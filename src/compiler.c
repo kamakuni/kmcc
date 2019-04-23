@@ -1,6 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Values for token types
+enum {
+    TK_NUM = 256, // token for integer
+    TK_EOF, // token for EOF
+}
+
+typedef struct {
+    int ty;
+    int val;
+    char *input;
+} Token;
+
+Token tokens[100];
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         fprintf(stderr, "引数の個数が正しくありません\n");
