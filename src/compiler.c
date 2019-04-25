@@ -46,6 +46,13 @@ Node *new_node_num(int val) {
     return node;
 }
 
+int consume(int ty) {
+    if (tokens[pos].ty != ty)
+        return 0;
+    pos++;
+    return 1;
+}
+
 void error(char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
