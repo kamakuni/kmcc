@@ -46,6 +46,33 @@ Node *new_node_num(int val) {
     return node;
 }
 
+Node *add() {
+    Node *node = mul();
+
+    for (;;) {
+        if (consume('+'))
+            node = new_node('+', node, mul());
+        else if (consume('-'))
+            node = new_node('-', node, mul());
+        else
+            return node;
+    }
+}
+
+Node *num() {
+    Node *node = term();
+
+    for (;;) {
+        if (consume('*'))
+            node = new_node('*', node, term());
+        else if (consume('/'))
+            node = new_node('/', node, term());
+        else
+            return node;
+        
+    }
+}
+
 Node *term() {
     if (consume('(')) {
         Node *node = add();
