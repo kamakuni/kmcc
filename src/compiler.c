@@ -46,6 +46,15 @@ Node *new_node_num(int val) {
     return node;
 }
 
+int consume(int ty) {
+    if (tokens[pos].ty != ty)
+        return 0;
+    pos++;
+    return 1;
+}
+
+Node *mul();
+
 Node *add() {
     Node *node = mul();
 
@@ -59,7 +68,8 @@ Node *add() {
     }
 }
 
-Node *num() {
+
+Node *mul() {
     Node *node = term();
 
     for (;;) {
@@ -86,13 +96,6 @@ Node *term() {
         
         error("数値でも開き括弧でもないトークンです： %s ", tokens[pos].input);
     }
-}
-
-int consume(int ty) {
-    if (tokens[pos].ty != ty)
-        return 0;
-    pos++;
-    return 1;
 }
 
 void error(char *fmt, ...) {
