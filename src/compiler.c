@@ -46,6 +46,21 @@ Node *new_node_num(int val) {
     return node;
 }
 
+Node *term() {
+    if (consume('(')) {
+        Node *node = add();
+        if (!consume(')')) {
+            error("開き括弧に対する閉じ括弧がありません。：%s", tokens[pos].input);
+            return node;
+        }
+
+        if ( tokens[pos].ty == TK_NUM )
+            return new_node_num(tokens[pos++].val);
+        
+        error("数値でも開き括弧でもないトークンです： %s ", tokens[pos].input);
+    }
+}
+
 int consume(int ty) {
     if (tokens[pos].ty != ty)
         return 0;
