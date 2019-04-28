@@ -46,6 +46,8 @@ Node *new_node_num(int val) {
     return node;
 }
 
+int pos = 0;
+
 int consume(int ty) {
     if (tokens[pos].ty != ty)
         return 0;
@@ -53,6 +55,8 @@ int consume(int ty) {
     return 1;
 }
 
+void error(char *fmt, ...);
+Node *term();
 Node *mul();
 
 Node *add() {
