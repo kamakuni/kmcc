@@ -72,7 +72,6 @@ Node *add() {
     }
 }
 
-
 Node *mul() {
     Node *node = term();
 
@@ -108,6 +107,36 @@ void error(char *fmt, ...) {
     vfprintf(stderr, fmt, ap);
     fprintf(stderr, "\n");
     exit(1);
+}
+
+void gen(Node *node) {
+    if (node->ty == ND_NUM) {
+        printf("  push %d\n", node->val);
+        return;
+    }
+
+    gen(node->lhs);
+    gen(node->rhs);
+
+    printf("  pop rdi\n");
+    printf("  pop rax\n");
+
+    switch (node->)
+    case '+':
+        printf("  add rax, rdi\n");
+        break;
+    case '-':
+        printf("  sub rax, rdi\n");
+        break;
+    case '*':
+        printf("  mul rdi\n");
+        break;
+    case '/':
+        printf("  mov rdx, 0\n");
+        printf("  div rdi\n");
+    }
+
+    printf("  push rax\n");
 }
 
 void tokenize(char *p) {
