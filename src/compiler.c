@@ -121,7 +121,7 @@ void gen(Node *node) {
     printf("  pop rdi\n");
     printf("  pop rax\n");
 
-    switch (node->)
+    switch (node->ty) {
     case '+':
         printf("  add rax, rdi\n");
         break;
