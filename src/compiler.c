@@ -60,6 +60,7 @@ Node *term();
 Node *mul();
 
 Node *add() {
+    // lhs
     Node *node = mul();
 
     for (;;) {
