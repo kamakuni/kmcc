@@ -178,40 +178,17 @@ int main(int argc, char **argv) {
     }
     
     tokenize(argv[1]);
+    // tokens to syntax tree
     Node *node = add();
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
 
+    // syntax tree to asm
+    gen(node);
 
-    if (tokens[0].ty != TK_NUM) 
-        error("最初の項が数ではありません");
-    printf("  mov rax, %d\n", tokens[0].val);
-
-    int i = 1;
-    while(tokens[i].ty != TK_EOF){
-        if (tokens[i].ty == '+') {
-            i++;
-            if (tokens[i].ty != TK_NUM)
-                error("予期しないトークンです: %s",tokens[i].input);
-            printf("  add rax, %d\n", tokens[i].val);
-            i++;
-            continue;
-        }
-
-        if (tokens[i].ty == '-') {
-            i++;
-            if (tokens[i].ty != TK_NUM)
-                error("予期しないトークンです: %s",tokens[i].input);
-            printf("  sub rax, %d\n", tokens[i].val);
-            i++;
-            continue;
-        }
-
-        error("予期しないトークンです：%s", tokens[i].input);
-    }
-
+    printf("  pop rax\n");
     printf("  ret\n");
     return 0;
 }
