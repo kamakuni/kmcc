@@ -94,12 +94,12 @@ Node *term() {
             error("開き括弧に対する閉じ括弧がありません。：%s", tokens[pos].input);
             return node;
         }
-
-        if ( tokens[pos].ty == TK_NUM )
-            return new_node_num(tokens[pos++].val);
-        
-        error("数値でも開き括弧でもないトークンです： %s ", tokens[pos].input);
     }
+
+    if ( tokens[pos].ty == TK_NUM )
+        return new_node_num(tokens[pos++].val);
+    
+    error("数値でも開き括弧でもないトークンです： %s ", tokens[pos].input);
 }
 
 void error(char *fmt, ...) {
@@ -178,6 +178,7 @@ int main(int argc, char **argv) {
     }
     
     tokenize(argv[1]);
+    Node *node = add();
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
