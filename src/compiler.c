@@ -92,8 +92,8 @@ Node *term() {
         Node *node = add();
         if (!consume(')')) {
             error("開き括弧に対する閉じ括弧がありません。：%s", tokens[pos].input);
-            return node;
         }
+        return node;
     }
 
     if ( tokens[pos].ty == TK_NUM )
@@ -147,7 +147,7 @@ void tokenize(char *p) {
             p++;
             continue;
         }
-        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/') {
+        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' ) {
             tokens[i].ty = *p;
             tokens[i].input = p;
             i++;
