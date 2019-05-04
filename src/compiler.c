@@ -58,6 +58,7 @@ int consume(int ty) {
 void error(char *fmt, ...);
 Node *term();
 Node *mul();
+Node *unary();
 
 Node *add() {
     // lhs
@@ -74,13 +75,13 @@ Node *add() {
 }
 
 Node *mul() {
-    Node *node = term();
+    Node *node = unary();
 
     for (;;) {
         if (consume('*'))
-            node = new_node('*', node, term());
+            node = new_node('*', node, unary());
         else if (consume('/'))
-            node = new_node('/', node, term());
+            node = new_node('/', node, unary());
         else
             return node;
         
@@ -100,6 +101,17 @@ Node *term() {
         return new_node_num(tokens[pos++].val);
     
     error("数値でも開き括弧でもないトークンです： %s ", tokens[pos].input);
+}
+
+Node *unary() {
+    if (consume('+')) {
+        return term();
+    }
+    if (consume('-')) {
+        // -x => 0-x
+        return new_node('-',new_node_num(0), term());
+    }
+    return term();
 }
 
 void error(char *fmt, ...) {
