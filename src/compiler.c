@@ -64,6 +64,7 @@ int consume(int ty) {
 }
 
 void error(char *fmt, ...);
+Node *add();
 Node *equality();
 Node *relational();
 Node *term();
