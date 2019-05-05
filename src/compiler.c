@@ -26,6 +26,10 @@ Token tokens[100];
 
 enum {
     ND_NUM = 256,
+    ND_EQ,
+    ND_NE,
+    ND_LE,
+    ND_GE,
 };
 
 typedef struct Node {
@@ -60,9 +64,42 @@ int consume(int ty) {
 }
 
 void error(char *fmt, ...);
+Node *equality();
+Node *relational();
 Node *term();
 Node *mul();
 Node *unary();
+
+Node *equality() {
+    Node *node = relational();
+
+    for (;;) {
+        if (consume(TK_EQ))
+            node = new_node(ND_EQ, node, relational());
+        else if (consume(TK_NE))
+            node = new_node(ND_NE, node, relational());
+        else
+            return node;
+    }
+}
+
+Node *relational() {
+    // lhs
+    Node *node = add();
+
+    for (;;) {
+        if (consume('<'))
+            node = new_node('<', node, add());
+        else if (consume(TK_LE))
+            node = new_node(ND_LE, node, add());
+        else if (consume('>'))
+            node = new_node('>', node, add());
+        else if (consume(TK_GE))
+            node = new_node(ND_GE, node, add());
+        else
+            return node;
+    }
+}
 
 Node *add() {
     // lhs
@@ -94,7 +131,7 @@ Node *mul() {
 
 Node *term() {
     if (consume('(')) {
-        Node *node = add();
+        Node *node = equality();
         if (!consume(')')) {
             error("開き括弧に対する閉じ括弧がありません。：%s", tokens[pos].input);
         }
@@ -229,7 +266,7 @@ int main(int argc, char **argv) {
     tokenize(argv[1]);
     
     // tokens to syntax tree
-    Node *node = add();
+    Node *node = equality();
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
