@@ -7,6 +7,10 @@
 // Values for token types
 enum {
     TK_NUM = 256, // token for integer
+    TK_EQ,
+    TK_NE,
+    TK_LE,
+    TK_GE,
     TK_EOF, // token for EOF
 };
 
@@ -175,6 +179,13 @@ void tokenize(char *p) {
             continue;
         }
 
+        if (strncmp(p,"==",2) == 2){
+            tokens[i].ty = TK_EQ;
+            strncpy(tokens[i].input, p ,2);
+            i++;
+            p = p + 2;
+        }
+
         error("トークナイズできません: %s", p);
         exit(1);
     }
@@ -190,6 +201,7 @@ int main(int argc, char **argv) {
     }
     
     tokenize(argv[1]);
+    
     // tokens to syntax tree
     Node *node = add();
 
