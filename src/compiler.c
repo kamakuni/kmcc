@@ -163,7 +163,7 @@ void tokenize(char *p) {
             p++;
             continue;
         }
-        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' ) {
+        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' ) {
             tokens[i].ty = *p;
             tokens[i].input = p;
             i++;
@@ -179,12 +179,38 @@ void tokenize(char *p) {
             continue;
         }
 
-        if (strncmp(p,"==",2) == 2){
+        if (strncmp(p,"==",2) == 0){
             tokens[i].ty = TK_EQ;
-            strncpy(tokens[i].input, p ,2);
+            tokens[i].input = p;
             i++;
             p = p + 2;
+            continue;
         }
+
+        if (strncmp(p,"!=",2) == 0){
+            tokens[i].ty = TK_NE;
+            tokens[i].input = p;
+            i++;
+            p = p + 2;
+            continue;
+        }
+
+        if (strncmp(p,"<=",2) == 0){
+            tokens[i].ty = TK_LE;
+            tokens[i].input = p;
+            i++;
+            p = p + 2;
+            continue;
+        }
+
+        if (strncmp(p,">=",2) == 0){
+            tokens[i].ty = TK_GE;
+            tokens[i].input = p;
+            i++;
+            p = p + 2;
+            continue;
+        }
+
 
         error("トークナイズできません: %s", p);
         exit(1);
