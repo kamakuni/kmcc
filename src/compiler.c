@@ -96,7 +96,7 @@ Node *relational() {
         else if (consume('>'))
             node = new_node('<', add(), node);
         else if (consume(TK_GE))
-            node = new_node(ND_GE, node, add());
+            node = new_node(ND_LE, add(), node);
         else
             return node;
     }
@@ -195,6 +195,11 @@ void gen(Node *node) {
         printf("  setl al\n");
         printf("  movzb rax, al\n");
         break;
+    case ND_LE:
+        printf("  cmp rax, rdi\n");
+        printf("  setle al\n");
+        printf("  movzb rax, al\n");
+        break;
     case ND_EQ:
         printf("  cmp rax, rdi\n");
         printf("  sete al\n");
@@ -216,6 +221,23 @@ void tokenize(char *p) {
             p++;
             continue;
         }
+
+        if (strncmp(p,"<=",2) == 0){
+            tokens[i].ty = TK_LE;
+            tokens[i].input = p;
+            i++;
+            p = p + 2;
+            continue;
+        }
+
+        if (strncmp(p,">=",2) == 0){
+            tokens[i].ty = TK_GE;
+            tokens[i].input = p;
+            i++;
+            p = p + 2;
+            continue;
+        }
+
         if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' ) {
             tokens[i].ty = *p;
             tokens[i].input = p;
@@ -247,23 +269,6 @@ void tokenize(char *p) {
             p = p + 2;
             continue;
         }
-
-        if (strncmp(p,"<=",2) == 0){
-            tokens[i].ty = TK_LE;
-            tokens[i].input = p;
-            i++;
-            p = p + 2;
-            continue;
-        }
-
-        if (strncmp(p,">=",2) == 0){
-            tokens[i].ty = TK_GE;
-            tokens[i].input = p;
-            i++;
-            p = p + 2;
-            continue;
-        }
-
 
         error("トークナイズできません: %s", p);
         exit(1);
