@@ -32,6 +32,12 @@ enum {
     ND_GE,
 };
 
+typedef struct {
+    void **data;
+    int capacity;
+    int len;
+} Vector;
+
 typedef struct Node {
     int ty;
     struct Node *lhs;
