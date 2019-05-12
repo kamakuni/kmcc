@@ -46,6 +46,14 @@ Vector *new_vector() {
     return vec;
 }
 
+void vec_push(Vector *vec, void *elem) {
+    if (vec->capacity == vec->len) {
+        vec->capacity *= 2;
+        vec->data = realloc(vec->data, sizeof(void *) * vec->capacity );
+    }
+    vec->data[vec->len++] = elem;
+}
+
 typedef struct Node {
     int ty;
     struct Node *lhs;
