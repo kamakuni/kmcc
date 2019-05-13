@@ -305,6 +305,11 @@ int main(int argc, char **argv) {
         fprintf(stderr, "引数の個数が正しくありません\n");
         return 1;
     }
+    // run testing codes
+    if (strcmp(argv[1],"-test") == 0){
+        runtest();
+        return 0;
+    }
     
     tokenize(argv[1]);
     
@@ -321,4 +326,18 @@ int main(int argc, char **argv) {
     printf("  pop rax\n");
     printf("  ret\n");
     return 0;
+}
+
+int expect(int line, int expected, int actual) {
+    if (expected == actual) 
+        return 0;
+    fprintf(stderr,"%d: %d expected, but got %d\n",line, expected, actual);
+    exit(1);
+}
+
+void runtest(){
+    Vector *vec = new_vector();
+    expect(__LINE__, 0, vec->len);
+
+    printf("OK\n");
 }
