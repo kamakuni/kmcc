@@ -14,24 +14,6 @@ enum {
     TK_EOF, // token for EOF
 };
 
-// Type for tokens
-typedef struct {
-    int ty; // token type
-    int val; // valu for Integer token
-    char *input; // token stirng
-} Token;
-
-Token *new_token(int ty, int val, char *input) {
-    Token *t = malloc(sizeof(Token));
-    t->ty = ty;
-    t->val = val;
-    t->input = input;
-    return t;
-}
-
-// array for tokenized result
-Token tokens[100];
-
 enum {
     ND_NUM = 256,
     ND_EQ,
@@ -61,6 +43,24 @@ void vec_push(Vector *vec, void *elem) {
     }
     vec->data[vec->len++] = elem;
 }
+
+// Type for tokens
+typedef struct {
+    int ty; // token type
+    int val; // valu for Integer token
+    char *input; // token stirng
+} Token;
+
+Token *new_token(int ty, int val, char *input) {
+    Token *t = malloc(sizeof(Token));
+    t->ty = ty;
+    t->val = val;
+    t->input = input;
+    return t;
+}
+
+// array for tokenized result
+Token tokens[100];
 
 typedef struct {
     Vector *vec;
@@ -345,6 +345,14 @@ void runtest(){
     expect(__LINE__, 0, (long)vec->data[0]);
     expect(__LINE__, 50, (long)vec->data[50]);
     expect(__LINE__, 99, (long)vec->data[99]);
+
+    Tokens *tokens = new_tokens();
+    append(tokens, new_token(1,2,"string"));
+    Token *token = get(tokens,0);
+
+    expect(__LINE__, 1, token->ty);
+    expect(__LINE__, 2, token->val);
+    expect(__LINE__, 0, strcmp("string", token->input));
 
     printf("OK\n");
 }
