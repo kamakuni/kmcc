@@ -21,6 +21,14 @@ typedef struct {
     char *input; // token stirng
 } Token;
 
+Token *new_token(int ty, int val, char *input) {
+    Token *t = malloc(sizeof(Token));
+    t->ty = ty;
+    t->val = val;
+    t->input = input;
+    return t;
+}
+
 // array for tokenized result
 Token tokens[100];
 
@@ -52,6 +60,25 @@ void vec_push(Vector *vec, void *elem) {
         vec->data = realloc(vec->data, sizeof(void *) * vec->capacity );
     }
     vec->data[vec->len++] = elem;
+}
+
+typedef struct {
+    Vector *vec;
+} Tokens;
+
+Tokens *new_tokens(){
+    Tokens *t = malloc(sizeof(Tokens));
+    //t->i = 0;
+    t->vec = new_vector();
+    return t;
+}
+
+void append(Tokens *t, Token *elem) {
+    vec_push(t->vec,(void *) elem);
+}
+
+Token *get(Tokens *t, int i) {
+    return (Token *) t->vec->data[i];
 }
 
 typedef struct Node {
