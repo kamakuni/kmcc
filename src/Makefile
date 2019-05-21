@@ -1,6 +1,14 @@
-compiler: compiler.c
+CFLAGS=-Wall -std=c11
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:.c=.o)
+
+compiler: $(OBJS)
+			$(CC) -o compiler $(OBJS) $(LDFLAGS)
+
+$(OBJS): compiler.h
 
 test: compiler
+		./compiler -test
 		./test.sh
 
 clean:
