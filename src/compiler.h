@@ -32,6 +32,7 @@ typedef struct Node {
 // Values for token types
 enum {
     TK_NUM = 256, // token for integer
+    TK_IDENT,
     TK_EQ,
     TK_NE,
     TK_LE,

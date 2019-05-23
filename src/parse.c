@@ -142,6 +142,12 @@ void tokenize(char *p) {
             continue;
         }
 
+        if ('a' <= *p && *p <= 'z') {
+            append(tokens, new_token(TK_IDENT,p));
+            p++;
+            continue;
+        }
+
         if (isdigit(*p)) {
             append(tokens, new_token_num(TK_NUM, strtol(p, &p, 10), p));
             continue;
