@@ -23,6 +23,15 @@ Node *new_node_num(int val) {
     return node;
 }
 
+Node *code[100];
+
+Node *assign() {
+    Node *node = equality();
+    if (consume('='))
+        node = new_node('=', node, assign());
+    return node;
+}
+
 Node *equality() {
     Node *node = relational();
 
