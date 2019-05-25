@@ -32,6 +32,10 @@ Node *assign() {
     return node;
 }
 
+Node *expr() {
+    return assign();
+}
+
 Node *equality() {
     Node *node = relational();
 
