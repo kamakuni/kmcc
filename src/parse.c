@@ -51,6 +51,13 @@ Node *stmt() {
     return node;
 }
 
+void program() {
+    int i = 0;
+    while (tokens[pos].tk != TK_EOF)
+        code[i++] = stmt();
+    code[i] = NULL;
+}
+
 Node *equality() {
     Node *node = relational();
 
