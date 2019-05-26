@@ -27,6 +27,7 @@ typedef struct Node {
     struct Node *lhs;
     struct Node *rhs;
     int val;
+    char name;
 } Node;
 
 // Values for token types
@@ -37,11 +38,14 @@ enum {
     TK_NE,
     TK_LE,
     TK_GE,
+    TK_SEMI,
+    TK_ASSIGN,
     TK_EOF, // token for EOF
 };
 
 enum {
     ND_NUM = 256,
+    ND_IDENT,
     ND_EQ,
     ND_NE,
     ND_LE,
@@ -63,10 +67,11 @@ Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
 int consume(int ty);
-void tokenize(char *p);
+void tokenize();
 
 void error(char *fmt, ...);
 
+void program();
 Node *add();
 Node *equality();
 Node *relational();
@@ -74,7 +79,9 @@ Node *term();
 Node *mul();
 Node *unary();
 
-void gen(Node *node);
+void gen();
 
+extern char *user_input;
 extern int pos;
 extern Tokens *tokens;
+extern Node *code[];

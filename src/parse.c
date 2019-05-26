@@ -47,13 +47,13 @@ Node *expr() {
 Node *stmt() {
     Node *node = expr();
     if (!consume(';'))
-        error_at(tokens[pos].input, "';'ではないトークンです");
+        error_at(get(tokens,pos)->input, "';'ではないトークンです");
     return node;
 }
 
 void program() {
     int i = 0;
-    while (tokens[pos].tk != TK_EOF)
+    while (get(tokens,pos)->ty != TK_EOF)
         code[i++] = stmt();
     code[i] = NULL;
 }
@@ -151,7 +151,8 @@ int consume(int ty) {
     return 1;
 }
 
-void tokenize(char *p) {
+void tokenize() {
+    char *p = user_input;
 
     while (*p) {
         if (isspace(*p)) {
@@ -183,6 +184,12 @@ void tokenize(char *p) {
             continue;
         }
 
+        if ( *p == ';' ) {
+            append(tokens, new_token(TK_SEMI,p));
+            p++;
+            continue;
+        }
+
         if (isdigit(*p)) {
             append(tokens, new_token_num(TK_NUM, strtol(p, &p, 10), p));
             continue;
@@ -197,6 +204,12 @@ void tokenize(char *p) {
         if (strncmp(p,"!=",2) == 0){
             append(tokens, new_token(TK_NE,p));
             p = p + 2;
+            continue;
+        }
+
+        if ( *p == '=' ) {
+            append(tokens, new_token(TK_ASSIGN,p));
+            p++;
             continue;
         }
 

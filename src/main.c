@@ -2,6 +2,7 @@
 
 int pos;
 Tokens *tokens;
+char *user_input;
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -15,18 +16,19 @@ int main(int argc, char **argv) {
     }
 
     pos = 0;
+    user_input = argv[1];
     tokens = new_tokens();
-    tokenize(argv[1]);
+    tokenize();
     
     // tokens to syntax tree
-    Node *node = equality();
+    program();
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
 
     // syntax tree to asm
-    gen(node);
+    //gen();
 
     printf("  pop rax\n");
     printf("  ret\n");
