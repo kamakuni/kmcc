@@ -8,6 +8,14 @@ void error(char *fmt, ...) {
     exit(1);
 }
 
+void error_at(char *loc, char *msg) {   
+    int pos = loc - user_input;
+    fprintf(stderr, "%s\n", user_input);
+    fprintf(stderr, "%*s", pos, ""); // pos個の空白を出力
+    fprintf(stderr, "^ %s\n", msg);
+    exit(1);
+}
+
 Node *new_node(int ty, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
     node->ty = ty;
@@ -34,6 +42,13 @@ Node *assign() {
 
 Node *expr() {
     return assign();
+}
+
+Node *stmt() {
+    Node *node = expr();
+    if (!consume(';'))
+        error_at(tokens[pos].input, "';'ではないトークンです");
+    return node;
 }
 
 Node *equality() {
