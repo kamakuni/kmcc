@@ -53,8 +53,11 @@ Node *stmt() {
 
 void program() {
     int i = 0;
-    while (get(tokens,pos)->ty != TK_EOF)
+    while (get(tokens,pos)->ty != TK_EOF) {
         code[i++] = stmt();
+        fprintf(stdout, "pos;%d\n", pos);
+        fprintf(stdout, "token:%d\n", get(tokens,pos)->ty);
+    }
     code[i] = NULL;
 }
 

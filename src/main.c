@@ -27,10 +27,18 @@ int main(int argc, char **argv) {
     printf(".global main\n");
     printf("main:\n");
 
-    // syntax tree to asm
-    //gen();
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    printf("  sub rsp, 208\n");
 
-    printf("  pop rax\n");
+    // syntax tree to asm
+    for (int i = 0; code[i]; i++) {
+        gen(code[i]);
+        printf("  pop rax\n");
+    }
+
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
     printf("  ret\n");
     return 0;
 }
