@@ -55,8 +55,6 @@ void program() {
     int i = 0;
     while (get(tokens,pos)->ty != TK_EOF) {
         code[i++] = stmt();
-        fprintf(stdout, "pos;%d\n", pos);
-        fprintf(stdout, "token:%d\n", get(tokens,pos)->ty);
     }
     code[i] = NULL;
 }
@@ -129,9 +127,10 @@ Node *term() {
         return node;
     }
 
-    if ( get(tokens,pos)->ty == TK_NUM )
+    if ( get(tokens,pos)->ty == TK_NUM ) {
         return new_node_num(get(tokens,pos++)->val);
-    
+    }
+
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
 
 }
@@ -188,7 +187,7 @@ void tokenize() {
         }
 
         if ( *p == ';' ) {
-            append(tokens, new_token(TK_SEMI,p));
+            append(tokens, new_token(*p,p));
             p++;
             continue;
         }
