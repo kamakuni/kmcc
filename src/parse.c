@@ -8,6 +8,14 @@ void error(char *fmt, ...) {
     exit(1);
 }
 
+void error_at(char *loc, char *msg) {   
+    int pos = loc - user_input;
+    fprintf(stderr, "%s\n", user_input);
+    fprintf(stderr, "%*s", pos, ""); // pos個の空白を出力
+    fprintf(stderr, "^ %s\n", msg);
+    exit(1);
+}
+
 Node *new_node(int ty, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
     node->ty = ty;
@@ -21,6 +29,34 @@ Node *new_node_num(int val) {
     node->ty = ND_NUM;
     node->val = val;
     return node;
+}
+
+Node *code[100];
+
+Node *assign() {
+    Node *node = equality();
+    if (consume('='))
+        node = new_node('=', node, assign());
+    return node;
+}
+
+Node *expr() {
+    return assign();
+}
+
+Node *stmt() {
+    Node *node = expr();
+    if (!consume(';'))
+        error_at(get(tokens,pos)->input, "';'ではないトークンです");
+    return node;
+}
+
+void program() {
+    int i = 0;
+    while (get(tokens,pos)->ty != TK_EOF) {
+        code[i++] = stmt();
+    }
+    code[i] = NULL;
 }
 
 Node *equality() {
@@ -91,9 +127,10 @@ Node *term() {
         return node;
     }
 
-    if ( get(tokens,pos)->ty == TK_NUM )
+    if ( get(tokens,pos)->ty == TK_NUM ) {
         return new_node_num(get(tokens,pos++)->val);
-    
+    }
+
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
 
 }
@@ -116,7 +153,8 @@ int consume(int ty) {
     return 1;
 }
 
-void tokenize(char *p) {
+void tokenize() {
+    char *p = user_input;
 
     while (*p) {
         if (isspace(*p)) {
@@ -142,6 +180,18 @@ void tokenize(char *p) {
             continue;
         }
 
+        if ('a' <= *p && *p <= 'z') {
+            append(tokens, new_token(TK_IDENT,p));
+            p++;
+            continue;
+        }
+
+        if ( *p == ';' ) {
+            append(tokens, new_token(*p,p));
+            p++;
+            continue;
+        }
+
         if (isdigit(*p)) {
             append(tokens, new_token_num(TK_NUM, strtol(p, &p, 10), p));
             continue;
@@ -156,6 +206,12 @@ void tokenize(char *p) {
         if (strncmp(p,"!=",2) == 0){
             append(tokens, new_token(TK_NE,p));
             p = p + 2;
+            continue;
+        }
+
+        if ( *p == '=' ) {
+            append(tokens, new_token(TK_ASSIGN,p));
+            p++;
             continue;
         }
 
