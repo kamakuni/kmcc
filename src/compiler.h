@@ -38,7 +38,6 @@ enum {
     TK_NE,
     TK_LE,
     TK_GE,
-    TK_ASSIGN,
     TK_EOF, // token for EOF
 };
 
@@ -64,6 +63,7 @@ void runtest();
 
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
+Node *new_node_ident(char *name);
 
 int consume(int ty);
 void tokenize();
