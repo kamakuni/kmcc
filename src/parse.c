@@ -139,7 +139,6 @@ Node *term() {
     }
 
     if (get(tokens,pos)->ty == TK_IDENT ){
-        printf("#  get(tokens,pos++)->input %s\n", get(tokens,pos)->input);
         return new_node_ident(get(tokens,pos++)->input);
     }
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
@@ -192,7 +191,7 @@ void tokenize() {
         }
 
         if ('a' <= *p && *p <= 'z') {
-            append(tokens, new_token(TK_IDENT,p));
+            append(tokens, new_token(TK_IDENT, p));
             p++;
             continue;
         }

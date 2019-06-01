@@ -13,7 +13,7 @@ typedef struct {
 // Type for tokens
 typedef struct {
     int ty; // token type
-    int val; // valu for Integer token
+    int val; // value for Integer token
     char *input; // token stirng
 } Token;
 
