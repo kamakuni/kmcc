@@ -5,6 +5,7 @@ void gen_lval(Node *node) {
         error("代入の左辺値が変数でありません。");
 
     int offset = ('z' - node->name + 1) * 8;
+    printf("#  node->name %d\n", node->name);
     printf("  mov rax, rbp\n");
     printf("  sub rax, %d\n", offset);
     printf("  push rax\n");
