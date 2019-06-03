@@ -13,7 +13,7 @@ typedef struct {
 // Type for tokens
 typedef struct {
     int ty; // token type
-    int val; // valu for Integer token
+    int val; // value for Integer token
     char *input; // token stirng
 } Token;
 
@@ -27,7 +27,7 @@ typedef struct Node {
     struct Node *lhs;
     struct Node *rhs;
     int val;
-    char name;
+    char *name;
 } Node;
 
 // Values for token types
@@ -38,7 +38,6 @@ enum {
     TK_NE,
     TK_LE,
     TK_GE,
-    TK_ASSIGN,
     TK_EOF, // token for EOF
 };
 
@@ -55,7 +54,9 @@ Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
 
 Token *new_token(int ty, char *input);
-Token *new_token_num(int ty, int val, char *input);
+Token *new_token_num(int val, char *input);
+Token *new_token_ident(char *name);
+
 Tokens *new_tokens();
 void append(Tokens *t, Token *elem);
 Token *get(Tokens *t, int i);
@@ -64,6 +65,7 @@ void runtest();
 
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
+Node *new_node_ident(char *name);
 
 int consume(int ty);
 void tokenize();

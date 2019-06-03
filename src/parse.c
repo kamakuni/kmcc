@@ -31,6 +31,13 @@ Node *new_node_num(int val) {
     return node;
 }
 
+Node *new_node_ident(char *name) {
+    Node *node = malloc(sizeof (Node));
+    node->ty = ND_IDENT;
+    node->name = name;
+    return node;
+}
+
 Node *code[100];
 
 Node *assign() {
@@ -131,6 +138,9 @@ Node *term() {
         return new_node_num(get(tokens,pos++)->val);
     }
 
+    if (get(tokens,pos)->ty == TK_IDENT ){
+        return new_node_ident(get(tokens,pos++)->input);
+    }
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
 
 }
@@ -181,7 +191,10 @@ void tokenize() {
         }
 
         if ('a' <= *p && *p <= 'z') {
-            append(tokens, new_token(TK_IDENT,p));
+            /*Token *t = new_token(TK_IDENT, NULL);
+            t->input = malloc(sizeof(char));
+            strncpy(t->input,p,1);*/
+            append(tokens, new_token_ident(p));
             p++;
             continue;
         }
@@ -193,7 +206,7 @@ void tokenize() {
         }
 
         if (isdigit(*p)) {
-            append(tokens, new_token_num(TK_NUM, strtol(p, &p, 10), p));
+            append(tokens, new_token_num(strtol(p, &p, 10), p));
             continue;
         }
 
@@ -210,7 +223,7 @@ void tokenize() {
         }
 
         if ( *p == '=' ) {
-            append(tokens, new_token(TK_ASSIGN,p));
+            append(tokens, new_token(*p,p));
             p++;
             continue;
         }
