@@ -27,7 +27,7 @@ typedef struct Node {
     struct Node *lhs;
     struct Node *rhs;
     int val;
-    char name;
+    char *name;
 } Node;
 
 // Values for token types
@@ -54,7 +54,9 @@ Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
 
 Token *new_token(int ty, char *input);
-Token *new_token_num(int ty, int val, char *input);
+Token *new_token_num(int val, char *input);
+Token *new_token_ident(char *name);
+
 Tokens *new_tokens();
 void append(Tokens *t, Token *elem);
 Token *get(Tokens *t, int i);

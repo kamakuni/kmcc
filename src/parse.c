@@ -191,7 +191,10 @@ void tokenize() {
         }
 
         if ('a' <= *p && *p <= 'z') {
-            append(tokens, new_token(TK_IDENT, p));
+            /*Token *t = new_token(TK_IDENT, NULL);
+            t->input = malloc(sizeof(char));
+            strncpy(t->input,p,1);*/
+            append(tokens, new_token_ident(p));
             p++;
             continue;
         }
@@ -203,7 +206,7 @@ void tokenize() {
         }
 
         if (isdigit(*p)) {
-            append(tokens, new_token_num(TK_NUM, strtol(p, &p, 10), p));
+            append(tokens, new_token_num(strtol(p, &p, 10), p));
             continue;
         }
 

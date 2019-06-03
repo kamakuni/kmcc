@@ -23,11 +23,19 @@ Token *new_token(int ty, char *input) {
     return t;
 }
 
-Token *new_token_num(int ty, int val, char *input) {
+Token *new_token_num(int val, char *input) {
     Token *t = malloc(sizeof(Token));
-    t->ty = ty;
+    t->ty = TK_NUM;
     t->val = val;
     t->input = input;
+    return t;
+}
+
+Token *new_token_ident(char *input) {
+    Token *t = malloc(sizeof(Token));
+    t->ty = TK_IDENT;
+    t->input = malloc(sizeof(char));
+    strncpy(t->input,input,1);
     return t;
 }
 
@@ -66,18 +74,18 @@ void runtest(){
     expect(__LINE__, 99, (long)vec->data[99]);
 
     Tokens *tokens = new_tokens();
-    append(tokens, new_token_num(1,2,"3"));
+    append(tokens, new_token_num(2,"3"));
     Token *token = get(tokens,0);
 
-    expect(__LINE__, 1, token->ty);
+    expect(__LINE__, TK_NUM, token->ty);
     expect(__LINE__, 2, token->val);
     expect(__LINE__, 0, strcmp("3", token->input));
 
-    append(tokens, new_token_num(2,3,"4"));
+    append(tokens, new_token_num(3,"4"));
 
     token = get(tokens,1);
 
-    expect(__LINE__, 2, token->ty);
+    expect(__LINE__, TK_NUM, token->ty);
     expect(__LINE__, 3, token->val);
     expect(__LINE__, 0, strcmp("4", token->input));
 

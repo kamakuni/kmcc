@@ -44,6 +44,7 @@ try 0 "2 + 3 != 5;"
 
 try 30 "a=30;"
 try 24 "a=9+15;"
-try 4 "a=b=2;c=1+3;c;"
+try 3 "a=1;b=2;a+b;"
+try 4 "a=b=2;c=a+b;c;"
 
 echo OK
