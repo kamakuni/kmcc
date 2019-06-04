@@ -34,6 +34,7 @@ typedef struct Node {
 enum {
     TK_NUM = 256, // token for integer
     TK_IDENT,
+    TK_RETURN,
     TK_EQ,
     TK_NE,
     TK_LE,
@@ -44,6 +45,7 @@ enum {
 enum {
     ND_NUM = 256,
     ND_IDENT,
+    ND_RETURN,
     ND_EQ,
     ND_NE,
     ND_LE,
@@ -70,6 +72,7 @@ Node *new_node_ident(char *name);
 int consume(int ty);
 void tokenize();
 
+int is_alnum(char c);
 void error(char *fmt, ...);
 
 void program();
