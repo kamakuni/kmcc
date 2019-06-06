@@ -47,4 +47,7 @@ try 24 "a=9+15;"
 try 3 "a=1;b=2;a+b;"
 try 4 "a=b=2;c=a+b;c;"
 
+try 5 "return 5;"
+try 7 "a=4+3; return a;"
+
 echo OK

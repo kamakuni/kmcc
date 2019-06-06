@@ -59,10 +59,11 @@ Node *expr() {
 }
 
 Node *stmt() {
-    if (consme(TK_RETURN)) {
-        Node *node = new_node(ND_RETURN, expr(), NULL);
+    Node *node;
+    if (consume(TK_RETURN)) {
+        node = new_node(ND_RETURN, expr(), NULL);
     } else {
-        Node *node = expr();
+        node = expr();
     }
     if (!consume(';'))
         error_at(get(tokens,pos)->input, "';'ではないトークンです");
@@ -201,18 +202,18 @@ void tokenize() {
             continue;
         }
 
-        if (strncmp(p, "return", 6) != is_alnum(p[6])){
-            Token *t = new_token(TK_RETURN, p);
-            p += 6;
-            continue;
-        }
-
         if ('a' <= *p && *p <= 'z') {
             /*Token *t = new_token(TK_IDENT, NULL);
             t->input = malloc(sizeof(char));
             strncpy(t->input,p,1);*/
             append(tokens, new_token_ident(p));
             p++;
+            continue;
+        }
+
+        if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
+            append(tokens, new_token(TK_RETURN,p));
+            p += 6;
             continue;
         }
 
