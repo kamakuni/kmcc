@@ -22,6 +22,11 @@ typedef struct {
     Vector *vec;
 } Tokens;
 
+typedef struct {
+    Vector *keys;
+    Vector *vals;
+} Map;
+
 typedef struct Node {
     int ty;
     struct Node *lhs;
@@ -54,6 +59,10 @@ enum {
 
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
+
+Map *new_map();
+void map_put(Map *map, char *key, void *val){};
+Map *get_put(char *key){};
 
 Token *new_token(int ty, char *input);
 Token *new_token_num(int val, char *input);
