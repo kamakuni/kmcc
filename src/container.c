@@ -17,22 +17,22 @@ void vec_push(Vector *vec, void *elem) {
 }
 
 Map *new_map(){
-    Map map = malloc(sizeof(Map));
+    Map *map = malloc(sizeof(Map));
     map->keys = new_vector();
     map->vals = new_vector();
     return map;
 };
 void map_put(Map *map, char *key, void *val){
     vec_push(map->keys, key);
-    vec_push(map->vals, val;
+    vec_push(map->vals, val);
 };
 
 Map *map_get(Map *map,char *key){
-    if(int i = map->keys->len - 1; i >=0; i--){
+    for(int i = map->keys->len - 1; i >=0; i--){
         if(strcmp(map->keys->data[i],key) == 0)
             return map->vals->data[i];
     }
-    return NULL
+    return NULL;
 };
 
 Token *new_token(int ty, char *input) {
@@ -80,7 +80,21 @@ int expect(int line, int expected, int actual) {
     exit(1);
 }
 
-void runtest(){
+void test_map() {
+    Map *map = new_map();
+    expect(__LINE__, 0,(long)map_get(map,"foo"));
+
+    map_put(map, "foo", (void *)2);
+    expect(__LINE__, 2,(long)map_get(map,"foo"));
+
+    map_put(map, "bar", (void *)3);
+    expect(__LINE__, 3,(long)map_get(map,"bar"));
+
+    map_put(map, "foo", (void *)4);
+    expect(__LINE__, 4,(long)map_get(map,"foo"));
+}
+
+void test_vector(){
     Vector *vec = new_vector();
     expect(__LINE__, 0, vec->len);
 
@@ -107,6 +121,10 @@ void runtest(){
     expect(__LINE__, TK_NUM, token->ty);
     expect(__LINE__, 3, token->val);
     expect(__LINE__, 0, strcmp("4", token->input));
+}
 
+void runtest(){
+    test_vector();
+    test_map();
     printf("OK\n");
 }

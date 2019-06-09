@@ -61,8 +61,8 @@ Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
 
 Map *new_map();
-void map_put(Map *map, char *key, void *val){};
-Map *map_get(Map *map,char *key){};
+void map_put(Map *map, char *key, void *val);
+Map *map_get(Map *map,char *key);
 
 Token *new_token(int ty, char *input);
 Token *new_token_num(int val, char *input);
