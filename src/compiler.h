@@ -14,6 +14,7 @@ typedef struct {
 typedef struct {
     int ty; // token type
     int val; // value for Integer token
+    char *name;
     char *input; // token stirng
 } Token;
 

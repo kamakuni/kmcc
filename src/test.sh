@@ -50,4 +50,6 @@ try 4 "a=b=2;c=a+b;c;"
 try 5 "return 5;"
 try 7 "a=4+3; return a;"
 
+try 6 "foo=1;bar=2+3;return foo + bar;"
+
 echo OK
