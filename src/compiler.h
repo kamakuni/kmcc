@@ -28,6 +28,12 @@ typedef struct {
     Vector *vals;
 } Map;
 
+typedef struct Var {
+    struct Var *next;
+    char *name;
+    int offset;
+}
+
 typedef struct Node {
     int ty;
     struct Node *lhs;
