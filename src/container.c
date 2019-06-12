@@ -35,6 +35,14 @@ Map *map_get(Map *map,char *key){
     return NULL;
 };
 
+Var *new_vars(){
+    Var *var = malloc(sizeof(Var));
+    var->next = NULL;
+    var->name = "";
+    var->offset = 0; 
+    return var;
+}
+
 Token *new_token(int ty, char *input) {
     Token *t = malloc(sizeof(Token));
     t->ty = ty;
