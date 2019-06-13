@@ -139,8 +139,21 @@ void test_vector(){
     expect(__LINE__, 0, strcmp("4", token->input));
 }
 
+void test_linked_list(){
+    Var *var = new_var();
+    expect(__LINE__, 0, var->offset);
+    expect(__LINE__, 0, strcmp("", var->name));
+    var = var_insert_first(var, "name1");
+    expect(__LINE__, 8, var->offset);
+    expect(__LINE__, 0, strcmp("name1", var->name));
+    var = var_insert_first(var, "name2");
+    expect(__LINE__, 16, var->offset);
+    expect(__LINE__, 0, strcmp("name2", var->name));
+}
+
 void runtest(){
     test_vector();
     test_map();
+    test_linked_list();
     printf("OK\n");
 }

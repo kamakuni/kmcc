@@ -85,7 +85,7 @@ Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(char *name);
 
-Var *new_vars();
+Var *new_var();
 Var *var_insert_first(Var *var,char *name);
 
 int consume(int ty);
