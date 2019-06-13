@@ -32,7 +32,7 @@ typedef struct Var {
     struct Var *next;
     char *name;
     int offset;
-}
+} Var;
 
 typedef struct Node {
     int ty;
@@ -86,7 +86,7 @@ Node *new_node_num(int val);
 Node *new_node_ident(char *name);
 
 Var *new_vars();
-Var vars_append(Var *vars, char *name);
+Var *var_insert_first(Var *var,char *name);
 
 int consume(int ty);
 void tokenize();
