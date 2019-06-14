@@ -39,10 +39,13 @@ Node *new_node_num(int val) {
 }
 
 Node *new_node_ident(char *name) {
-    Node *node = malloc(sizeof (Node));
-    node->ty = ND_IDENT;
-    node->name = name;
-    return node;
+    Token *t = malloc(sizeof(Token));
+    t->ty = TK_IDENT;
+    t->input = malloc(sizeof(char));
+    strncpy(t->input,input, strlen(input));
+    t->name = malloc(sizeof(char));
+    strncpy(t->name,input, strlen(input));
+    return t;
 }
 
 Node *code[100];
@@ -209,11 +212,11 @@ void tokenize() {
         }
 
         if ('a' <= *p && *p <= 'z') {
-            /*Token *t = new_token(TK_IDENT, NULL);
-            t->input = malloc(sizeof(char));
-            strncpy(t->input,p,1);*/
-            append(tokens, new_token_ident(p));
-            p++;
+            int i = 0;
+            while(isalpha(p[i]))
+                i++;
+            append(tokens, new_token_ident(strndup(p,i)));
+            p += i;
             continue;
         }
 
