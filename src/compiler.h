@@ -87,6 +87,7 @@ Node *new_node_ident(char *name);
 
 Var *new_var();
 Var *var_insert_first(Var *var,char *name);
+int var_len(Var *var);
 
 int consume(int ty);
 void tokenize();

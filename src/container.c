@@ -51,6 +51,14 @@ Var *var_insert_first(Var *var,char *name){
     return new;
 }
 
+int var_len(Var *var){
+    int i = 0;
+    while(var->next != NULL){
+        i++;
+    };
+    return i;
+}
+
 Token *new_token(int ty, char *input) {
     Token *t = malloc(sizeof(Token));
     t->ty = ty;
@@ -149,6 +157,7 @@ void test_linked_list(){
     var = var_insert_first(var, "name2");
     expect(__LINE__, 16, var->offset);
     expect(__LINE__, 0, strcmp("name2", var->name));
+    whi;e
 }
 
 void runtest(){
