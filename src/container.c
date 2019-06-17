@@ -39,22 +39,33 @@ Var *new_var(){
     Var *var = malloc(sizeof(Var));
     var->next = NULL;
     var->name = "";
-    var->offset = 0; 
+    var->offset = 0;
     return var;
 }
 
-Var *var_insert_first(Var *var,char *name){
+Var *var_insert_first(Var *var,char *name, int offset){
     Var *new = malloc(sizeof(Var));
     new->next = var;
     new->name = name;
-    new->offset = var->offset+8;
+    new->offset = offset;
     return new;
+}
+
+Var *var_get(Var *var, char *name){
+    while(var->next != NULL){
+        if(strcmp(var->next->name, name) == 0){
+            return var->next;
+        }
+        var = var->next;
+    };
+    return NULL;
 }
 
 int var_len(Var *var){
     int i = 0;
     while(var->next != NULL){
         i++;
+        var = var->next;
     };
     return i;
 }
@@ -151,13 +162,16 @@ void test_linked_list(){
     Var *var = new_var();
     expect(__LINE__, 0, var->offset);
     expect(__LINE__, 0, strcmp("", var->name));
-    var = var_insert_first(var, "name1");
+    var = var_insert_first(var, "name1", (var_len(var)+1)*8);
     expect(__LINE__, 8, var->offset);
     expect(__LINE__, 0, strcmp("name1", var->name));
-    var = var_insert_first(var, "name2");
+    var = var_insert_first(var, "name2", (var_len(var)+1)*8);
     expect(__LINE__, 16, var->offset);
     expect(__LINE__, 0, strcmp("name2", var->name));
-    whi;e
+    Var *var_name1 = var_get(var, "name1");
+    var = var_insert_first(var, var_name1->name, var_name1->offset);
+    expect(__LINE__, 8, var->offset);
+    expect(__LINE__, 0, strcmp("name1", var->name));
 }
 
 void runtest(){

@@ -86,7 +86,8 @@ Node *new_node_num(int val);
 Node *new_node_ident(char *name);
 
 Var *new_var();
-Var *var_insert_first(Var *var,char *name);
+Var *var_insert_first(Var *var, char *name, int offset);
+Var *var_get(Var *var, char *name);
 int var_len(Var *var);
 
 int consume(int ty);
