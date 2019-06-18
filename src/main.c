@@ -3,6 +3,7 @@
 int pos;
 Tokens *tokens;
 char *user_input;
+Var *variables;
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -17,6 +18,7 @@ int main(int argc, char **argv) {
 
     pos = 0;
     user_input = argv[1];
+    variables = new_var();
     tokens = new_tokens();
     tokenize();
     

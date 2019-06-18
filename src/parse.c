@@ -42,9 +42,9 @@ Node *new_node_ident(char *name) {
     Token *t = malloc(sizeof(Token));
     t->ty = TK_IDENT;
     t->input = malloc(sizeof(char));
-    strncpy(t->input,input, strlen(input));
+    strncpy(t->input, name, strlen(name));
     t->name = malloc(sizeof(char));
-    strncpy(t->name,input, strlen(input));
+    strncpy(t->name, name, strlen(name));
     return t;
 }
 

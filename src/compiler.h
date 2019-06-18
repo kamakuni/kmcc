@@ -110,3 +110,4 @@ extern char *user_input;
 extern int pos;
 extern Tokens *tokens;
 extern Node *code[];
+extern Var *variables;
