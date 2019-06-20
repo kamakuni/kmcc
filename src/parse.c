@@ -39,10 +39,10 @@ Node *new_node_num(int val) {
 }
 
 Node *new_node_ident(char *name) {
-    Var *var = var_get(variables, name);
     int offset = (var_len(variables) + 1) * 8;
-    if (var != NULL)
-        offset = var->offset;
+    int current = var_get_offset(variables, name);
+    if (current != 0)
+        offset = current;
     var_insert_first(&variables, name, offset);
     Node *node = malloc(sizeof(Node));
     node->ty = ND_IDENT;
@@ -258,4 +258,3 @@ void tokenize() {
     
     append(tokens, new_token(TK_EOF,p));
 }
-
