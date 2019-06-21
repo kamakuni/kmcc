@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
-    
+    int buf = var_len(variables) * 8;
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
     printf("  sub rsp, 208\n");
