@@ -1,12 +1,9 @@
-CFLAGS=-Wall -std=c11
+CFLAGS=-Wall -std=c11 -g -o0
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
 compiler: $(OBJS)
 			$(CC) -o compiler $(OBJS) $(LDFLAGS)
-
-debug: $(OBJS)
-		$(CC) -g -o debug $(OBJS) $(LDFLAGS)
 
 $(OBJS): compiler.h
 

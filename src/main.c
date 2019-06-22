@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     int buf = var_len(variables) * 8;
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, 208\n");
+    printf("  sub rsp, %d\n", buf);
     
     // syntax tree to asm
     for (int i = 0; code[i]; i++) {

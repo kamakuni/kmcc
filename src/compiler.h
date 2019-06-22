@@ -73,7 +73,8 @@ Map *map_get(Map *map,char *key);
 
 Token *new_token(int ty, char *input);
 Token *new_token_num(int val, char *input);
-Token *new_token_ident(char *name);
+//Token *new_token_ident(char *name);
+Token *new_token_ident(char *input, int len);
 
 Tokens *new_tokens();
 void append(Tokens *t, Token *elem);

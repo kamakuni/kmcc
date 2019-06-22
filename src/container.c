@@ -85,13 +85,13 @@ Token *new_token_num(int val, char *input) {
     return t;
 }
 
-Token *new_token_ident(char *name) {
+Token *new_token_ident(char *input, int len) {
     Token *t = malloc(sizeof(Token));
     t->ty = TK_IDENT;
-    t->input = malloc(sizeof(char));
-    strncpy(t->input,name,strlen(name));
-    t->name = malloc(sizeof(char));
-    strncpy(t->name,name,strlen(name));
+    char *name = malloc(sizeof(char)*len);
+    strncpy(name, input, len);
+    t->name = name;
+    t->input = input;
     return t;
 }
 

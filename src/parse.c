@@ -218,7 +218,7 @@ void tokenize() {
             int i = 0;
             while(isalpha(p[i]))
                 i++;
-            append(tokens, new_token_ident(strndup(p,i)));
+            append(tokens, new_token_ident(p, i));
             p += i;
             continue;
         }
