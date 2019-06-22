@@ -86,6 +86,8 @@ Token *new_token_num(int val, char *input) {
 }
 
 Token *new_token_ident(char *input, int len) {
+    // if(len > strlen(input))
+    // return NULL; 
     Token *t = malloc(sizeof(Token));
     t->ty = TK_IDENT;
     char *name = malloc(sizeof(char)*len);
@@ -164,16 +166,14 @@ void test_linked_list(){
     Var *var = new_var();
     expect(__LINE__, 0, var->offset);
     expect(__LINE__, 0, strcmp("", var->name));
-    var_insert_first(var, "name1", (var_len(var)+1)*8);
+    var_insert_first(&var, "name1", (var_len(var)+1)*8);
     expect(__LINE__, 8, var->offset);
     expect(__LINE__, 0, strcmp("name1", var->name));
-    var_insert_first(var, "name2", (var_len(var)+1)*8);
+    var_insert_first(&var, "name2", (var_len(var)+1)*8);
     expect(__LINE__, 16, var->offset);
     expect(__LINE__, 0, strcmp("name2", var->name));
-    /*Var *var_name1 = var_get(var, "name1");
-     var_insert_first(var, var_name1->name, var_name1->offset);
-     expect(__LINE__, 8, var->offset);
-     expect(__LINE__, 0, strcmp("name1", var->name));*/
+    int offset = var_get_offset(var, "name1");
+    expect(__LINE__, 8, offset);
 }
 
 void runtest(){

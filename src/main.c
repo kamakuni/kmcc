@@ -28,9 +28,9 @@ int main(int argc, char **argv) {
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
-    int buf = var_len(variables) * 8;
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
+    int buf = var_len(variables) * 8;
     printf("  sub rsp, %d\n", buf);
     
     // syntax tree to asm
