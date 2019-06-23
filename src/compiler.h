@@ -46,6 +46,10 @@ typedef struct Node {
 enum {
     TK_NUM = 256, // token for integer
     TK_IDENT,
+    TK_IF,
+    TK_ELSE,
+    TK_WHILE,
+    TK_FOR,
     TK_RETURN,
     TK_EQ,
     TK_NE,

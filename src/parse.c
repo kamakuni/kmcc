@@ -207,13 +207,32 @@ void tokenize() {
             p++;
             continue;
         }
-        
+
+        if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])){
+            append(tokens, new_token(TK_FOR,p));
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])){
+            append(tokens, new_token(TK_ELSE,p));
+            p += 4;
+            continue;
+        }
+
+
         if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
             append(tokens, new_token(TK_RETURN,p));
             p += 6;
             continue;
         }
-        
+
+        if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])){
+            append(tokens, new_token(TK_WHILE,p));
+            p += 5;
+            continue;
+        }
+
         if ('a' <= *p && *p <= 'z') {
             int i = 0;
             while(isalpha(p[i]))
