@@ -61,6 +61,7 @@ enum {
 enum {
     ND_NUM = 256,
     ND_IDENT,
+    ND_IF,
     ND_RETURN,
     ND_EQ,
     ND_NE,

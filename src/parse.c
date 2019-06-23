@@ -68,6 +68,8 @@ Node *stmt() {
     Node *node;
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
+    } else if (consume(TK_IF)) {
+        node = new_node(ND_IF, expr(), NULL);
     } else {
         node = expr();
     }
@@ -202,7 +204,7 @@ void tokenize() {
             continue;
         }
         
-        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' ) {
+        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' || *p == ';' ) {
             append(tokens, new_token(*p,p));
             p++;
             continue;
@@ -219,7 +221,6 @@ void tokenize() {
             p += 4;
             continue;
         }
-
 
         if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
             append(tokens, new_token(TK_RETURN,p));
@@ -239,12 +240,6 @@ void tokenize() {
                 i++;
             append(tokens, new_token_ident(p, i));
             p += i;
-            continue;
-        }
-        
-        if ( *p == ';' ) {
-            append(tokens, new_token(*p,p));
-            p++;
             continue;
         }
         
