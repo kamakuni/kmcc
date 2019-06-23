@@ -8,7 +8,7 @@ void error(char *fmt, ...) {
     exit(1);
 }
 
-void error_at(char *loc, char *msg) {   
+void error_at(char *loc, char *msg) {
     int pos = loc - user_input;
     fprintf(stderr, "%s\n", user_input);
     fprintf(stderr, "%*s", pos, ""); // pos個の空白を出力
@@ -18,9 +18,9 @@ void error_at(char *loc, char *msg) {
 
 int is_alnum(char c) {
     return ('a' <= c && c <= 'z') ||
-            ('A' <= c && c <= 'Z') ||
-            ('0' <= c && c <= '9') ||
-            (c == '_');
+    ('A' <= c && c <= 'Z') ||
+    ('0' <= c && c <= '9') ||
+    (c == '_');
 }
 
 Node *new_node(int ty, Node *lhs, Node *rhs) {
@@ -39,9 +39,15 @@ Node *new_node_num(int val) {
 }
 
 Node *new_node_ident(char *name) {
-    Node *node = malloc(sizeof (Node));
+    int offset = (var_len(variables) + 1) * 8;
+    int current = var_get_offset(variables, name);
+    if (current != 0)
+        offset = current;
+    var_insert_first(&variables, name, offset);
+    Node *node = malloc(sizeof(Node));
     node->ty = ND_IDENT;
-    node->name = name;
+    node->name = malloc(sizeof(char));
+    strncpy(node->name, name, strlen(name));
     return node;
 }
 
@@ -80,7 +86,7 @@ void program() {
 
 Node *equality() {
     Node *node = relational();
-
+    
     for (;;) {
         if (consume(TK_EQ))
             node = new_node(ND_EQ, node, relational());
@@ -94,7 +100,7 @@ Node *equality() {
 Node *relational() {
     // lhs
     Node *node = add();
-
+    
     for (;;) {
         if (consume('<'))
             node = new_node('<', node, add());
@@ -112,7 +118,7 @@ Node *relational() {
 Node *add() {
     // lhs
     Node *node = mul();
-
+    
     for (;;) {
         if (consume('+'))
             node = new_node('+', node, mul());
@@ -125,7 +131,7 @@ Node *add() {
 
 Node *mul() {
     Node *node = unary();
-
+    
     for (;;) {
         if (consume('*'))
             node = new_node('*', node, unary());
@@ -145,16 +151,16 @@ Node *term() {
         }
         return node;
     }
-
+    
     if ( get(tokens,pos)->ty == TK_NUM ) {
         return new_node_num(get(tokens,pos++)->val);
     }
-
+    
     if (get(tokens,pos)->ty == TK_IDENT ){
-        return new_node_ident(get(tokens,pos++)->input);
+        return new_node_ident(get(tokens,pos++)->name);
     }
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
-
+    return NULL;
 }
 
 Node *unary() {
@@ -177,78 +183,78 @@ int consume(int ty) {
 
 void tokenize() {
     char *p = user_input;
-
+    
     while (*p) {
         if (isspace(*p)) {
             p++;
             continue;
         }
-
+        
         if (strncmp(p,"<=",2) == 0){
             append(tokens, new_token(TK_LE,p));
             p = p + 2;
             continue;
         }
-
+        
         if (strncmp(p,">=",2) == 0){
             append(tokens, new_token(TK_GE,p));
             p = p + 2;
             continue;
         }
-
+        
         if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' ) {
             append(tokens, new_token(*p,p));
             p++;
             continue;
         }
-
+        
         if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
             append(tokens, new_token(TK_RETURN,p));
             p += 6;
             continue;
         }
-
+        
         if ('a' <= *p && *p <= 'z') {
-            /*Token *t = new_token(TK_IDENT, NULL);
-            t->input = malloc(sizeof(char));
-            strncpy(t->input,p,1);*/
-            append(tokens, new_token_ident(p));
-            p++;
+            int i = 0;
+            while(isalpha(p[i]))
+                i++;
+            append(tokens, new_token_ident(p, i));
+            p += i;
             continue;
         }
-
+        
         if ( *p == ';' ) {
             append(tokens, new_token(*p,p));
             p++;
             continue;
         }
-
+        
         if (isdigit(*p)) {
             append(tokens, new_token_num(strtol(p, &p, 10), p));
             continue;
         }
-
+        
         if (strncmp(p,"==",2) == 0){
             append(tokens, new_token(TK_EQ,p));
             p = p + 2;
             continue;
         }
-
+        
         if (strncmp(p,"!=",2) == 0){
             append(tokens, new_token(TK_NE,p));
             p = p + 2;
             continue;
         }
-
+        
         if ( *p == '=' ) {
             append(tokens, new_token(*p,p));
             p++;
             continue;
         }
-
+        
         error("トークナイズできません: %s", p);
         exit(1);
     }
-
+    
     append(tokens, new_token(TK_EOF,p));
 }

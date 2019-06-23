@@ -14,13 +14,25 @@ typedef struct {
 typedef struct {
     int ty; // token type
     int val; // value for Integer token
-    char *input; // token stirng
+    char *name; // name for Ident
+    char *input; // token stirng for debugging
 } Token;
 
 
 typedef struct {
     Vector *vec;
 } Tokens;
+
+typedef struct {
+    Vector *keys;
+    Vector *vals;
+} Map;
+
+typedef struct Var {
+    struct Var *next;
+    char *name;
+    int offset;
+} Var;
 
 typedef struct Node {
     int ty;
@@ -55,9 +67,14 @@ enum {
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
 
+Map *new_map();
+void map_put(Map *map, char *key, void *val);
+Map *map_get(Map *map,char *key);
+
 Token *new_token(int ty, char *input);
 Token *new_token_num(int val, char *input);
-Token *new_token_ident(char *name);
+//Token *new_token_ident(char *name);
+Token *new_token_ident(char *input, int len);
 
 Tokens *new_tokens();
 void append(Tokens *t, Token *elem);
@@ -68,6 +85,11 @@ void runtest();
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(char *name);
+
+Var *new_var();
+void var_insert_first(Var **var, char *name, int offset);
+int var_get_offset(Var *var, char *name);
+int var_len(Var *var);
 
 int consume(int ty);
 void tokenize();
@@ -89,3 +111,4 @@ extern char *user_input;
 extern int pos;
 extern Tokens *tokens;
 extern Node *code[];
+extern Var *variables;
