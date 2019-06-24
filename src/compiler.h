@@ -38,6 +38,8 @@ typedef struct Node {
     int ty;
     struct Node *lhs;
     struct Node *rhs;
+    struct Node *ifCond;
+    struct Node *ifBody;
     int val;
     char *name;
 } Node;
@@ -90,6 +92,7 @@ void runtest();
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(char *name);
+Node *new_node_if(Node *ifCond, Node *ifBody);
 
 Var *new_var();
 void var_insert_first(Var **var, char *name, int offset);

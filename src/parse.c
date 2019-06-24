@@ -51,6 +51,14 @@ Node *new_node_ident(char *name) {
     return node;
 }
 
+Node *new_node_if(Node *ifCond, Node *ifBody) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_IF;
+    node->ifCond = ifCond;
+    node->ifBody = ifBody;
+    return node;
+}
+
 Node *code[100];
 
 Node *assign() {
@@ -69,7 +77,7 @@ Node *stmt() {
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
     } else if (consume(TK_IF)) {
-        node = new_node(ND_IF, expr(), NULL);
+        node = new_node_if(expr(), expr());
     } else {
         node = expr();
     }
