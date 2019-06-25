@@ -77,7 +77,9 @@ Node *stmt() {
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
     } else if (consume(TK_IF)) {
-        node = new_node_if(expr(), expr());
+        Node *ifCond = expr();
+        Node *ifBody = stmt();
+        node = new_node_if(ifCond, ifBody);
     } else {
         node = expr();
     }
@@ -218,9 +220,15 @@ void tokenize() {
             continue;
         }
 
+        if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])){
+            append(tokens, new_token(TK_IF,p));
+            p += 2;
+            continue;
+        }
+
         if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])){
             append(tokens, new_token(TK_FOR,p));
-            p += 2;
+            p += 3;
             continue;
         }
 
