@@ -75,12 +75,13 @@ Node *expr() {
 Node *stmt() {
     Node *node;
     if (consume(TK_IF)) {
-        if(!consume('(') 
-            Node *ifCond = expr();
-        if(!consume(')') {
-            Node *ifBody = stmt();
-            return new_node_if(ifCond, ifBody);
-        }
+        if(!consume('(')
+            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+        Node *ifCond = expr();
+        if(!consume(')')
+            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+        Node *ifBody = stmt();
+        return new_node_if(ifCond, ifBody);
     }
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
