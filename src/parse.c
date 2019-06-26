@@ -77,9 +77,13 @@ Node *stmt() {
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
     } else if (consume(TK_IF)) {
-        Node *ifCond = expr();
-        Node *ifBody = stmt();
-        node = new_node_if(ifCond, ifBody);
+        if(consume('(')){
+            Node *ifCond = expr();
+            if(consume(')')){
+                Node *ifBody = stmt();
+                node = new_node_if(ifCond, ifBody);
+            }
+        }
     } else {
         node = expr();
     }
