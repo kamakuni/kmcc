@@ -75,10 +75,10 @@ Node *expr() {
 Node *stmt() {
     Node *node;
     if (consume(TK_IF)) {
-        if(!consume('(')
+        if(!consume('('))
             error_at(get(tokens,pos)->input, "'('ではないトークンです");
         Node *ifCond = expr();
-        if(!consume(')')
+        if(!consume(')'))
             error_at(get(tokens,pos)->input, "')'ではないトークンです");
         Node *ifBody = stmt();
         return new_node_if(ifCond, ifBody);
