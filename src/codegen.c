@@ -33,6 +33,7 @@ void gen(Node *node) {
         printf("  je  .Lend%d\n", label_index);
         gen(node->ifBody);
         printf(".Lend%d:\n", label_index);
+        label_index += 1;
         return;
     }
 
