@@ -53,6 +53,7 @@ try 7 "a=4+3; return a;"
 try 6 "foo=1;bar=2+3;return foo + bar;"
 
 try 2 "if(1<10)2;"
-try 0 "if(1>10)2;"
+try 10 "var=1;if(1<10)var=10;var;"
+try 1 "var=1;if(1>10)var=10;var;"
 
 echo OK

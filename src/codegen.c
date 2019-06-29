@@ -1,5 +1,7 @@
 #include "compiler.h"
 
+int label_index = 0;
+
 void gen_lval(Node *node) {
     if (node->ty != ND_IDENT)
         error("代入の左辺値が変数でありません。");
@@ -28,9 +30,10 @@ void gen(Node *node) {
         gen(node->ifCond);
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je  .Lend1\n");
+        printf("  je  .Lend%d\n", label_index);
         gen(node->ifBody);
-        printf(".Lend1:\n");
+        printf(".Lend%d:\n", label_index);
+        return;
     }
 
     if (node->ty == ND_RETURN) {
