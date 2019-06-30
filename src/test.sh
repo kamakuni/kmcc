@@ -59,4 +59,6 @@ try 1 "var=1;if(1>10)var=10;var;"
 try 2 "if(1<10) 2;else 3;"
 try 3 "if(11<10) 2;else 3;"
 
+try 10 "while(i<10) i = i + 1;i;"
+
 echo OK
