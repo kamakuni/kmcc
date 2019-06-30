@@ -30,9 +30,18 @@ void gen(Node *node) {
         gen(node->ifCond);
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je  .Lend%d\n", label_index);
-        gen(node->ifBody);
-        printf(".Lend%d:\n", label_index);
+        if(node->elseBody == NULL){
+            printf("  je  .Lend%d\n", label_index);
+            gen(node->ifBody);
+            printf(".Lend%d:\n", label_index);
+        } else {
+            printf("  je  .Lelse%d\n", label_index);
+            gen(node->ifBody);
+            printf("  jmp  .Lend%d\n", label_index);
+            printf(".Lelse%d:\n", label_index);
+            gen(node->elseBody);
+            printf(".Lend%d:\n", label_index);
+        }
         label_index += 1;
         return;
     }

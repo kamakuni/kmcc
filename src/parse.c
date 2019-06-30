@@ -51,11 +51,12 @@ Node *new_node_ident(char *name) {
     return node;
 }
 
-Node *new_node_if(Node *ifCond, Node *ifBody) {
+Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_IF;
     node->ifCond = ifCond;
     node->ifBody = ifBody;
+    node->elseBody = elseBody;
     return node;
 }
 
@@ -81,7 +82,11 @@ Node *stmt() {
         if(!consume(')'))
             error_at(get(tokens,pos)->input, "')'ではないトークンです");
         Node *ifBody = stmt();
-        return new_node_if(ifCond, ifBody);
+        if(consume(TK_ELSE)) {
+            Node *elseBody = stmt();
+            return new_node_if(ifCond, ifBody, elseBody);
+        }
+        return new_node_if(ifCond, ifBody, NULL);
     }
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
