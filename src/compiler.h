@@ -41,6 +41,8 @@ typedef struct Node {
     struct Node *cond;
     struct Node *body;
     struct Node *elseBody;
+    struct Node *init;
+    struct Node *incdec;
     int val;
     char *name;
 } Node;
@@ -66,6 +68,7 @@ enum {
     ND_IDENT,
     ND_IF,
     ND_WHILE,
+    ND_FOR,
     ND_RETURN,
     ND_EQ,
     ND_NE,

@@ -51,10 +51,12 @@ Node *new_node_ident(char *name) {
     return node;
 }
 
-Node *new_node_while(Node *cond, Node *body) {
+Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_WHILE;
+    node->ty = ND_FOR;
+    node->init = init;
     node->cond = cond;
+    node->incdec = incdec;
     node->body = body;
     return node;
 }
@@ -65,6 +67,14 @@ Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
     node->cond = cond;
     node->body = body;
     node->elseBody = elseBody;
+    return node;
+}
+
+Node *new_node_while(Node *cond, Node *body) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_WHILE;
+    node->cond = cond;
+    node->body = body;
     return node;
 }
 
@@ -104,6 +114,30 @@ Node *stmt() {
             error_at(get(tokens,pos)->input, "')'ではないトークンです");
         Node *body = stmt();
         return new_node_while(cond, body);
+    }
+    if (consume(TK_FOR)) {
+        if(!consume('('))
+            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+        Node *init = NULL;
+        if(get(tokens,pos)->ty != ';') {
+            init = expr();
+        }
+        if(!consume(';'))
+            error_at(get(tokens,pos)->input, "';'ではないトークンです");
+        Node *cond = NULL;
+        if(get(tokens,pos)->ty != ';') {
+            cond = expr();
+        }
+        if(!consume(';'))
+            error_at(get(tokens,pos)->input, "';'ではないトークンです");
+        Node *incdec = NULL;
+        if(get(tokens,pos)->ty != ')') {
+            incdec = expr();
+        }
+        if(!consume(')'))
+            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+        Node *body = stmt();
+        return new_node_for(init, cond, incdec, body);
     }
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
