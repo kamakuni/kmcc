@@ -56,13 +56,15 @@ try 2 "if(1<10)2;"
 try 10 "var=1;if(1<10)var=10;var;"
 try 1 "var=1;if(1>10)var=10;var;"
 
-try 2 "if(1<10) 2; (else 3;)"
-try 3 "if(11<10) 2; (else 3;)"
+try 2 "if(1<10) 2; else 3;"
+try 3 "if(11<10) 2; else 3;"
 
 try 10 "i=0;while(i<10)i=i+1; return i;"
-try 10 "i=0;while(i<10)if(i==2) retrun i; (else i=i+1;); return 30;"
+try 0 "i=0;while(i<10)if(i==0) return i; return 11;"
+try 5 "i=0;while(i<10)if(i<5) i=i+1; else return i; return 11;"
 
 try 20 "a=10;for(i=0;i<10;i=i+1)a=a+1; return a;"
-try 11 "i=5;for(;i<=10;)i=i+1;return i;"
+try 11 "i=0;for(;i<=10;)i=i+1;return i;"
+try 5 "i=0;for(;i<=10;)if(i<5) i=i+1; else return i; return 11;"
 
 echo OK
