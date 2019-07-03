@@ -51,6 +51,33 @@ Node *new_node_ident(char *name) {
     return node;
 }
 
+Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_FOR;
+    node->init = init;
+    node->cond = cond;
+    node->incdec = incdec;
+    node->body = body;
+    return node;
+}
+
+Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_IF;
+    node->cond = cond;
+    node->body = body;
+    node->elseBody = elseBody;
+    return node;
+}
+
+Node *new_node_while(Node *cond, Node *body) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_WHILE;
+    node->cond = cond;
+    node->body = body;
+    return node;
+}
+
 Node *code[100];
 
 Node *assign() {
@@ -66,6 +93,52 @@ Node *expr() {
 
 Node *stmt() {
     Node *node;
+    if (consume(TK_IF)) {
+        if(!consume('('))
+            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+        Node *cond = expr();
+        if(!consume(')'))
+            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+        Node *body = stmt();
+        if(consume(TK_ELSE)) {
+            Node *elseBody = stmt();
+            return new_node_if(cond, body, elseBody);
+        }
+        return new_node_if(cond, body, NULL);
+    }
+    if (consume(TK_WHILE)) {
+        if(!consume('('))
+            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+        Node *cond = expr();
+        if(!consume(')'))
+            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+        Node *body = stmt();
+        return new_node_while(cond, body);
+    }
+    if (consume(TK_FOR)) {
+        if(!consume('('))
+            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+        Node *init = NULL;
+        if(get(tokens,pos)->ty != ';') {
+            init = expr();
+        }
+        if(!consume(';'))
+            error_at(get(tokens,pos)->input, "';'ではないトークンです");
+        Node *cond = NULL;
+        if(get(tokens,pos)->ty != ';') {
+            cond = expr();
+        }
+        if(!consume(';'))
+            error_at(get(tokens,pos)->input, "';'ではないトークンです");
+        Node *incdec = NULL;
+        if(get(tokens,pos)->ty != ')') {
+            incdec = expr();
+        }
+        if(!consume(')'))
+            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+        Node *body = stmt();
+        return new_node_for(init, cond, incdec, body);
+    }
     if (consume(TK_RETURN)) {
         node = new_node(ND_RETURN, expr(), NULL);
     } else {
@@ -202,30 +275,48 @@ void tokenize() {
             continue;
         }
         
-        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' ) {
+        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' || *p == ';' ) {
             append(tokens, new_token(*p,p));
             p++;
             continue;
         }
-        
+
+        if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])){
+            append(tokens, new_token(TK_IF,p));
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])){
+            append(tokens, new_token(TK_FOR,p));
+            p += 3;
+            continue;
+        }
+
+        if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])){
+            append(tokens, new_token(TK_ELSE,p));
+            p += 4;
+            continue;
+        }
+
         if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
             append(tokens, new_token(TK_RETURN,p));
             p += 6;
             continue;
         }
-        
+
+        if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])){
+            append(tokens, new_token(TK_WHILE,p));
+            p += 5;
+            continue;
+        }
+
         if ('a' <= *p && *p <= 'z') {
             int i = 0;
             while(isalpha(p[i]))
                 i++;
             append(tokens, new_token_ident(p, i));
             p += i;
-            continue;
-        }
-        
-        if ( *p == ';' ) {
-            append(tokens, new_token(*p,p));
-            p++;
             continue;
         }
         

@@ -38,6 +38,11 @@ typedef struct Node {
     int ty;
     struct Node *lhs;
     struct Node *rhs;
+    struct Node *cond;
+    struct Node *body;
+    struct Node *elseBody;
+    struct Node *init;
+    struct Node *incdec;
     int val;
     char *name;
 } Node;
@@ -46,6 +51,10 @@ typedef struct Node {
 enum {
     TK_NUM = 256, // token for integer
     TK_IDENT,
+    TK_IF,
+    TK_ELSE,
+    TK_WHILE,
+    TK_FOR,
     TK_RETURN,
     TK_EQ,
     TK_NE,
@@ -57,6 +66,9 @@ enum {
 enum {
     ND_NUM = 256,
     ND_IDENT,
+    ND_IF,
+    ND_WHILE,
+    ND_FOR,
     ND_RETURN,
     ND_EQ,
     ND_NE,
@@ -85,6 +97,7 @@ void runtest();
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(char *name);
+Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
 
 Var *new_var();
 void var_insert_first(Var **var, char *name, int offset);
