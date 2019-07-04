@@ -38,11 +38,12 @@ typedef struct Node {
     int ty;
     struct Node *lhs;
     struct Node *rhs;
-    struct Node *cond;
-    struct Node *body;
-    struct Node *elseBody;
-    struct Node *init;
-    struct Node *incdec;
+    struct Node *cond; // for ND_IF | ND_FOR | ND_WHILE
+    struct Node *body; // for ND_IF | ND_FOR | ND_WHILE
+    struct Node *elseBody; // for ND_IF
+    struct Node *init; // for ND_FOR
+    struct Node *incdec; // for ND_FOR
+    Vector *stmts; // for ND_NODE
     int val;
     char *name;
 } Node;
@@ -65,6 +66,7 @@ enum {
 
 enum {
     ND_NUM = 256,
+    ND_BLOCK,
     ND_IDENT,
     ND_IF,
     ND_WHILE,
