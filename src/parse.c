@@ -31,6 +31,13 @@ Node *new_node(int ty, Node *lhs, Node *rhs) {
     return node;
 }
 
+Node *new_node_block(Vector *stmts) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_BLOCK;
+    node->stmts = stmts;
+    return node;
+}
+
 Node *new_node_num(int val) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_NUM;
@@ -93,6 +100,13 @@ Node *expr() {
 
 Node *stmt() {
     Node *node;
+    if (consume('{')) {
+        Vector *stmts = new_vector();
+        while(!consume('}')) {
+            vec_push(stmts, stmt());
+        }
+        return new_node_block(stmts);
+    }
     if (consume(TK_IF)) {
         if(!consume('('))
             error_at(get(tokens,pos)->input, "'('ではないトークンです");
@@ -275,7 +289,7 @@ void tokenize() {
             continue;
         }
         
-        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '<' || *p == '>' || *p == ';' ) {
+        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '{' || *p =='}' || *p == '<' || *p == '>' || *p == ';' ) {
             append(tokens, new_token(*p,p));
             p++;
             continue;

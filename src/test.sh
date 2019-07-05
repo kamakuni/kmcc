@@ -68,4 +68,8 @@ try 11 "i=0;for(;i<=10;)i=i+1;return i;"
 try 0 "i=0;for(;i<=10;)if(i==0) return i; return 11;"
 try 5 "i=0;for(;i<=10;)if(i<5) i=i+1; else return i; return 11;"
 
+try 3 "{1;2;3;}"
+try 1 "{a=1;a;}"
+try 5 "{i=0;for(;i<=10;)if(i<5) i=i+1; else return i; ret=11;}"
+
 echo OK
