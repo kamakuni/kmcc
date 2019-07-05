@@ -31,10 +31,10 @@ Node *new_node(int ty, Node *lhs, Node *rhs) {
     return node;
 }
 
-Node *new_node_block() {
+Node *new_node_block(Vector *stmts) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_BLOCK;
-    node->stmts = new_vector();
+    node->stmts = stmts;
     return node;
 }
 
@@ -101,12 +101,11 @@ Node *expr() {
 Node *stmt() {
     Node *node;
     if (consume('{')) {
-        node = new_node_block();
-        while(get(tokens,pos)->ty != '}') {
-            vec_push(node->stmts, stmt());
+        Vector *stmts = new_vector();
+        while(!consume('}')) {
+            vec_push(stmts, stmt());
         }
-        consume('}');
-        return node;
+        return new_node_block(stmts);
     }
     if (consume(TK_IF)) {
         if(!consume('('))

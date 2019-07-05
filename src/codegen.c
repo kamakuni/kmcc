@@ -13,6 +13,17 @@ void gen_lval(Node *node) {
 }
 
 void gen(Node *node) {
+
+    if (node->ty == ND_BLOCK) {
+        int len = node->stmts->len;
+        for (int i = 0; i < len; i++) {
+            gen((Node *)vec_get(node->stmts, i));
+            if (i + 1 < len)
+                printf("  pop rax\n");
+        }
+        return;
+    }
+
     if (node->ty == ND_NUM) {
         printf("  push %d\n", node->val);
         return;

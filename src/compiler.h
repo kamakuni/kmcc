@@ -76,10 +76,12 @@ enum {
     ND_NE,
     ND_LE,
     ND_GE,
+    ND_EOF,
 };
 
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
+void *vec_get(Vector *vec, int i);
 
 Map *new_map();
 void map_put(Map *map, char *key, void *val);
