@@ -3,7 +3,21 @@
 main:
   push rbp
   mov rbp, rsp
-  sub rsp, 0
+  sub rsp, 8
+  mov rax, rbp
+  sub rax, 8
+  push rax
+  push 1
+  pop rdi
+  pop rax
+  mov [rax], rdi
+  push rdi
+  pop rax
+  push 1
+  push 1
+  mov edi, 1
+  mov esi, 2
+  mov edx, 3
   call foo
   pop rax
   mov rsp, rbp

@@ -44,6 +44,7 @@ typedef struct Node {
     struct Node *init; // for ND_FOR
     struct Node *incdec; // for ND_FOR
     Vector *stmts; // for ND_NODE
+    Vector *args; // for ND_CALL
     int val;
     char *name;
 } Node;
@@ -67,7 +68,7 @@ enum {
 enum {
     ND_NUM = 256,
     ND_BLOCK,
-    ND_FUNCALL,
+    ND_CALL,
     ND_IDENT,
     ND_IF,
     ND_WHILE,
