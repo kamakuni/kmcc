@@ -13,6 +13,11 @@ void gen_lval(Node *node) {
 }
 
 void gen(Node *node) {
+    
+    if(node->ty == ND_FUNCALL) {
+        printf("  call %s\n",node->name);
+        return;
+    }
 
     if (node->ty == ND_BLOCK) {
         int len = node->stmts->len;

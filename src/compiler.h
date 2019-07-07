@@ -67,6 +67,7 @@ enum {
 enum {
     ND_NUM = 256,
     ND_BLOCK,
+    ND_FUNCALL,
     ND_IDENT,
     ND_IF,
     ND_WHILE,

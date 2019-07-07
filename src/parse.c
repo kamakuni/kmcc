@@ -40,7 +40,7 @@ Node *new_node_block(Vector *stmts) {
 
 Node *new_node_funcall(char *name) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_NUM;
+    node->ty = ND_FUNCALL;
     node->name = name;
     return node;
 }
@@ -251,12 +251,15 @@ Node *term() {
     }
     
     if (get(tokens,pos)->ty == TK_IDENT ){
-        if (!consume('('))
-            return new_node_ident(get(tokens,pos)->name);
+        char *name = get(tokens,pos++)->name;
+        if (!consume('(')){
+            return new_node_ident(name);
+        }
         if (!consume(')'))
             error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
-        return new_node_funcall(get(tokens,pos)->name);
+        return new_node_funcall(name);
     }
+    
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
     return NULL;
 }
