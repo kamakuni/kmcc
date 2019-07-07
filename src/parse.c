@@ -38,6 +38,14 @@ Node *new_node_block(Vector *stmts) {
     return node;
 }
 
+Node *new_node_funcall(char *name, Vector *args) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_CALL;
+    node->name = name;
+    node->args = args;
+    return node;
+}
+
 Node *new_node_num(int val) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_NUM;
@@ -243,9 +251,24 @@ Node *term() {
         return new_node_num(get(tokens,pos++)->val);
     }
     
-    if (get(tokens,pos)->ty == TK_IDENT ){
-        return new_node_ident(get(tokens,pos++)->name);
+    if (get(tokens,pos)->ty == TK_IDENT ) {
+        char *name = get(tokens,pos++)->name;
+        if (!consume('(')) {
+            return new_node_ident(name);
+        }
+        Vector *args = new_vector();
+        while (get(tokens,pos)->ty != ')') {
+            if (get(tokens,pos)->ty == TK_NUM) {
+                vec_push(args, (void *) get(tokens,pos++)->val);
+                consume(',');
+            }
+        }
+        if (!consume(')'))
+            error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
+        
+        return new_node_funcall(name, args);
     }
+    
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
     return NULL;
 }
@@ -289,7 +312,7 @@ void tokenize() {
             continue;
         }
         
-        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '{' || *p =='}' || *p == '<' || *p == '>' || *p == ';' ) {
+        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '{' || *p =='}' || *p == '<' || *p == '>' || *p == ';' || *p == ',' ) {
             append(tokens, new_token(*p,p));
             p++;
             continue;

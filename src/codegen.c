@@ -1,6 +1,7 @@
 #include "compiler.h"
 
 int label_count = 0;
+char* argregs[] = {"edi", "esi", "edx", "ecx", "r8d", "r9d"};
 
 void gen_lval(Node *node) {
     if (node->ty != ND_IDENT)
@@ -13,6 +14,14 @@ void gen_lval(Node *node) {
 }
 
 void gen(Node *node) {
+    if(node->ty == ND_CALL) {
+        int len = node->args->len;
+        for (int i = 0; i < len; i++) {
+            printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
+        }
+        printf("  call %s\n",node->name);
+        return;
+    }
 
     if (node->ty == ND_BLOCK) {
         int len = node->stmts->len;
