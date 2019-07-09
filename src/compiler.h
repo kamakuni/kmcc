@@ -119,6 +119,8 @@ int is_alnum(char c);
 void error(char *fmt, ...);
 
 void program();
+Node *function();
+Node *stmt();
 Node *add();
 Node *equality();
 Node *relational();

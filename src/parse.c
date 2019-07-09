@@ -38,7 +38,7 @@ Node *new_node_block(Vector *stmts) {
     return node;
 }
 
-Node *new_node_funcall(char *name, Vector *args) {
+Node *new_node_call(char *name, Vector *args) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_CALL;
     node->name = name;
@@ -115,13 +115,43 @@ Node *expr() {
     return assign();
 }
 
+Node *function() {
+    Node *node;
+    char *name = get(tokens,pos)->name;
+    if (!consume(TK_IDENT))
+        error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
+    if (!consume('('))
+        error_at(get(tokens,pos)->input, "'('ではないトークンです");        
+    Vector *args = new_vector();
+    while (get(tokens,pos)->ty != ')') {
+        if (get(tokens,pos)->ty == TK_IDENT) {
+            vec_push(args, (void *) get(tokens,pos++)->name);
+        } else if (get(tokens,pos)->ty ==  ','){
+            pos++;
+        }
+    }
+    if (!consume(')'))
+        error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
+    if (!consume('{'))
+        error_at(get(tokens,pos)->input, "'{'ではないトークンです");        
+    Vector *stmts = new_vector();
+    while(get(tokens, pos)->ty != '}') {
+        vec_push(stmts, stmt());
+    }
+    if (!consume('}'))
+        error_at(get(tokens,pos)->input, "'}'ではないトークンです");        
+    return new_node_function(name, args, new_node_block(stmts));
+}
+
 Node *stmt() {
     Node *node;
     if (consume('{')) {
         Vector *stmts = new_vector();
-        while(!consume('}')) {
+        while(get(tokens, pos)->ty != '}') {
             vec_push(stmts, stmt());
         }
+        if(!consume('}'))
+            error_at(get(tokens,pos)->input, "'}'ではないトークンです");
         return new_node_block(stmts);
     }
     if (consume(TK_IF)) {
@@ -183,7 +213,8 @@ Node *stmt() {
 void program() {
     int i = 0;
     while (get(tokens,pos)->ty != TK_EOF) {
-        code[i++] = stmt();
+        //code[i++] = stmt();
+        code[i++] = function();
     }
     code[i] = NULL;
 }
@@ -275,7 +306,7 @@ Node *term() {
         if (!consume(')'))
             error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
         
-        return new_node_funcall(name, args);
+        return new_node_call(name, args);
     }
     
     error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
