@@ -13,6 +13,26 @@ void gen_lval(Node *node) {
     printf("  push rax\n");
 }
 
+void gen_func(Node *node){
+    if(node->ty != ND_FUNC)
+        error("関数でありません。");    
+    printf("%s:\n",node->name);
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    int buf = var_len(variables) * 8;
+    printf("  sub rsp, %d\n", buf);
+    
+    // syntax tree to asm
+    for (int i = 0; code[i]; i++) {
+        gen(code[i]);
+        printf("  pop rax\n");
+    }
+    
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
+    printf("  ret\n");
+}
+
 void gen(Node *node) {
     if(node->ty == ND_CALL) {
         int len = node->args->len;

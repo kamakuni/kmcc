@@ -46,7 +46,7 @@ Node *new_node_call(char *name, Vector *args) {
     return node;
 }
 
-Node *new_node_function(char *name, Vector *args, Node *block) {
+Node *new_node_function(char *name, Var *args, Node *block) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_FUNC;
     node->name = name;
@@ -122,10 +122,11 @@ Node *function() {
         error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
     if (!consume('('))
         error_at(get(tokens,pos)->input, "'('ではないトークンです");        
-    Vector *args = new_vector();
+    Var *args = new_var();
     while (get(tokens,pos)->ty != ')') {
         if (get(tokens,pos)->ty == TK_IDENT) {
-            vec_push(args, (void *) get(tokens,pos++)->name);
+            //vec_push(args, (void *) get(tokens,pos++)->name);
+            var_append(args,(void *) get(tokens,pos++)->name);
         } else if (get(tokens,pos)->ty ==  ','){
             pos++;
         }
