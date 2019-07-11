@@ -44,6 +44,7 @@ try 0 "main(){2 + 3 != 5;}"
 
 try 30 "main(){a=30;}"
 try 24 "main(){a=9+15;}"
+try 3 "main(){1;2;3;}"
 try 3 "main(){a=1;b=2;a+b;}"
 try 4 "main(){a=b=2;c=a+b;c;}"
 
