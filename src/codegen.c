@@ -19,14 +19,14 @@ void gen_func(Node *node){
     printf("%s:\n",node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    int buf = var_len(variables) * 8;
+    int buf = var_len(node->args) * 8;
     printf("  sub rsp, %d\n", buf);
     
     // syntax tree to asm
-    for (int i = 0; code[i]; i++) {
-        gen(code[i]);
-        printf("  pop rax\n");
-    }
+    //for (int i = 0; code[i]; i++) {
+    gen(node->block);
+    printf("  pop rax\n");
+    //}
     
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");
@@ -34,6 +34,7 @@ void gen_func(Node *node){
 }
 
 void gen(Node *node) {
+
     if(node->ty == ND_CALL) {
         int len = node->args->len;
         for (int i = 0; i < len; i++) {

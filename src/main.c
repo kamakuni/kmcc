@@ -27,20 +27,10 @@ int main(int argc, char **argv) {
     
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
-    printf("main:\n");
-    printf("  push rbp\n");
-    printf("  mov rbp, rsp\n");
-    int buf = var_len(variables) * 8;
-    printf("  sub rsp, %d\n", buf);
-    
-    // syntax tree to asm
+
     for (int i = 0; code[i]; i++) {
-        gen(code[i]);
-        printf("  pop rax\n");
+        gen_func(code[i]);
     }
-    
-    printf("  mov rsp, rbp\n");
-    printf("  pop rbp\n");
-    printf("  ret\n");
+
     return 0;
 }
