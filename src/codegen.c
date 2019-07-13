@@ -19,7 +19,7 @@ void gen_func(Node *node){
     printf("%s:\n",node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    int buf = var_len(node->args) * 8;
+    int buf = (node->args->len + var_len(variables)) * 8;
     printf("  sub rsp, %d\n", buf);
     
     int len = node->stmts->len;
