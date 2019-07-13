@@ -22,12 +22,12 @@ void gen_func(Node *node){
     int buf = var_len(node->args) * 8;
     printf("  sub rsp, %d\n", buf);
     
-    // syntax tree to asm
-    //for (int i = 0; code[i]; i++) {
-    gen(node->block);
-    printf("  pop rax\n");
-    //}
-    
+    int len = node->stmts->len;
+    for (int i = 0; i < len; i++) {
+        gen((Node *)vec_get(node->stmts, i));
+        printf("  pop rax\n");
+    }
+
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");
     printf("  ret\n");

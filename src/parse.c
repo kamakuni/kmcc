@@ -46,12 +46,12 @@ Node *new_node_call(char *name, Vector *args) {
     return node;
 }
 
-Node *new_node_function(char *name, Var *args, Node *block) {
+Node *new_node_function(char *name, Var *args, Vector *stmts) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_FUNC;
     node->name = name;
     node->args = args;
-    node->block = block;
+    node->stmts = stmts;
     return node;
 }
 
@@ -141,7 +141,7 @@ Node *function() {
     }
     if (!consume('}'))
         error_at(get(tokens,pos)->input, "'}'ではないトークンです");        
-    return new_node_function(name, args, new_node_block(stmts));
+    return new_node_function(name, args, stmts);
 }
 
 Node *stmt() {
