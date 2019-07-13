@@ -39,6 +39,7 @@ typedef struct Node {
     struct Node *lhs;
     struct Node *rhs;
     struct Node *cond; // for ND_IF | ND_FOR | ND_WHILE
+    struct Node *block; // for ND_FUNC
     struct Node *body; // for ND_IF | ND_FOR | ND_WHILE
     struct Node *elseBody; // for ND_IF
     struct Node *init; // for ND_FOR
@@ -69,6 +70,7 @@ enum {
     ND_NUM = 256,
     ND_BLOCK,
     ND_CALL,
+    ND_FUNC,
     ND_IDENT,
     ND_IF,
     ND_WHILE,
@@ -117,6 +119,8 @@ int is_alnum(char c);
 void error(char *fmt, ...);
 
 void program();
+Node *function();
+Node *stmt();
 Node *add();
 Node *equality();
 Node *relational();
