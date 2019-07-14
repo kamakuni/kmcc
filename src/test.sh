@@ -70,4 +70,6 @@ try 0 "main(){i=0;for(;i<=10;)if(i==0) return i; return 11;}"
 try 5 "main(){i=0;for(;i<=10;)if(i<5) i=i+1; else return i; return 11;}"
 try 5 "main(){i=0;for(;i<=10;)if(i<5) i=i+1; else return i; ret=11;}"
 
+try 10 "func(){return 10;}main(){func();}"
+
 echo OK
