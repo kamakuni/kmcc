@@ -25,7 +25,7 @@ void gen_func(Node *node){
     int len = node->stmts->len;
     for (int i = 0; i < len; i++) {
         gen((Node *)vec_get(node->stmts, i));
-        printf("  pop rax\n");
+        //printf("  pop rax\n");
     }
 
     printf("  mov rsp, rbp\n");
