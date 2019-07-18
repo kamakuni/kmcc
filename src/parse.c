@@ -46,7 +46,7 @@ Node *new_node_call(char *name, Vector *args) {
     return node;
 }
 
-Node *new_node_function(char *name, Var *args, Vector *stmts) {
+Node *new_node_function(char *name, Vector *args, Vector *stmts) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_FUNC;
     node->name = name;
