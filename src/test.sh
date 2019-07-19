@@ -74,6 +74,9 @@ try 10 "func(){10;}main(){func();}"
 try 10 "func(){return 10;}main(){func();}"
 try 10 "func(){return 10;}main(){return func();}"
 try 10 "three(){return 3;}seven(){return 7;}main(){return three() + seven();}"
+
+try 10 "func(x,y){x + y;}main(){func(3,7);}"
+try 10 "func(x,y){return x + y;}main(){func(3,7);}"
 try 10 "func(x,y){return x + y;}main(){return func(3,7);}"
 
 echo OK
