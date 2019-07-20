@@ -21,8 +21,11 @@ void gen_func(Node *node){
     printf("  mov rbp, rsp\n");
     int buf = (node->args->len + var_len(variables)) * 8;
     printf("  sub rsp, %d\n", buf);
+    int offset = 8;
     for (int i = 0; i < node->args->len; i++) {
-        printf("  mov rbp, %s",argregs[i]);
+        printf("  mov rax, rbp\n");
+        printf("  sub rax, %d\n", offset * (i + 1));
+        printf("  mov [rax], %s\n",argregs[i]);
     }
 
     for (int i = 0; i < node->stmts->len; i++) {
