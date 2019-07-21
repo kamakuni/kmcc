@@ -1,7 +1,7 @@
 #include "compiler.h"
 
 int label_count = 0;
-char* argregs[] = {"edi", "esi", "edx", "ecx", "r8d", "r9d"};
+char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 void gen_lval(Node *node) {
     if (node->ty != ND_IDENT)
@@ -25,7 +25,7 @@ void gen_func(Node *node){
     for (int i = 0; i < node->args->len; i++) {
         printf("  mov rax, rbp\n");
         printf("  sub rax, %d\n", offset * (i + 1));
-        printf("  mov [rax], %s\n",argregs[i]);
+        printf("  mov [rax], %s\n", argregs[i]);
     }
 
     for (int i = 0; i < node->stmts->len; i++) {
@@ -42,8 +42,11 @@ void gen(Node *node) {
 
     if(node->ty == ND_CALL) {
         int len = node->args->len;
-        for (int i = 0; i < len; i++) {
-            printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
+        for (int i = len - 1; i >= 0; i--) {
+            gen((Node *) vec_get(node->args,i));
+            printf("  pop rax\n");
+            printf("  mov %s, rax\n", argregs[i]);
+            //printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
         }
         printf("  call %s\n",node->name);
         printf("  push rax\n");

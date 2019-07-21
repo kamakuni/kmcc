@@ -299,10 +299,13 @@ Node *term() {
         }
         Vector *args = new_vector();
         while (get(tokens,pos)->ty != ')') {
-            if (get(tokens,pos)->ty == TK_NUM) {
+            Node *node = add();
+            vec_push(args, (void *) node);
+            consume(',');
+            /*if (get(tokens,pos)->ty == TK_NUM) {
                 vec_push(args, (void *) get(tokens,pos++)->val);
                 consume(',');
-            }
+            }*/
         }
         if (!consume(')'))
             error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
