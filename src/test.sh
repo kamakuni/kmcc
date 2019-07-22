@@ -77,7 +77,7 @@ try 10 "three(){return 3;}seven(){return 7;}main(){return three() + seven();}"
 
 try 10 "func(a){a;}main(){func(10);}"
 try 10 "func(a,b){b;}main(){func(0,10);}"
-try 10 "func(a,b){b;}main(){func(10,0);}"
+try 10 "func(a,b){a;}main(){func(10,0);}"
 try 10 "func(a){if(a==1) 11; else 10;}main(){func(1);}"
 try 10 "func(a){if(a==1) 11; else 10;}main(){func(0);}"
 

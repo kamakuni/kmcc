@@ -42,12 +42,20 @@ void gen(Node *node) {
 
     if(node->ty == ND_CALL) {
         int len = node->args->len;
-        for (int i = len - 1; i >= 0; i--) {
+        for (int i = 0; i < len; i++) {
             gen((Node *) vec_get(node->args,i));
             printf("  pop rax\n");
-            printf("  mov %s, rax\n", argregs[i]);
+            printf("  mov %s, rax\n", argregs[len - (i + 1)]);
             //printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
         }
+        /* 
+        gen((Node *) vec_get(node->args,0));
+        printf("  pop rax\n");
+        printf("  mov %s, rax\n", argregs[0]);
+        gen((Node *) vec_get(node->args,1));
+        printf("  pop rax\n");
+        printf("  mov %s, rax\n", argregs[1]);
+        */
         printf("  call %s\n",node->name);
         printf("  push rax\n");
         return;
