@@ -23,6 +23,7 @@ void gen_func(Node *node){
     printf("  sub rsp, %d\n", buf);
     int offset = 8;
     for (int i = 0; i < node->args->len; i++) {
+    //for (int i = node->args->len; i >= 0 ; i--) {
         printf("  mov rax, rbp\n");
         printf("  sub rax, %d\n", offset * (i + 1));
         printf("  mov [rax], %s\n", argregs[i]);
@@ -45,17 +46,11 @@ void gen(Node *node) {
         for (int i = 0; i < len; i++) {
             gen((Node *) vec_get(node->args,i));
             printf("  pop rax\n");
-            printf("  mov %s, rax\n", argregs[len - (i + 1)]);
+            //printf("  mov %s, rax\n", argregs[len - (i + 1)]);
+            printf("  mov %s, rax\n", argregs[i]);
             //printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
         }
-        /* 
-        gen((Node *) vec_get(node->args,0));
-        printf("  pop rax\n");
-        printf("  mov %s, rax\n", argregs[0]);
-        gen((Node *) vec_get(node->args,1));
-        printf("  pop rax\n");
-        printf("  mov %s, rax\n", argregs[1]);
-        */
+
         printf("  call %s\n",node->name);
         printf("  push rax\n");
         return;
