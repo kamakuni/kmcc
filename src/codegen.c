@@ -21,12 +21,14 @@ void gen_func(Node *node){
     printf("  mov rbp, rsp\n");
     int buf = (node->args->len + var_len(variables)) * 8;
     printf("  sub rsp, %d\n", buf);
-    int offset = 8;
     for (int i = 0; i < node->args->len; i++) {
     //for (int i = node->args->len; i >= 0 ; i--) {
-        printf("  mov rax, rbp\n");
-        printf("  sub rax, %d\n", offset * (i + 1));
-        printf("  mov [rax], %s\n", argregs[i]);
+        int offset = var_get_offset(variables,vec_get(node->args,i));
+        if (offset != 0) {
+            printf("  mov rax, rbp\n");
+            printf("  sub rax, %d\n", offset);
+            printf("  mov [rax], %s\n", argregs[i]);
+        }
     }
 
     for (int i = 0; i < node->stmts->len; i++) {

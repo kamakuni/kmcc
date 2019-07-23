@@ -126,7 +126,6 @@ Node *function() {
     while (get(tokens,pos)->ty != ')') {
         if (get(tokens,pos)->ty == TK_IDENT) {
             vec_push(args, (void *) get(tokens,pos++)->name);
-            //var_append(args,(void *) get(tokens,pos++)->name);
         } else if (get(tokens,pos)->ty ==  ','){
             pos++;
         }
