@@ -13,9 +13,16 @@ void gen_lval(Node *node) {
     printf("  push rax\n");
 }
 
+void gen_block(Node *node){
+    for (int i = 0; i < node->stmts->len; i++) {
+        gen((Node *)vec_get(node->stmts, i));
+        printf("  pop rax\n");
+    }
+}
+
 void gen_func(Node *node){
     if(node->ty != ND_FUNC)
-        error("関数でありません。");    
+        error("関数でありません。");
     printf("%s:\n",node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
@@ -30,11 +37,9 @@ void gen_func(Node *node){
             printf("  mov [rax], %s\n", argregs[i]);
         }
     }
-
-    for (int i = 0; i < node->stmts->len; i++) {
-        gen((Node *)vec_get(node->stmts, i));
-        printf("  pop rax\n");
-    }
+    if(node->block->ty != ND_BLOCK)
+        error("ブロックでありません。");
+    gen_block(node->block);
 
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");
@@ -58,7 +63,7 @@ void gen(Node *node) {
         return;
     }
 
-    if (node->ty == ND_BLOCK) {
+    /* if (node->ty == ND_BLOCK) {
         int len = node->stmts->len;
         for (int i = 0; i < len; i++) {
             gen((Node *)vec_get(node->stmts, i));
@@ -66,7 +71,7 @@ void gen(Node *node) {
                 printf("  pop rax\n");
         }
         return;
-    }
+    }*/
 
     if (node->ty == ND_NUM) {
         printf("  push %d\n", node->val);
@@ -110,7 +115,9 @@ void gen(Node *node) {
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
         printf("  je  .Lend%d\n", label_count_while);
-        gen(node->body);
+        if(node->block->ty != ND_BLOCK)
+            error("ブロックでありません。");
+        gen_block(node->block);
         printf("  jmp  .Lbegin%d\n", label_count_while);
         printf(".Lend%d:\n", label_count_while);
         return;

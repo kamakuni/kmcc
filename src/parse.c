@@ -46,12 +46,12 @@ Node *new_node_call(char *name, Vector *args) {
     return node;
 }
 
-Node *new_node_function(char *name, Vector *args, Vector *stmts) {
+Node *new_node_function(char *name, Vector *args, Node *block) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_FUNC;
     node->name = name;
     node->args = args;
-    node->stmts = stmts;
+    node->block = block;
     return node;
 }
 
@@ -134,9 +134,10 @@ Node *function() {
     while(get(tokens, pos)->ty != '}') {
         vec_push(stmts, stmt());
     }
+    Node *block = new_node_block(stmts);
     if (!consume('}'))
         error_at(get(tokens,pos)->input, "'}'ではないトークンです");        
-    return new_node_function(name, args, stmts);
+    return new_node_function(name, args, block);
 }
 
 Node *stmt() {

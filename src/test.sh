@@ -85,5 +85,7 @@ try 10 "func(a,b){a + b;}main(){func(3,7);}"
 try 10 "func(a,b){return a + b;}main(){func(3,7);}"
 try 10 "func(a,b){return a + b;}main(){return func(3,7);}"
 try 10 "func(a,b){return a + b;}main(){return func(2*2,2+4);}"
+try 1  "func(a){if(a == 5) 1; else 0;} main(){return func(5);}"
+try 1  "func(a){return a = a + 1;} main(){return func(0);}"
 
 echo OK
