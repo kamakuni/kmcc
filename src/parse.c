@@ -63,11 +63,7 @@ Node *new_node_num(int val) {
 }
 
 Node *new_node_ident(char *name) {
-    int offset = (var_len(variables) + 1) * 8;
-    int current = var_get_offset(variables, name);
-    if (current != 0)
-        offset = current;
-    var_insert_first(&variables, name, offset);
+    var_append(variables, name);
     Node *node = malloc(sizeof(Node));
     node->ty = ND_IDENT;
     node->name = malloc(sizeof(char));
