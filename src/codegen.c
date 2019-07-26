@@ -97,7 +97,6 @@ void gen(Node *node) {
             printf(".Lend%d:\n", label_count_if);
         } else {
             printf("  je  .Lelse%d\n", label_count_if);
-            gen(node->body);
             if(node->body->ty == ND_BLOCK){
                 gen_block(node->body);
             } else {
