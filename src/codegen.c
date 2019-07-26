@@ -63,15 +63,10 @@ void gen(Node *node) {
         return;
     }
 
-    /* if (node->ty == ND_BLOCK) {
-        int len = node->stmts->len;
-        for (int i = 0; i < len; i++) {
-            gen((Node *)vec_get(node->stmts, i));
-            if (i + 1 < len)
-                printf("  pop rax\n");
-        }
+    if (node->ty == ND_BLOCK) {
+        gen_block(node->block);
         return;
-    }*/
+    }
 
     if (node->ty == ND_NUM) {
         printf("  push %d\n", node->val);
@@ -94,14 +89,27 @@ void gen(Node *node) {
         printf("  cmp rax, 0\n");
         if(node->elseBody == NULL){
             printf("  je  .Lend%d\n", label_count_if);
-            gen(node->body);
+            if(node->body->ty == ND_BLOCK){
+                gen_block(node->body);
+            } else {
+                gen(node->body);
+            }
             printf(".Lend%d:\n", label_count_if);
         } else {
             printf("  je  .Lelse%d\n", label_count_if);
             gen(node->body);
+            if(node->body->ty == ND_BLOCK){
+                gen_block(node->body);
+            } else {
+                gen(node->body);
+            }
             printf("  jmp  .Lend%d\n", label_count_if);
             printf(".Lelse%d:\n", label_count_if);
-            gen(node->elseBody);
+            if(node->elseBody->ty == ND_BLOCK){
+                gen_block(node->elseBody);
+            } else {
+                gen(node->elseBody);
+            }
             printf(".Lend%d:\n", label_count_if);
         }
         return;
@@ -115,9 +123,11 @@ void gen(Node *node) {
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
         printf("  je  .Lend%d\n", label_count_while);
-        if(node->block->ty != ND_BLOCK)
-            error("ブロックでありません。");
-        gen_block(node->block);
+        if(node->body->ty == ND_BLOCK){
+            gen_block(node->body);
+        } else {
+            gen(node->body);
+        }
         printf("  jmp  .Lbegin%d\n", label_count_while);
         printf(".Lend%d:\n", label_count_while);
         return;

@@ -54,6 +54,7 @@ try 7 "main(){a=4+3; return a;}"
 try 6 "main(){foo=1;bar=2+3;return foo + bar;}"
 
 try 2 "main(){if(1<10)2;}"
+try 2 "main(){if(1<10){return 2;}}"
 try 10 "main(){var=1;if(1<10)var=10;var;}"
 try 1 "main(){var=1;if(1>10)var=10;var;}"
 
@@ -63,6 +64,7 @@ try 3 "main(){if(11<10) 2; else 3;}"
 try 10 "main(){i=0;while(i<10)i=i+1; return i;}"
 try 0 "main(){i=0;while(i<10)if(i==0) return i; return 11;}"
 try 5 "main(){i=0;while(i<10)if(i<5) i=i+1; else return i; return 11;}"
+try 10 "main(){i=0;while(i<10){i=i+1;} return i;}"
 
 try 20 "main(){a=10;for(i=0;i<10;i=i+1)a=a+1; return a;}"
 try 11 "main(){i=0;for(;i<=10;)i=i+1;return i;}"
