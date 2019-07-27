@@ -46,12 +46,12 @@ Node *new_node_call(char *name, Vector *args) {
     return node;
 }
 
-Node *new_node_function(char *name, Var *args, Vector *stmts) {
+Node *new_node_function(char *name, Vector *args, Node *block) {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_FUNC;
     node->name = name;
     node->args = args;
-    node->stmts = stmts;
+    node->block = block;
     return node;
 }
 
@@ -63,11 +63,7 @@ Node *new_node_num(int val) {
 }
 
 Node *new_node_ident(char *name) {
-    int offset = (var_len(variables) + 1) * 8;
-    int current = var_get_offset(variables, name);
-    if (current != 0)
-        offset = current;
-    var_insert_first(&variables, name, offset);
+    var_append(variables, name);
     Node *node = malloc(sizeof(Node));
     node->ty = ND_IDENT;
     node->name = malloc(sizeof(char));
@@ -122,11 +118,10 @@ Node *function() {
         error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
     if (!consume('('))
         error_at(get(tokens,pos)->input, "'('ではないトークンです");        
-    Var *args = new_var();
+    Vector *args = new_vector();
     while (get(tokens,pos)->ty != ')') {
         if (get(tokens,pos)->ty == TK_IDENT) {
-            //vec_push(args, (void *) get(tokens,pos++)->name);
-            var_append(args,(void *) get(tokens,pos++)->name);
+            vec_push(args, (void *) get(tokens,pos++)->name);
         } else if (get(tokens,pos)->ty ==  ','){
             pos++;
         }
@@ -139,9 +134,10 @@ Node *function() {
     while(get(tokens, pos)->ty != '}') {
         vec_push(stmts, stmt());
     }
+    Node *block = new_node_block(stmts);
     if (!consume('}'))
         error_at(get(tokens,pos)->input, "'}'ではないトークンです");        
-    return new_node_function(name, args, stmts);
+    return new_node_function(name, args, block);
 }
 
 Node *stmt() {
@@ -299,10 +295,13 @@ Node *term() {
         }
         Vector *args = new_vector();
         while (get(tokens,pos)->ty != ')') {
-            if (get(tokens,pos)->ty == TK_NUM) {
+            Node *node = add();
+            vec_push(args, (void *) node);
+            consume(',');
+            /*if (get(tokens,pos)->ty == TK_NUM) {
                 vec_push(args, (void *) get(tokens,pos++)->val);
                 consume(',');
-            }
+            }*/
         }
         if (!consume(')'))
             error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);

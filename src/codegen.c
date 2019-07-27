@@ -1,7 +1,7 @@
 #include "compiler.h"
 
 int label_count = 0;
-char* argregs[] = {"edi", "esi", "edx", "ecx", "r8d", "r9d"};
+char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 void gen_lval(Node *node) {
     if (node->ty != ND_IDENT)
@@ -13,20 +13,33 @@ void gen_lval(Node *node) {
     printf("  push rax\n");
 }
 
+void gen_block(Node *node){
+    for (int i = 0; i < node->stmts->len; i++) {
+        gen((Node *)vec_get(node->stmts, i));
+        printf("  pop rax\n");
+    }
+}
+
 void gen_func(Node *node){
     if(node->ty != ND_FUNC)
-        error("関数でありません。");    
+        error("関数でありません。");
     printf("%s:\n",node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
     int buf = (node->args->len + var_len(variables)) * 8;
     printf("  sub rsp, %d\n", buf);
-    
-    int len = node->stmts->len;
-    for (int i = 0; i < len; i++) {
-        gen((Node *)vec_get(node->stmts, i));
-        printf("  pop rax\n");
+    for (int i = 0; i < node->args->len; i++) {
+    //for (int i = node->args->len; i >= 0 ; i--) {
+        int offset = var_get_offset(variables,vec_get(node->args,i));
+        if (offset != 0) {
+            printf("  mov rax, rbp\n");
+            printf("  sub rax, %d\n", offset);
+            printf("  mov [rax], %s\n", argregs[i]);
+        }
     }
+    if(node->block->ty != ND_BLOCK)
+        error("ブロックでありません。");
+    gen_block(node->block);
 
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");
@@ -38,19 +51,20 @@ void gen(Node *node) {
     if(node->ty == ND_CALL) {
         int len = node->args->len;
         for (int i = 0; i < len; i++) {
-            printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
+            gen((Node *) vec_get(node->args,i));
+            printf("  pop rax\n");
+            //printf("  mov %s, rax\n", argregs[len - (i + 1)]);
+            printf("  mov %s, rax\n", argregs[i]);
+            //printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
         }
+
         printf("  call %s\n",node->name);
+        printf("  push rax\n");
         return;
     }
 
     if (node->ty == ND_BLOCK) {
-        int len = node->stmts->len;
-        for (int i = 0; i < len; i++) {
-            gen((Node *)vec_get(node->stmts, i));
-            if (i + 1 < len)
-                printf("  pop rax\n");
-        }
+        gen_block(node->block);
         return;
     }
 
@@ -75,14 +89,26 @@ void gen(Node *node) {
         printf("  cmp rax, 0\n");
         if(node->elseBody == NULL){
             printf("  je  .Lend%d\n", label_count_if);
-            gen(node->body);
+            if(node->body->ty == ND_BLOCK){
+                gen_block(node->body);
+            } else {
+                gen(node->body);
+            }
             printf(".Lend%d:\n", label_count_if);
         } else {
             printf("  je  .Lelse%d\n", label_count_if);
-            gen(node->body);
+            if(node->body->ty == ND_BLOCK){
+                gen_block(node->body);
+            } else {
+                gen(node->body);
+            }
             printf("  jmp  .Lend%d\n", label_count_if);
             printf(".Lelse%d:\n", label_count_if);
-            gen(node->elseBody);
+            if(node->elseBody->ty == ND_BLOCK){
+                gen_block(node->elseBody);
+            } else {
+                gen(node->elseBody);
+            }
             printf(".Lend%d:\n", label_count_if);
         }
         return;
@@ -96,7 +122,11 @@ void gen(Node *node) {
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
         printf("  je  .Lend%d\n", label_count_while);
-        gen(node->body);
+        if(node->body->ty == ND_BLOCK){
+            gen_block(node->body);
+        } else {
+            gen(node->body);
+        }
         printf("  jmp  .Lbegin%d\n", label_count_while);
         printf(".Lend%d:\n", label_count_while);
         return;

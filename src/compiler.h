@@ -44,7 +44,7 @@ typedef struct Node {
     struct Node *elseBody; // for ND_IF
     struct Node *init; // for ND_FOR
     struct Node *incdec; // for ND_FOR
-    Vector *stmts; // for ND_NODE
+    Vector *stmts; // for ND_BLOCK | ND_FUNC
     Vector *args; // for ND_CALL
     int val;
     char *name;
