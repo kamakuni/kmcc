@@ -55,11 +55,14 @@ try 6 "main(){foo=1;bar=2+3;return foo + bar;}"
 
 try 2 "main(){if(1<10)2;}"
 try 2 "main(){if(1<10){return 2;}}"
+try 2 "main(){if(1<10){a=2;return a;}}"
 try 10 "main(){var=1;if(1<10)var=10;var;}"
 try 1 "main(){var=1;if(1>10)var=10;var;}"
 
 try 2 "main(){if(1<10) 2; else 3;}"
 try 3 "main(){if(11<10) 2; else 3;}"
+try 2 "main(){if(1<10) {return 2;} else {return 3;}}"
+try 3 "main(){if(11<10) {return 2;} else {return 3;}}"
 
 try 10 "main(){i=0;while(i<10)i=i+1; return i;}"
 try 0 "main(){i=0;while(i<10)if(i==0) return i; return 11;}"
@@ -89,5 +92,7 @@ try 10 "func(a,b){return a + b;}main(){return func(3,7);}"
 try 10 "func(a,b){return a + b;}main(){return func(2*2,2+4);}"
 try 1  "func(a){if(a == 5) 1; else 0;} main(){return func(5);}"
 try 1  "func(a){return a = a + 1;} main(){return func(0);}"
+
+try 55 "fib(n){if(n==0){return 0;} if(n==1){return 1;} return fib(n-2) + fib(n-1);}main(){return fib(10);}"
 
 echo OK
