@@ -95,4 +95,6 @@ try 1  "func(a){return a = a + 1;} main(){return func(0);}"
 
 try 55 "fib(n){if(n==0){return 0;} if(n==1){return 1;} return fib(n-2) + fib(n-1);}main(){return fib(10);}"
 
+try 10 "main(){a = 10; &a;}"
+
 echo OK
