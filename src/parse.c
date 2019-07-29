@@ -321,6 +321,12 @@ Node *unary() {
         // -x => 0-x
         return new_node('-',new_node_num(0), term());
     }
+    if (consume('*')) {
+        return new_node(ND_DEREF, unary(), NULL);
+    }
+    if (consume('&')) {
+        return new_node(ND_ADDR, unary(), NULL);
+    }
     return term();
 }
 
@@ -352,7 +358,19 @@ void tokenize() {
             continue;
         }
         
-        if ( *p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p ==')' || *p == '{' || *p =='}' || *p == '<' || *p == '>' || *p == ';' || *p == ',' ) {
+        if ( *p == '+'
+          || *p == '-'
+          || *p == '*'
+          || *p == '/'
+          || *p == '('
+          || *p == ')'
+          || *p == '{'
+          || *p =='}'
+          || *p == '<'
+          || *p == '>'
+          || *p == ';'
+          || *p == ','
+          || *p == '&') {
             append(tokens, new_token(*p,p));
             p++;
             continue;

@@ -81,6 +81,8 @@ enum {
     ND_LE,
     ND_GE,
     ND_EOF,
+    ND_ADDR,
+    ND_DEREF,
 };
 
 Vector *new_vector();
