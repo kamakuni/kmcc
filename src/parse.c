@@ -114,17 +114,20 @@ Node *expr() {
 Node *function() {
     Node *node;
     char *name = get(tokens,pos)->name;
+    if (!consume(TK_INT))
+        error_at(get(tokens,pos)->input, "intではないトークンです");
     if (!consume(TK_IDENT))
         error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
     if (!consume('('))
         error_at(get(tokens,pos)->input, "'('ではないトークンです");        
     Vector *args = new_vector();
     while (get(tokens,pos)->ty != ')') {
-        if (get(tokens,pos)->ty == TK_IDENT) {
+        if (!consume(TK_INT))
+            error_at(get(tokens,pos)->input, "intではないトークンです");
+        if (get(tokens,pos)->ty == TK_IDENT)
             vec_push(args, (void *) get(tokens,pos++)->name);
-        } else if (get(tokens,pos)->ty ==  ','){
+        if (get(tokens,pos)->ty ==  ',')
             pos++;
-        }
     }
     if (!consume(')'))
         error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
@@ -288,6 +291,9 @@ Node *term() {
         return new_node_num(get(tokens,pos++)->val);
     }
     
+    if (!consume(TK_INT))
+        error_at(get(tokens,pos)->input, "intではないトークンです");
+
     if (get(tokens,pos)->ty == TK_IDENT ) {
         char *name = get(tokens,pos++)->name;
         if (!consume('(')) {
@@ -373,6 +379,12 @@ void tokenize() {
           || *p == '&') {
             append(tokens, new_token(*p,p));
             p++;
+            continue;
+        }
+
+        if (strncmp(p, "int", 3) == 0 && !is_alnum(p[3])){
+            append(tokens, new_token(TK_IF,p));
+            p += 3;
             continue;
         }
 

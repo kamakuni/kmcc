@@ -55,6 +55,7 @@ enum {
     TK_NUM = 256, // token for integer
     TK_IDENT,
     TK_IF,
+    TK_INT,
     TK_ELSE,
     TK_WHILE,
     TK_FOR,
