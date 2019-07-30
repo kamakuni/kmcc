@@ -145,6 +145,16 @@ Node *function() {
 
 Node *stmt() {
     Node *node;
+
+    if (consume(TK_INT)) {
+        if (get(tokens,pos)->ty == TK_IDENT ) {
+            char *name = get(tokens,pos++)->name;
+            return new_node_ident(name);
+        } else {
+            error_at(get(tokens,pos)->input, "識別子ではないトークンです");
+        }
+    }
+
     if (consume('{')) {
         Vector *stmts = new_vector();
         while(get(tokens, pos)->ty != '}') {
@@ -291,9 +301,6 @@ Node *term() {
         return new_node_num(get(tokens,pos++)->val);
     }
     
-    if (!consume(TK_INT))
-        error_at(get(tokens,pos)->input, "intではないトークンです");
-
     if (get(tokens,pos)->ty == TK_IDENT ) {
         char *name = get(tokens,pos++)->name;
         if (!consume('(')) {
