@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "kmcc.h"
 
 int pos;
 Tokens *tokens;

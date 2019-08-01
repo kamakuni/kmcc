@@ -2,14 +2,14 @@ CFLAGS=-Wall -std=c11 -g -o0
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
-compiler: $(OBJS)
-			$(CC) -o compiler $(OBJS) $(LDFLAGS)
+kmcc: $(OBJS)
+			$(CC) -o kmcc $(OBJS) $(LDFLAGS)
 
-$(OBJS): compiler.h
+$(OBJS): kmcc.h
 
-test: compiler
-		./compiler -test
+test: kmcc
+		./kmcc -test
 		./test.sh
 
 clean:
-		rm -f compiler *.o *~ tmp*
+		rm -f kmcc *.o *~ tmp*

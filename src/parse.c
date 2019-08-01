@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "kmcc.h"
 
 void error(char *fmt, ...) {
     va_list ap;
@@ -113,9 +113,9 @@ Node *expr() {
 
 Node *function() {
     Node *node;
-    char *name = get(tokens,pos)->name;
     if (!consume(TK_INT))
         error_at(get(tokens,pos)->input, "intではないトークンです");
+    char *name = get(tokens,pos)->name;
     if (!consume(TK_IDENT))
         error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
     if (!consume('('))
@@ -390,7 +390,7 @@ void tokenize() {
         }
 
         if (strncmp(p, "int", 3) == 0 && !is_alnum(p[3])){
-            append(tokens, new_token(TK_IF,p));
+            append(tokens, new_token(TK_INT,p));
             p += 3;
             continue;
         }
