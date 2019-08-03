@@ -149,12 +149,14 @@ Node *stmt() {
     if (consume(TK_INT)) {
         if (get(tokens,pos)->ty == TK_IDENT ) {
             char *name = get(tokens,pos++)->name;
-            return new_node_ident(name);
+            node = new_node_ident(name);
+            if (!consume(';'))
+                error_at(get(tokens,pos)->input, "';'ではないトークンです");
+            return node;
         } else {
             error_at(get(tokens,pos)->input, "識別子ではないトークンです");
         }
     }
-
     if (consume('{')) {
         Vector *stmts = new_vector();
         while(get(tokens, pos)->ty != '}') {
