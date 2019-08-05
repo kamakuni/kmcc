@@ -69,11 +69,11 @@ try 0 "int main(){int i; i=0;while(i<10)if(i==0) return i; return 11;}"
 try 5 "int main(){int i; i=0;while(i<10)if(i<5) i=i+1; else return i; return 11;}"
 try 10 "int main(){int i; i=0;while(i<10){i=i+1;} return i;}"
 
-try 20 "int main(){int i; a=10;for(i=0;i<10;i=i+1)a=a+1; return a;}"
+try 20 "int main(){int i;int a; a=10;for(i=0;i<10;i=i+1)a=a+1; return a;}"
 try 11 "int main(){int i; i=0;for(;i<=10;)i=i+1;return i;}"
 try 0 "int main(){int i; i=0;for(;i<=10;)if(i==0) return i; return 11;}"
 try 5 "int main(){int i; i=0;for(;i<=10;)if(i<5) i=i+1; else return i; return 11;}"
-try 5 "int main(){int i; i=0;for(;i<=10;)if(i<5) i=i+1; else return i; ret=11;}"
+try 5 "int main(){int i; i=0;for(;i<=10;)if(i<5) i=i+1; else return i;int ret; ret=11;}"
 
 try 10 "int func(){10;}int main(){func();}"
 try 10 "int func(){return 10;}int main(){func();}"
@@ -95,6 +95,6 @@ try 1  "int func(int a){return a = a + 1;}int main(){return func(0);}"
 
 try 55 "int fib(int n){if(n==0){return 0;} if(n==1){return 1;} return fib(n-2) + fib(n-1);}int main(){return fib(10);}"
 
-try 10 "int main(){int 1; int b; a = 10; b = &a; return *b;}"
+try 10 "int main(){int a; int b; a = 10; b = &a; return *b;}"
 
 echo OK

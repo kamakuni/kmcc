@@ -124,8 +124,10 @@ Node *function() {
     while (get(tokens,pos)->ty != ')') {
         if (!consume(TK_INT))
             error_at(get(tokens,pos)->input, "intではないトークンです");
-        if (get(tokens,pos)->ty == TK_IDENT)
+        if (get(tokens,pos)->ty == TK_IDENT) {
+            var_append(variables, get(tokens,pos)->name);
             vec_push(args, (void *) get(tokens,pos++)->name);
+        }
         if (get(tokens,pos)->ty ==  ',')
             pos++;
     }
@@ -306,6 +308,8 @@ Node *term() {
     if (get(tokens,pos)->ty == TK_IDENT ) {
         char *name = get(tokens,pos++)->name;
         if (!consume('(')) {
+            if (!var_exist(variables, name)) 
+                error("未定義の変数です。：%s", name);
             return new_node_ident(name);
         }
         Vector *args = new_vector();

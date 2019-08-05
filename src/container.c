@@ -55,6 +55,16 @@ void var_insert_first(Var **var,char *name, int offset){
     *var = new;
 }
 
+int var_exist(Var *var, char *name){
+    while(var->next != NULL){
+        if(strcmp(var->name, name) == 0){
+            return 1;
+        }
+        var = var->next;
+    };
+    return 0;
+}
+
 int var_get_offset(Var *var, char *name){
     while(var->next != NULL){
         if(strcmp(var->name, name) == 0){
