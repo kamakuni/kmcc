@@ -50,6 +50,11 @@ typedef struct Node {
     char *name;
 } Node;
 
+typedef struct Type {
+    enum { INT, PTR } ty;
+    struct Type *ptr_to;
+} Type;
+
 // Values for token types
 enum {
     TK_NUM = 256, // token for integer
