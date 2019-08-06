@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "kmcc.h"
 
 int label_count = 0;
 char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};

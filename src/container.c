@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "kmcc.h"
 
 Vector *new_vector() {
     Vector *vec = malloc(sizeof(Vector));
@@ -53,6 +53,16 @@ void var_insert_first(Var **var,char *name, int offset){
     new->name = name;
     new->offset = offset;
     *var = new;
+}
+
+int var_exist(Var *var, char *name){
+    while(var->next != NULL){
+        if(strcmp(var->name, name) == 0){
+            return 1;
+        }
+        var = var->next;
+    };
+    return 0;
 }
 
 int var_get_offset(Var *var, char *name){

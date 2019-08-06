@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "kmcc.h"
 
 void error(char *fmt, ...) {
     va_list ap;
@@ -113,6 +113,8 @@ Node *expr() {
 
 Node *function() {
     Node *node;
+    if (!consume(TK_INT))
+        error_at(get(tokens,pos)->input, "intではないトークンです");
     char *name = get(tokens,pos)->name;
     if (!consume(TK_IDENT))
         error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
@@ -120,11 +122,14 @@ Node *function() {
         error_at(get(tokens,pos)->input, "'('ではないトークンです");        
     Vector *args = new_vector();
     while (get(tokens,pos)->ty != ')') {
+        if (!consume(TK_INT))
+            error_at(get(tokens,pos)->input, "intではないトークンです");
         if (get(tokens,pos)->ty == TK_IDENT) {
+            var_append(variables, get(tokens,pos)->name);
             vec_push(args, (void *) get(tokens,pos++)->name);
-        } else if (get(tokens,pos)->ty ==  ','){
-            pos++;
         }
+        if (get(tokens,pos)->ty ==  ',')
+            pos++;
     }
     if (!consume(')'))
         error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
@@ -142,6 +147,18 @@ Node *function() {
 
 Node *stmt() {
     Node *node;
+
+    if (consume(TK_INT)) {
+        if (get(tokens,pos)->ty == TK_IDENT ) {
+            char *name = get(tokens,pos++)->name;
+            node = new_node_ident(name);
+            if (!consume(';'))
+                error_at(get(tokens,pos)->input, "';'ではないトークンです");
+            return node;
+        } else {
+            error_at(get(tokens,pos)->input, "識別子ではないトークンです");
+        }
+    }
     if (consume('{')) {
         Vector *stmts = new_vector();
         while(get(tokens, pos)->ty != '}') {
@@ -291,6 +308,8 @@ Node *term() {
     if (get(tokens,pos)->ty == TK_IDENT ) {
         char *name = get(tokens,pos++)->name;
         if (!consume('(')) {
+            if (!var_exist(variables, name)) 
+                error("未定義の変数です。：%s", name);
             return new_node_ident(name);
         }
         Vector *args = new_vector();
@@ -373,6 +392,12 @@ void tokenize() {
           || *p == '&') {
             append(tokens, new_token(*p,p));
             p++;
+            continue;
+        }
+
+        if (strncmp(p, "int", 3) == 0 && !is_alnum(p[3])){
+            append(tokens, new_token(TK_INT,p));
+            p += 3;
             continue;
         }
 
