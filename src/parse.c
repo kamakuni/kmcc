@@ -115,6 +115,10 @@ Node *function() {
     Node *node;
     if (!consume(TK_INT))
         error_at(get(tokens,pos)->input, "intではないトークンです");
+    while (get(tokens,pos)->ty != TK_IDENT) {
+        if (!consume('*'))
+            error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+    }
     char *name = get(tokens,pos)->name;
     if (!consume(TK_IDENT))
         error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
@@ -124,6 +128,10 @@ Node *function() {
     while (get(tokens,pos)->ty != ')') {
         if (!consume(TK_INT))
             error_at(get(tokens,pos)->input, "intではないトークンです");
+        while (get(tokens,pos)->ty != TK_IDENT) {
+            if (!consume('*'))
+                error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+        }
         if (get(tokens,pos)->ty == TK_IDENT) {
             var_append(variables, get(tokens,pos)->name);
             vec_push(args, (void *) get(tokens,pos++)->name);
@@ -149,6 +157,10 @@ Node *stmt() {
     Node *node;
 
     if (consume(TK_INT)) {
+        while (get(tokens,pos)->ty != TK_IDENT) {
+            if (!consume('*'))
+                error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+        }
         if (get(tokens,pos)->ty == TK_IDENT ) {
             char *name = get(tokens,pos++)->name;
             node = new_node_ident(name);

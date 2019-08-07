@@ -97,4 +97,6 @@ try 55 "int fib(int n){if(n==0){return 0;} if(n==1){return 1;} return fib(n-2) +
 
 try 10 "int main(){int a; int b; a = 10; b = &a; return *b;}"
 
+try 10 "int *func(int *a){int **b;a;}int main(){func(10);}"
+
 echo OK
