@@ -23,9 +23,9 @@ int is_alnum(char c) {
     (c == '_');
 }
 
-Node *new_node(int ty, Node *lhs, Node *rhs) {
+Node *new_node(int kind, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ty;
+    node->kind = kind;
     node->lhs = lhs;
     node->rhs = rhs;
     return node;
@@ -33,14 +33,14 @@ Node *new_node(int ty, Node *lhs, Node *rhs) {
 
 Node *new_node_block(Vector *stmts) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_BLOCK;
+    node->kind = ND_BLOCK;
     node->stmts = stmts;
     return node;
 }
 
 Node *new_node_call(char *name, Vector *args) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_CALL;
+    node->kind = ND_CALL;
     node->name = name;
     node->args = args;
     return node;
@@ -48,7 +48,7 @@ Node *new_node_call(char *name, Vector *args) {
 
 Node *new_node_function(char *name, Vector *args, Node *block) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_FUNC;
+    node->kind = ND_FUNC;
     node->name = name;
     node->args = args;
     node->block = block;
@@ -57,7 +57,7 @@ Node *new_node_function(char *name, Vector *args, Node *block) {
 
 Node *new_node_num(int val) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_NUM;
+    node->kind = ND_NUM;
     node->val = val;
     return node;
 }
@@ -65,7 +65,7 @@ Node *new_node_num(int val) {
 Node *new_node_ident(char *name) {
     var_append(variables, name);
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_IDENT;
+    node->kind = ND_IDENT;
     node->name = malloc(sizeof(char));
     strncpy(node->name, name, strlen(name));
     return node;
@@ -73,7 +73,7 @@ Node *new_node_ident(char *name) {
 
 Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_FOR;
+    node->kind = ND_FOR;
     node->init = init;
     node->cond = cond;
     node->incdec = incdec;
@@ -83,7 +83,7 @@ Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
 
 Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_IF;
+    node->kind = ND_IF;
     node->cond = cond;
     node->body = body;
     node->elseBody = elseBody;
@@ -92,7 +92,7 @@ Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
 
 Node *new_node_while(Node *cond, Node *body) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_WHILE;
+    node->kind = ND_WHILE;
     node->cond = cond;
     node->body = body;
     return node;

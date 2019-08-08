@@ -4,7 +4,7 @@ int label_count = 0;
 char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 void gen_lval(Node *node) {
-    if (node->ty != ND_IDENT)
+    if (node->kind != ND_IDENT)
         error("代入の左辺値が変数でありません。");
     
     int offset = var_get_offset(variables, node->name);
@@ -21,7 +21,7 @@ void gen_block(Node *node){
 }
 
 void gen_func(Node *node){
-    if(node->ty != ND_FUNC)
+    if(node->kind != ND_FUNC)
         error("関数でありません。");
     printf("%s:\n",node->name);
     printf("  push rbp\n");
@@ -37,7 +37,7 @@ void gen_func(Node *node){
             printf("  mov [rax], %s\n", argregs[i]);
         }
     }
-    if(node->block->ty != ND_BLOCK)
+    if(node->block->kind != ND_BLOCK)
         error("ブロックでありません。");
     gen_block(node->block);
 
@@ -48,7 +48,7 @@ void gen_func(Node *node){
 
 void gen(Node *node) {
 
-    if(node->ty == ND_CALL) {
+    if(node->kind == ND_CALL) {
         int len = node->args->len;
         for (int i = 0; i < len; i++) {
             gen((Node *) vec_get(node->args,i));
@@ -63,17 +63,17 @@ void gen(Node *node) {
         return;
     }
 
-    if (node->ty == ND_BLOCK) {
+    if (node->kind == ND_BLOCK) {
         gen_block(node->block);
         return;
     }
 
-    if (node->ty == ND_NUM) {
+    if (node->kind == ND_NUM) {
         printf("  push %d\n", node->val);
         return;
     }
     
-    if (node->ty == ND_IDENT) {
+    if (node->kind == ND_IDENT) {
         gen_lval(node);
         printf("  pop rax\n");
         printf("  mov rax, [rax]\n");
@@ -81,7 +81,7 @@ void gen(Node *node) {
         return;
     }
     
-    if (node->ty == ND_IF) {
+    if (node->kind == ND_IF) {
         int label_count_if = label_count;
         label_count += 1;
         gen(node->cond);
@@ -89,7 +89,7 @@ void gen(Node *node) {
         printf("  cmp rax, 0\n");
         if(node->elseBody == NULL){
             printf("  je  .Lend%d\n", label_count_if);
-            if(node->body->ty == ND_BLOCK){
+            if(node->body->kind == ND_BLOCK){
                 gen_block(node->body);
             } else {
                 gen(node->body);
@@ -97,14 +97,14 @@ void gen(Node *node) {
             printf(".Lend%d:\n", label_count_if);
         } else {
             printf("  je  .Lelse%d\n", label_count_if);
-            if(node->body->ty == ND_BLOCK){
+            if(node->body->kind == ND_BLOCK){
                 gen_block(node->body);
             } else {
                 gen(node->body);
             }
             printf("  jmp  .Lend%d\n", label_count_if);
             printf(".Lelse%d:\n", label_count_if);
-            if(node->elseBody->ty == ND_BLOCK){
+            if(node->elseBody->kind == ND_BLOCK){
                 gen_block(node->elseBody);
             } else {
                 gen(node->elseBody);
@@ -114,7 +114,7 @@ void gen(Node *node) {
         return;
     }
 
-    if (node->ty == ND_WHILE) {
+    if (node->kind == ND_WHILE) {
         int label_count_while = label_count;
         label_count += 1;
         printf(".Lbegin%d:\n", label_count_while);
@@ -122,7 +122,7 @@ void gen(Node *node) {
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
         printf("  je  .Lend%d\n", label_count_while);
-        if(node->body->ty == ND_BLOCK){
+        if(node->body->kind == ND_BLOCK){
             gen_block(node->body);
         } else {
             gen(node->body);
@@ -132,7 +132,7 @@ void gen(Node *node) {
         return;
     }
 
-    if (node->ty == ND_FOR) {
+    if (node->kind == ND_FOR) {
         int label_count_for = label_count;
         label_count += 1;
         if(node->init) {
@@ -153,7 +153,7 @@ void gen(Node *node) {
         return;
     }
 
-    if (node->ty == ND_RETURN) {
+    if (node->kind == ND_RETURN) {
         gen(node->lhs);
         printf("  pop rax\n");
         printf("  mov rsp, rbp\n");
@@ -162,7 +162,7 @@ void gen(Node *node) {
         return;
     }
     
-    if (node->ty == '=') {
+    if (node->kind == '=') {
         gen_lval(node->lhs);
         gen(node->rhs);
         
@@ -173,12 +173,12 @@ void gen(Node *node) {
         return;
     }
 
-    if (node->ty == ND_ADDR) {
+    if (node->kind == ND_ADDR) {
         gen_lval(node->lhs);
         return;
     }
 
-    if (node->ty == ND_DEREF) {
+    if (node->kind == ND_DEREF) {
         gen(node->lhs);
         printf("  pop rax\n");
         printf("  mov rax, [rax]\n");
@@ -192,7 +192,7 @@ void gen(Node *node) {
     printf("  pop rdi\n");
     printf("  pop rax\n");
     
-    switch (node->ty) {
+    switch (node->kind) {
         case '+':
             printf("  add rax, rdi\n");
             break;

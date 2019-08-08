@@ -34,8 +34,13 @@ typedef struct Var {
     int offset;
 } Var;
 
+typedef struct Type {
+    enum { INT, PTR } ty;
+    struct Type *ptr_to;
+} Type;
+
 typedef struct Node {
-    int ty;
+    int kind;
     struct Node *lhs;
     struct Node *rhs;
     struct Node *cond; // for ND_IF | ND_FOR | ND_WHILE
@@ -46,14 +51,10 @@ typedef struct Node {
     struct Node *incdec; // for ND_FOR
     Vector *stmts; // for ND_BLOCK | ND_FUNC
     Vector *args; // for ND_CALL
+    Type *ty;
     int val;
     char *name;
 } Node;
-
-typedef struct Type {
-    enum { INT, PTR } ty;
-    struct Type *ptr_to;
-} Type;
 
 // Values for token types
 enum {
@@ -110,7 +111,7 @@ Token *get(Tokens *t, int i);
 
 void runtest();
 
-Node *new_node(int ty, Node *lhs, Node *rhs);
+Node *new_node(int kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
