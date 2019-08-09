@@ -92,16 +92,16 @@ void var_append(Var *var, char *name){
     var_insert_first(&variables, name, offset);
 }
 
-Token *new_token(int ty, char *input) {
+Token *new_token(int kind, char *input) {
     Token *t = malloc(sizeof(Token));
-    t->ty = ty;
+    t->kind = kind;
     t->input = input;
     return t;
 }
 
 Token *new_token_num(int val, char *input) {
     Token *t = malloc(sizeof(Token));
-    t->ty = TK_NUM;
+    t->kind = TK_NUM;
     t->val = val;
     t->input = input;
     return t;
@@ -111,7 +111,7 @@ Token *new_token_ident(char *input, int len) {
     // if(len > strlen(input))
     // return NULL; 
     Token *t = malloc(sizeof(Token));
-    t->ty = TK_IDENT;
+    t->kind = TK_IDENT;
     char *name = malloc(sizeof(char)*len);
     strncpy(name, input, len);
     t->name = name;
@@ -171,7 +171,7 @@ void test_vector(){
     append(tokens, new_token_num(2,"3"));
     Token *token = get(tokens,0);
     
-    expect(__LINE__, TK_NUM, token->ty);
+    expect(__LINE__, TK_NUM, token->kind);
     expect(__LINE__, 2, token->val);
     expect(__LINE__, 0, strcmp("3", token->input));
     
@@ -179,7 +179,7 @@ void test_vector(){
     
     token = get(tokens,1);
     
-    expect(__LINE__, TK_NUM, token->ty);
+    expect(__LINE__, TK_NUM, token->kind);
     expect(__LINE__, 3, token->val);
     expect(__LINE__, 0, strcmp("4", token->input));
 }

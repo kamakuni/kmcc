@@ -12,7 +12,7 @@ typedef struct {
 
 // Type for tokens
 typedef struct {
-    int ty; // token type
+    int kind; // token kind
     int val; // value for Integer token
     char *name; // name for Ident
     char *input; // token stirng for debugging
@@ -100,7 +100,7 @@ Map *new_map();
 void map_put(Map *map, char *key, void *val);
 Map *map_get(Map *map,char *key);
 
-Token *new_token(int ty, char *input);
+Token *new_token(int kind, char *input);
 Token *new_token_num(int val, char *input);
 //Token *new_token_ident(char *name);
 Token *new_token_ident(char *input, int len);
@@ -121,7 +121,7 @@ void var_insert_first(Var **var, char *name, int offset);
 int var_get_offset(Var *var, char *name);
 int var_len(Var *var);
 
-int consume(int ty);
+int consume(int kind);
 void tokenize();
 
 int is_alnum(char c);

@@ -115,7 +115,7 @@ Node *function() {
     Node *node;
     if (!consume(TK_INT))
         error_at(get(tokens,pos)->input, "intではないトークンです");
-    while (get(tokens,pos)->ty != TK_IDENT) {
+    while (get(tokens,pos)->kind != TK_IDENT) {
         if (!consume('*'))
             error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
     }
@@ -125,18 +125,18 @@ Node *function() {
     if (!consume('('))
         error_at(get(tokens,pos)->input, "'('ではないトークンです");        
     Vector *args = new_vector();
-    while (get(tokens,pos)->ty != ')') {
+    while (get(tokens,pos)->kind != ')') {
         if (!consume(TK_INT))
             error_at(get(tokens,pos)->input, "intではないトークンです");
-        while (get(tokens,pos)->ty != TK_IDENT) {
+        while (get(tokens,pos)->kind != TK_IDENT) {
             if (!consume('*'))
                 error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
         }
-        if (get(tokens,pos)->ty == TK_IDENT) {
+        if (get(tokens,pos)->kind == TK_IDENT) {
             var_append(variables, get(tokens,pos)->name);
             vec_push(args, (void *) get(tokens,pos++)->name);
         }
-        if (get(tokens,pos)->ty ==  ',')
+        if (get(tokens,pos)->kind ==  ',')
             pos++;
     }
     if (!consume(')'))
@@ -144,7 +144,7 @@ Node *function() {
     if (!consume('{'))
         error_at(get(tokens,pos)->input, "'{'ではないトークンです");        
     Vector *stmts = new_vector();
-    while(get(tokens, pos)->ty != '}') {
+    while(get(tokens, pos)->kind != '}') {
         vec_push(stmts, stmt());
     }
     Node *block = new_node_block(stmts);
@@ -157,11 +157,11 @@ Node *stmt() {
     Node *node;
 
     if (consume(TK_INT)) {
-        while (get(tokens,pos)->ty != TK_IDENT) {
+        while (get(tokens,pos)->kind != TK_IDENT) {
             if (!consume('*'))
                 error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
         }
-        if (get(tokens,pos)->ty == TK_IDENT ) {
+        if (get(tokens,pos)->kind == TK_IDENT ) {
             char *name = get(tokens,pos++)->name;
             node = new_node_ident(name);
             if (!consume(';'))
@@ -173,7 +173,7 @@ Node *stmt() {
     }
     if (consume('{')) {
         Vector *stmts = new_vector();
-        while(get(tokens, pos)->ty != '}') {
+        while(get(tokens, pos)->kind != '}') {
             vec_push(stmts, stmt());
         }
         if(!consume('}'))
@@ -206,19 +206,19 @@ Node *stmt() {
         if(!consume('('))
             error_at(get(tokens,pos)->input, "'('ではないトークンです");
         Node *init = NULL;
-        if(get(tokens,pos)->ty != ';') {
+        if(get(tokens,pos)->kind != ';') {
             init = expr();
         }
         if(!consume(';'))
             error_at(get(tokens,pos)->input, "';'ではないトークンです");
         Node *cond = NULL;
-        if(get(tokens,pos)->ty != ';') {
+        if(get(tokens,pos)->kind != ';') {
             cond = expr();
         }
         if(!consume(';'))
             error_at(get(tokens,pos)->input, "';'ではないトークンです");
         Node *incdec = NULL;
-        if(get(tokens,pos)->ty != ')') {
+        if(get(tokens,pos)->kind != ')') {
             incdec = expr();
         }
         if(!consume(')'))
@@ -238,7 +238,7 @@ Node *stmt() {
 
 void program() {
     int i = 0;
-    while (get(tokens,pos)->ty != TK_EOF) {
+    while (get(tokens,pos)->kind != TK_EOF) {
         //code[i++] = stmt();
         code[i++] = function();
     }
@@ -313,11 +313,11 @@ Node *term() {
         return node;
     }
     
-    if ( get(tokens,pos)->ty == TK_NUM ) {
+    if ( get(tokens,pos)->kind == TK_NUM ) {
         return new_node_num(get(tokens,pos++)->val);
     }
     
-    if (get(tokens,pos)->ty == TK_IDENT ) {
+    if (get(tokens,pos)->kind == TK_IDENT ) {
         char *name = get(tokens,pos++)->name;
         if (!consume('(')) {
             if (!var_exist(variables, name)) 
@@ -325,11 +325,11 @@ Node *term() {
             return new_node_ident(name);
         }
         Vector *args = new_vector();
-        while (get(tokens,pos)->ty != ')') {
+        while (get(tokens,pos)->kind != ')') {
             Node *node = add();
             vec_push(args, (void *) node);
             consume(',');
-            /*if (get(tokens,pos)->ty == TK_NUM) {
+            /*if (get(tokens,pos)->kind == TK_NUM) {
                 vec_push(args, (void *) get(tokens,pos++)->val);
                 consume(',');
             }*/
@@ -361,8 +361,8 @@ Node *unary() {
     return term();
 }
 
-int consume(int ty) {
-    if (get(tokens, pos)->ty != ty)
+int consume(int kind) {
+    if (get(tokens, pos)->kind != kind)
         return 0;
     pos++;
     return 1;
