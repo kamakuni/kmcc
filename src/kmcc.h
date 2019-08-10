@@ -28,16 +28,18 @@ typedef struct {
     Vector *vals;
 } Map;
 
-typedef struct Var {
-    struct Var *next;
-    char *name;
-    int offset;
-} Var;
 
 typedef struct Type {
     enum { INT, PTR } ty;
     struct Type *ptr_to;
 } Type;
+
+typedef struct Var {
+    struct Var *next;
+    char *name;
+    Type *ty;
+    int offset;
+} Var;
 
 typedef struct Node {
     int kind;
@@ -51,7 +53,6 @@ typedef struct Node {
     struct Node *incdec; // for ND_FOR
     Vector *stmts; // for ND_BLOCK | ND_FUNC
     Vector *args; // for ND_CALL
-    Type *ty;
     int val;
     char *name;
 } Node;
@@ -117,7 +118,7 @@ Node *new_node_ident(char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
 
 Var *new_var();
-void var_insert_first(Var **var, char *name, int offset);
+void var_insert_first(Var **var, Type *ty, char *name, int offset);
 int var_get_offset(Var *var, char *name);
 int var_len(Var *var);
 

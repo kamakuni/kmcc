@@ -42,14 +42,16 @@ Map *map_get(Map *map,char *key){
 Var *new_var(){
     Var *var = malloc(sizeof(Var));
     var->next = NULL;
+    var->ty = NULL;
     var->name = "";
     var->offset = 0;
     return var;
 }
 
-void var_insert_first(Var **var,char *name, int offset){
+void var_insert_first(Var **var, Type *ty, char *name, int offset){
     Var *new = malloc(sizeof(Var));
     new->next = *var;
+    new->ty = ty;
     new->name = name;
     new->offset = offset;
     *var = new;
@@ -84,12 +86,12 @@ int var_len(Var *var){
     return i;
 }
 
-void var_append(Var *var, char *name){
+void var_append(Var *var, Type *ty, char *name){
     int offset = (var_len(variables) + 1) * 8;
     int current = var_get_offset(variables, name);
     if (current != 0)
         offset = current;
-    var_insert_first(&variables, name, offset);
+    var_insert_first(&variables, ty, name, offset);
 }
 
 Token *new_token(int kind, char *input) {
@@ -188,11 +190,17 @@ void test_linked_list(){
     Var *var = new_var();
     expect(__LINE__, 0, var->offset);
     expect(__LINE__, 0, strcmp("", var->name));
-    var_insert_first(&var, "name1", (var_len(var)+1)*8);
+    Type *ty = malloc(sizeof(Type));
+    ty->ty = INT;
+    var_insert_first(&var, ty, "name1", (var_len(var)+1)*8);
     expect(__LINE__, 8, var->offset);
+    expect(__LINE__, INT, var->ty->ty);
     expect(__LINE__, 0, strcmp("name1", var->name));
-    var_insert_first(&var, "name2", (var_len(var)+1)*8);
+    ty = malloc(sizeof(Type));
+    ty->ty = PTR;
+    var_insert_first(&var, ty, "name2", (var_len(var)+1)*8);
     expect(__LINE__, 16, var->offset);
+    expect(__LINE__, PTR, var->ty->ty);
     expect(__LINE__, 0, strcmp("name2", var->name));
     int offset = var_get_offset(var, "name1");
     expect(__LINE__, 8, offset);

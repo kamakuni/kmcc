@@ -63,7 +63,6 @@ Node *new_node_num(int val) {
 }
 
 Node *new_node_ident(char *name) {
-    var_append(variables, name);
     Node *node = malloc(sizeof(Node));
     node->kind = ND_IDENT;
     node->name = malloc(sizeof(char));
@@ -128,12 +127,18 @@ Node *function() {
     while (get(tokens,pos)->kind != ')') {
         if (!consume(TK_INT))
             error_at(get(tokens,pos)->input, "intではないトークンです");
+        Type *ty = malloc(sizeof(Type));
+        ty->ty = INT;
         while (get(tokens,pos)->kind != TK_IDENT) {
             if (!consume('*'))
                 error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+            Type *next = ty;
+            ty = malloc(sizeof(Type));
+            ty->ty = PTR;
+            ty->ptr_to = next;
         }
         if (get(tokens,pos)->kind == TK_IDENT) {
-            var_append(variables, get(tokens,pos)->name);
+            var_append(variables, ty, get(tokens,pos)->name);
             vec_push(args, (void *) get(tokens,pos++)->name);
         }
         if (get(tokens,pos)->kind ==  ',')
@@ -157,12 +162,19 @@ Node *stmt() {
     Node *node;
 
     if (consume(TK_INT)) {
+        Type *ty = malloc(sizeof(Type));
+        ty->ty = INT;
         while (get(tokens,pos)->kind != TK_IDENT) {
             if (!consume('*'))
                 error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+            Type *next = ty;
+            ty = malloc(sizeof(Type));
+            ty->ty = PTR;
+            ty->ptr_to = next;
         }
         if (get(tokens,pos)->kind == TK_IDENT ) {
             char *name = get(tokens,pos++)->name;
+            var_append(variables, ty, name);
             node = new_node_ident(name);
             if (!consume(';'))
                 error_at(get(tokens,pos)->input, "';'ではないトークンです");
