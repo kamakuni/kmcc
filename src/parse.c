@@ -62,11 +62,12 @@ Node *new_node_num(int val) {
     return node;
 }
 
-Node *new_node_ident(char *name) {
+Node *new_node_ident(Type *ty, char *name) {
     Node *node = malloc(sizeof(Node));
     node->kind = ND_IDENT;
     node->name = malloc(sizeof(char));
     strncpy(node->name, name, strlen(name));
+    var_append(variables, ty, name);
     return node;
 }
 
@@ -174,8 +175,7 @@ Node *stmt() {
         }
         if (get(tokens,pos)->kind == TK_IDENT ) {
             char *name = get(tokens,pos++)->name;
-            var_append(variables, ty, name);
-            node = new_node_ident(name);
+            node = new_node_ident(ty, name);
             if (!consume(';'))
                 error_at(get(tokens,pos)->input, "';'ではないトークンです");
             return node;
@@ -334,7 +334,8 @@ Node *term() {
         if (!consume('(')) {
             if (!var_exist(variables, name)) 
                 error("未定義の変数です。：%s", name);
-            return new_node_ident(name);
+            Var *var = var_get(variables, name);
+            return new_node_ident(&var->ty,name);
         }
         Vector *args = new_vector();
         while (get(tokens,pos)->kind != ')') {

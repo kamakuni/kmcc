@@ -67,6 +67,16 @@ int var_exist(Var *var, char *name){
     return 0;
 }
 
+Var *var_get(Var *var,char *name) {
+    while(var->next != NULL){
+        if(strcmp(var->name, name) == 0){
+            return var;
+        }
+        var = var->next;
+    };
+    return NULL;
+}
+
 int var_get_offset(Var *var, char *name){
     while(var->next != NULL){
         if(strcmp(var->name, name) == 0){
