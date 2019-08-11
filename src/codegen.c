@@ -6,7 +6,6 @@ char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 void gen_lval(Node *node) {
     if (node->kind != ND_IDENT)
         error("代入の左辺値が変数でありません。");
-    
     int offset = var_get_offset(variables, node->name);
     printf("  mov rax, rbp\n");
     printf("  sub rax, %d\n", offset);

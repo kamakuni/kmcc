@@ -66,6 +66,7 @@ Node *new_node_ident(Type *ty, char *name) {
     Node *node = malloc(sizeof(Node));
     node->kind = ND_IDENT;
     node->name = malloc(sizeof(char));
+    node->ty = ty;
     strncpy(node->name, name, strlen(name));
     var_append(variables, ty, name);
     return node;
