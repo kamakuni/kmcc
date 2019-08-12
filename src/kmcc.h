@@ -43,14 +43,14 @@ typedef struct Var {
 
 typedef struct Node {
     int kind;
-    Node *lhs;
-    Node *rhs;
-    Node *cond; // for ND_IF | ND_FOR | ND_WHILE
-    Node *block; // for ND_FUNC
-    Node *body; // for ND_IF | ND_FOR | ND_WHILE
-    Node *elseBody; // for ND_IF
-    Node *init; // for ND_FOR
-    Node *incdec; // for ND_FOR
+    struct Node *lhs;
+    struct Node *rhs;
+    struct Node *cond; // for ND_IF | ND_FOR | ND_WHILE
+    struct Node *block; // for ND_FUNC
+    struct Node *body; // for ND_IF | ND_FOR | ND_WHILE
+    struct Node *elseBody; // for ND_IF
+    struct Node *init; // for ND_FOR
+    struct Node *incdec; // for ND_FOR
     Vector *stmts; // for ND_BLOCK | ND_FUNC
     Vector *args; // for ND_CALL
     Type *ty;
