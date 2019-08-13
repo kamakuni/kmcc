@@ -23,6 +23,13 @@ int is_alnum(char c) {
     (c == '_');
 }
 
+char *strndup(char *p,int len) {
+    char *buf = malloc(len + 1);
+    strncpy(buf, p , len);
+    buf[len] = '\0';
+    return buf;
+}
+
 Node *new_node(int kind, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
     node->kind = kind;
