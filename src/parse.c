@@ -72,9 +72,9 @@ Node *new_node_num(int val) {
 Node *new_node_ident(Type *ty, char *name) {
     Node *node = malloc(sizeof(Node));
     node->kind = ND_IDENT;
-    node->name = malloc(sizeof(char));
+    //node->name = malloc(sizeof(char));
     node->ty = ty;
-    strncpy(node->name, name, strlen(name));
+    node->name = strndup(name, strlen(name));
     var_append(variables, ty, name);
     return node;
 }
@@ -343,7 +343,7 @@ Node *term() {
             if (!var_exist(variables, name)) 
                 error("未定義の変数です。：%s", name);
             Var *var = var_get(variables, name);
-            return new_node_ident(&var->ty,name);
+            return new_node_ident(var->ty,name);
         }
         Vector *args = new_vector();
         while (get(tokens,pos)->kind != ')') {

@@ -122,11 +122,11 @@ Token *new_token_num(int val, char *input) {
 Token *new_token_ident(char *input, int len) {
     // if(len > strlen(input))
     // return NULL; 
-    Token *t = malloc(sizeof(Token));
+    Token *t = calloc(1,sizeof(Token));
+    //Token *t = malloc(sizeof(Token));
     t->kind = TK_IDENT;
-    char *name = malloc(sizeof(char)*len);
-    strncpy(name, input, len);
-    t->name = name;
+    //char *name = malloc(sizeof(char)*len);
+    t->name = strndup(input, len);
     t->input = input;
     return t;
 }
