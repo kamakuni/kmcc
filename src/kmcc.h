@@ -34,12 +34,12 @@ struct Map {
 typedef struct Type Type;
 struct Type {
     enum { INT, PTR } ty;
-    struct Type *ptr_to;
+    Type *ptr_to;
 };
 
 typedef struct Var Var;
 struct Var {
-    struct Var *next;
+    Var *next;
     char *name;
     Type *ty;
     int offset;
@@ -124,6 +124,7 @@ Node *new_node_ident(Type *ty, char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
 
 Var *new_var();
+Var *var_get(Var *var,char *name);
 void var_insert_first(Var **var, Type *ty, char *name, int offset);
 int var_get_offset(Var *var, char *name);
 int var_len(Var *var);

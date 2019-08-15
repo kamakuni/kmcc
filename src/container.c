@@ -70,7 +70,11 @@ int var_exist(Var *var, char *name){
 Var *var_get(Var *var,char *name) {
     while(var->next != NULL){
         if(strcmp(var->name, name) == 0){
-            return var;
+            Var *res = new_var();
+            res->ty = var->ty;
+            res->name = var->name;
+            res->offset = var->offset;
+            return res;
         }
         var = var->next;
     };
@@ -125,9 +129,6 @@ Token *new_token_ident(char *input, int len) {
     Token *t = calloc(1,sizeof(Token));
     //Token *t = malloc(sizeof(Token));
     t->kind = TK_IDENT;
-    //char *name = malloc(sizeof(char)*len);
-    char *name = malloc(sizeof(char)*len+1);
-    name = strndup(input, len);
     t->name = strndup(input, len);
     t->input = input;
     return t;

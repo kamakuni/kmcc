@@ -342,6 +342,13 @@ Node *term() {
         if (!consume('(')) {
             if (!var_exist(variables, name)) 
                 error("未定義の変数です。：%s", name);
+            /*Var *var;
+            while(variables->next != NULL){
+                if(strcmp(variables->name, name) == 0){
+                    var = variables;
+                }
+                variables = variables->next;
+            };*/
             Var *var = var_get(variables, name);
             return new_node_ident(var->ty,name);
         }
