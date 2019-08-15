@@ -4,59 +4,64 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct Vector Vector;
+struct Vector{
     void **data;
     int capacity;
     int len;
-} Vector;
+};
 
+typedef struct Token Token;
 // Type for tokens
-typedef struct {
+struct Token {
     int kind; // token kind
     int val; // value for Integer token
     char *name; // name for Ident
     char *input; // token stirng for debugging
-} Token;
+};
 
-
-typedef struct {
+typedef struct Tokens Tokens;
+struct Tokens {
     Vector *vec;
-} Tokens;
+};
 
-typedef struct {
+typedef struct Map Map;
+struct Map {
     Vector *keys;
     Vector *vals;
-} Map;
+};
 
-
-typedef struct Type {
+typedef struct Type Type;
+struct Type {
     enum { INT, PTR } ty;
     struct Type *ptr_to;
-} Type;
+};
 
-typedef struct Var {
+typedef struct Var Var;
+struct Var {
     struct Var *next;
     char *name;
     Type *ty;
     int offset;
-} Var;
+};
 
-typedef struct Node {
+typedef struct Node Node;
+struct Node {
     int kind;
-    struct Node *lhs;
-    struct Node *rhs;
-    struct Node *cond; // for ND_IF | ND_FOR | ND_WHILE
-    struct Node *block; // for ND_FUNC
-    struct Node *body; // for ND_IF | ND_FOR | ND_WHILE
-    struct Node *elseBody; // for ND_IF
-    struct Node *init; // for ND_FOR
-    struct Node *incdec; // for ND_FOR
+    Node *lhs;
+    Node *rhs;
+    Node *cond; // for ND_IF | ND_FOR | ND_WHILE
+    Node *block; // for ND_FUNC
+    Node *body; // for ND_IF | ND_FOR | ND_WHILE
+    Node *elseBody; // for ND_IF
+    Node *init; // for ND_FOR
+    Node *incdec; // for ND_FOR
     Vector *stmts; // for ND_BLOCK | ND_FUNC
     Vector *args; // for ND_CALL
     Type *ty;
     int val;
     char *name;
-} Node;
+};
 
 // Values for token types
 enum {
@@ -127,6 +132,7 @@ int consume(int kind);
 void tokenize();
 
 int is_alnum(char c);
+char *strndup(char *p,int len);
 void error(char *fmt, ...);
 
 void program();

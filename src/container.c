@@ -126,6 +126,8 @@ Token *new_token_ident(char *input, int len) {
     //Token *t = malloc(sizeof(Token));
     t->kind = TK_IDENT;
     //char *name = malloc(sizeof(char)*len);
+    char *name = malloc(sizeof(char)*len+1);
+    name = strndup(input, len);
     t->name = strndup(input, len);
     t->input = input;
     return t;
