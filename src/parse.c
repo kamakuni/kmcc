@@ -1,9 +1,43 @@
 #include "kmcc.h"
 
+// Report an error and exit.
 void error(char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+    exit(1);
+}
+
+// Report an error message in the following format and exit.
+//
+// foo.c:10: x = y + 1;
+//               ^ <error message here>
+void verror_at(char *loc, char *fmt, va_list ap) {
+    // Find a line containing `loc`.
+    char *line = loc;
+    while (user_input < line && line[-1] != '\n')
+        line--;
+    
+    char *end = loc;
+    while (*end != '\n')
+        end++;
+    
+    // Get a line number.
+    int line_num = 1;
+    for (char *p = user_input; p < line; p++)
+        if (*p == '\n')
+            line_num++;
+    
+    // Print out the line.
+    int ident = fprintf(stderr, "%s:%d: ", filename, line_num);
+    fprintf(stderr, "%.*s\n", (int)(end - line), line);
+
+    // Show the error message.
+    int pos = loc - line + ident;
+    fprintf(stderr, "%*s", pos, ""); // print pos spaces.
+    fprintf(stderr, "^ ");
+    fprintf(stderr, fmt, ap);
     fprintf(stderr, "\n");
     exit(1);
 }

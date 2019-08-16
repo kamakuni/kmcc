@@ -148,6 +148,7 @@ Node *unary();
 
 void gen();
 
+extern char *filename;
 extern char *user_input;
 extern int pos;
 extern Tokens *tokens;
