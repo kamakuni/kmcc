@@ -423,8 +423,15 @@ Node *unary() {
     return term();
 }
 
+Token *peek(int kind){
+    Token *token = get(tokens, pos);
+    if (token->kind != kind)
+        return NULL;
+    return token;
+}
+
 int consume(int kind) {
-    if (get(tokens, pos)->kind != kind)
+    if (!peek(kind))
         return 0;
     pos++;
     return 1;
