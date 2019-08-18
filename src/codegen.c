@@ -4,12 +4,20 @@ int label_count = 0;
 char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 void gen_lval(Node *node) {
-    if (node->kind != ND_IDENT)
-        error("代入の左辺値が変数でありません。");
-    int offset = var_get_offset(variables, node->name);
-    printf("  mov rax, rbp\n");
-    printf("  sub rax, %d\n", offset);
-    printf("  push rax\n");
+    switch (node->kind) {
+    case ND_IDENT:{
+        int offset = var_get_offset(variables, node->name);
+        printf("  mov rax, rbp\n");
+        printf("  sub rax, %d\n", offset);
+        printf("  push rax\n");
+        return;
+    }
+    case ND_DEREF:
+        gen(node);
+        return;
+    }
+
+    error("not a left value");
 }
 
 void gen_block(Node *node){
