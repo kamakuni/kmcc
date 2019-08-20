@@ -12,9 +12,9 @@ void gen_lval(Node *node) {
         printf("  push rax\n");
         return;
     }
-    /*case ND_DEREF:
-        gen(node);
-        return;*/
+    case ND_DEREF:
+        gen(node->lhs);
+        return;
     }
 
     error("not a left value");
@@ -170,11 +170,7 @@ void gen(Node *node) {
     }
     
     if (node->kind == '=') {
-        if(node->lhs->kind == ND_IDENT) {
-            gen_lval(node->lhs);    
-        } else if (node->lhs->kind == ND_DEREF) {
-            gen(node->lhs);
-        }
+        gen_lval(node->lhs);    
         gen(node->rhs);
         
         printf("  pop rdi\n");
