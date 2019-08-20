@@ -4,51 +4,64 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct Vector Vector;
+struct Vector{
     void **data;
     int capacity;
     int len;
-} Vector;
+};
 
+typedef struct Token Token;
 // Type for tokens
-typedef struct {
-    int ty; // token type
+struct Token {
+    int kind; // token kind
     int val; // value for Integer token
     char *name; // name for Ident
     char *input; // token stirng for debugging
-} Token;
+};
 
-
-typedef struct {
+typedef struct Tokens Tokens;
+struct Tokens {
     Vector *vec;
-} Tokens;
+};
 
-typedef struct {
+typedef struct Map Map;
+struct Map {
     Vector *keys;
     Vector *vals;
-} Map;
+};
 
-typedef struct Var {
-    struct Var *next;
+typedef struct Type Type;
+struct Type {
+    enum { INT, PTR } ty;
+    Type *ptr_to;
+};
+
+typedef struct Var Var;
+struct Var {
+    Var *next;
     char *name;
+    Type *ty;
     int offset;
-} Var;
+};
 
-typedef struct Node {
-    int ty;
-    struct Node *lhs;
-    struct Node *rhs;
-    struct Node *cond; // for ND_IF | ND_FOR | ND_WHILE
-    struct Node *block; // for ND_FUNC
-    struct Node *body; // for ND_IF | ND_FOR | ND_WHILE
-    struct Node *elseBody; // for ND_IF
-    struct Node *init; // for ND_FOR
-    struct Node *incdec; // for ND_FOR
+typedef struct Node Node;
+struct Node {
+    int kind;
+    Node *lhs;
+    Node *rhs;
+    Node *cond; // for ND_IF | ND_FOR | ND_WHILE
+    Node *block; // for ND_FUNC
+    Node *body; // for ND_IF | ND_FOR | ND_WHILE
+    Node *elseBody; // for ND_IF
+    Node *init; // for ND_FOR
+    Node *incdec; // for ND_FOR
     Vector *stmts; // for ND_BLOCK | ND_FUNC
     Vector *args; // for ND_CALL
+    Type *ty;
     int val;
     char *name;
-} Node;
+};
 
 // Values for token types
 enum {
@@ -94,7 +107,7 @@ Map *new_map();
 void map_put(Map *map, char *key, void *val);
 Map *map_get(Map *map,char *key);
 
-Token *new_token(int ty, char *input);
+Token *new_token(int kind, char *input);
 Token *new_token_num(int val, char *input);
 //Token *new_token_ident(char *name);
 Token *new_token_ident(char *input, int len);
@@ -105,20 +118,22 @@ Token *get(Tokens *t, int i);
 
 void runtest();
 
-Node *new_node(int ty, Node *lhs, Node *rhs);
+Node *new_node(int kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
-Node *new_node_ident(char *name);
+Node *new_node_ident(Type *ty, char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
 
 Var *new_var();
-void var_insert_first(Var **var, char *name, int offset);
+Var *var_get(Var *var,char *name);
+void var_insert_first(Var **var, Type *ty, char *name, int offset);
 int var_get_offset(Var *var, char *name);
 int var_len(Var *var);
 
-int consume(int ty);
+int consume(int kind);
 void tokenize();
 
 int is_alnum(char c);
+char *strndup(char *p,int len);
 void error(char *fmt, ...);
 
 void program();
@@ -133,6 +148,7 @@ Node *unary();
 
 void gen();
 
+extern char *filename;
 extern char *user_input;
 extern int pos;
 extern Tokens *tokens;

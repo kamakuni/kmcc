@@ -96,5 +96,6 @@ try 1  "int func(int a){return a = a + 1;}int main(){return func(0);}"
 try 55 "int fib(int n){if(n==0){return 0;} if(n==1){return 1;} return fib(n-2) + fib(n-1);}int main(){return fib(10);}"
 
 try 10 "int main(){int a; int b; a = 10; b = &a; return *b;}"
+try 3  "int main(){int x;int *y;y = &x;*y = 3;return x;}"
 
 echo OK

@@ -42,14 +42,16 @@ Map *map_get(Map *map,char *key){
 Var *new_var(){
     Var *var = malloc(sizeof(Var));
     var->next = NULL;
+    var->ty = NULL;
     var->name = "";
     var->offset = 0;
     return var;
 }
 
-void var_insert_first(Var **var,char *name, int offset){
+void var_insert_first(Var **var, Type *ty, char *name, int offset){
     Var *new = malloc(sizeof(Var));
     new->next = *var;
+    new->ty = ty;
     new->name = name;
     new->offset = offset;
     *var = new;
@@ -63,6 +65,20 @@ int var_exist(Var *var, char *name){
         var = var->next;
     };
     return 0;
+}
+
+Var *var_get(Var *var,char *name) {
+    while(var->next != NULL){
+        if(strcmp(var->name, name) == 0){
+            Var *res = new_var();
+            res->ty = var->ty;
+            res->name = var->name;
+            res->offset = var->offset;
+            return res;
+        }
+        var = var->next;
+    };
+    return NULL;
 }
 
 int var_get_offset(Var *var, char *name){
@@ -84,24 +100,24 @@ int var_len(Var *var){
     return i;
 }
 
-void var_append(Var *var, char *name){
+void var_append(Var *var, Type *ty, char *name){
     int offset = (var_len(variables) + 1) * 8;
     int current = var_get_offset(variables, name);
     if (current != 0)
         offset = current;
-    var_insert_first(&variables, name, offset);
+    var_insert_first(&variables, ty, name, offset);
 }
 
-Token *new_token(int ty, char *input) {
+Token *new_token(int kind, char *input) {
     Token *t = malloc(sizeof(Token));
-    t->ty = ty;
+    t->kind = kind;
     t->input = input;
     return t;
 }
 
 Token *new_token_num(int val, char *input) {
     Token *t = malloc(sizeof(Token));
-    t->ty = TK_NUM;
+    t->kind = TK_NUM;
     t->val = val;
     t->input = input;
     return t;
@@ -110,11 +126,10 @@ Token *new_token_num(int val, char *input) {
 Token *new_token_ident(char *input, int len) {
     // if(len > strlen(input))
     // return NULL; 
-    Token *t = malloc(sizeof(Token));
-    t->ty = TK_IDENT;
-    char *name = malloc(sizeof(char)*len);
-    strncpy(name, input, len);
-    t->name = name;
+    Token *t = calloc(1,sizeof(Token));
+    //Token *t = malloc(sizeof(Token));
+    t->kind = TK_IDENT;
+    t->name = strndup(input, len);
     t->input = input;
     return t;
 }
@@ -171,7 +186,7 @@ void test_vector(){
     append(tokens, new_token_num(2,"3"));
     Token *token = get(tokens,0);
     
-    expect(__LINE__, TK_NUM, token->ty);
+    expect(__LINE__, TK_NUM, token->kind);
     expect(__LINE__, 2, token->val);
     expect(__LINE__, 0, strcmp("3", token->input));
     
@@ -179,7 +194,7 @@ void test_vector(){
     
     token = get(tokens,1);
     
-    expect(__LINE__, TK_NUM, token->ty);
+    expect(__LINE__, TK_NUM, token->kind);
     expect(__LINE__, 3, token->val);
     expect(__LINE__, 0, strcmp("4", token->input));
 }
@@ -188,11 +203,17 @@ void test_linked_list(){
     Var *var = new_var();
     expect(__LINE__, 0, var->offset);
     expect(__LINE__, 0, strcmp("", var->name));
-    var_insert_first(&var, "name1", (var_len(var)+1)*8);
+    Type *ty = malloc(sizeof(Type));
+    ty->ty = INT;
+    var_insert_first(&var, ty, "name1", (var_len(var)+1)*8);
     expect(__LINE__, 8, var->offset);
+    expect(__LINE__, INT, var->ty->ty);
     expect(__LINE__, 0, strcmp("name1", var->name));
-    var_insert_first(&var, "name2", (var_len(var)+1)*8);
+    ty = malloc(sizeof(Type));
+    ty->ty = PTR;
+    var_insert_first(&var, ty, "name2", (var_len(var)+1)*8);
     expect(__LINE__, 16, var->offset);
+    expect(__LINE__, PTR, var->ty->ty);
     expect(__LINE__, 0, strcmp("name2", var->name));
     int offset = var_get_offset(var, "name1");
     expect(__LINE__, 8, offset);

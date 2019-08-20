@@ -1,9 +1,43 @@
 #include "kmcc.h"
 
+// Report an error and exit.
 void error(char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+    exit(1);
+}
+
+// Report an error message in the following format and exit.
+//
+// foo.c:10: x = y + 1;
+//               ^ <error message here>
+void verror_at(char *loc, char *fmt, va_list ap) {
+    // Find a line containing `loc`.
+    char *line = loc;
+    while (user_input < line && line[-1] != '\n')
+        line--;
+    
+    char *end = loc;
+    while (*end != '\n')
+        end++;
+    
+    // Get a line number.
+    int line_num = 1;
+    for (char *p = user_input; p < line; p++)
+        if (*p == '\n')
+            line_num++;
+    
+    // Print out the line.
+    int ident = fprintf(stderr, "%s:%d: ", filename, line_num);
+    fprintf(stderr, "%.*s\n", (int)(end - line), line);
+
+    // Show the error message.
+    int pos = loc - line + ident;
+    fprintf(stderr, "%*s", pos, ""); // print pos spaces.
+    fprintf(stderr, "^ ");
+    fprintf(stderr, fmt, ap);
     fprintf(stderr, "\n");
     exit(1);
 }
@@ -23,9 +57,16 @@ int is_alnum(char c) {
     (c == '_');
 }
 
-Node *new_node(int ty, Node *lhs, Node *rhs) {
+char *strndup(char *p,int len) {
+    char *buf = malloc(len + 1);
+    strncpy(buf, p , len);
+    buf[len] = '\0';
+    return buf;
+}
+
+Node *new_node(int kind, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ty;
+    node->kind = kind;
     node->lhs = lhs;
     node->rhs = rhs;
     return node;
@@ -33,14 +74,14 @@ Node *new_node(int ty, Node *lhs, Node *rhs) {
 
 Node *new_node_block(Vector *stmts) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_BLOCK;
+    node->kind = ND_BLOCK;
     node->stmts = stmts;
     return node;
 }
 
 Node *new_node_call(char *name, Vector *args) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_CALL;
+    node->kind = ND_CALL;
     node->name = name;
     node->args = args;
     return node;
@@ -48,7 +89,7 @@ Node *new_node_call(char *name, Vector *args) {
 
 Node *new_node_function(char *name, Vector *args, Node *block) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_FUNC;
+    node->kind = ND_FUNC;
     node->name = name;
     node->args = args;
     node->block = block;
@@ -57,23 +98,24 @@ Node *new_node_function(char *name, Vector *args, Node *block) {
 
 Node *new_node_num(int val) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_NUM;
+    node->kind = ND_NUM;
     node->val = val;
     return node;
 }
 
-Node *new_node_ident(char *name) {
-    var_append(variables, name);
+Node *new_node_ident(Type *ty, char *name) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_IDENT;
-    node->name = malloc(sizeof(char));
-    strncpy(node->name, name, strlen(name));
+    node->kind = ND_IDENT;
+    //node->name = malloc(sizeof(char));
+    node->ty = ty;
+    node->name = strndup(name, strlen(name));
+    var_append(variables, ty, name);
     return node;
 }
 
 Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_FOR;
+    node->kind = ND_FOR;
     node->init = init;
     node->cond = cond;
     node->incdec = incdec;
@@ -83,7 +125,7 @@ Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
 
 Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_IF;
+    node->kind = ND_IF;
     node->cond = cond;
     node->body = body;
     node->elseBody = elseBody;
@@ -92,7 +134,7 @@ Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
 
 Node *new_node_while(Node *cond, Node *body) {
     Node *node = malloc(sizeof(Node));
-    node->ty = ND_WHILE;
+    node->kind = ND_WHILE;
     node->cond = cond;
     node->body = body;
     return node;
@@ -115,20 +157,34 @@ Node *function() {
     Node *node;
     if (!consume(TK_INT))
         error_at(get(tokens,pos)->input, "intではないトークンです");
+    while (get(tokens,pos)->kind != TK_IDENT) {
+        if (!consume('*'))
+            error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+    }
     char *name = get(tokens,pos)->name;
     if (!consume(TK_IDENT))
         error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
     if (!consume('('))
         error_at(get(tokens,pos)->input, "'('ではないトークンです");        
     Vector *args = new_vector();
-    while (get(tokens,pos)->ty != ')') {
+    while (get(tokens,pos)->kind != ')') {
         if (!consume(TK_INT))
             error_at(get(tokens,pos)->input, "intではないトークンです");
-        if (get(tokens,pos)->ty == TK_IDENT) {
-            var_append(variables, get(tokens,pos)->name);
+        Type *ty = malloc(sizeof(Type));
+        ty->ty = INT;
+        while (get(tokens,pos)->kind != TK_IDENT) {
+            if (!consume('*'))
+                error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+            Type *next = ty;
+            ty = malloc(sizeof(Type));
+            ty->ty = PTR;
+            ty->ptr_to = next;
+        }
+        if (get(tokens,pos)->kind == TK_IDENT) {
+            var_append(variables, ty, get(tokens,pos)->name);
             vec_push(args, (void *) get(tokens,pos++)->name);
         }
-        if (get(tokens,pos)->ty ==  ',')
+        if (get(tokens,pos)->kind ==  ',')
             pos++;
     }
     if (!consume(')'))
@@ -136,7 +192,7 @@ Node *function() {
     if (!consume('{'))
         error_at(get(tokens,pos)->input, "'{'ではないトークンです");        
     Vector *stmts = new_vector();
-    while(get(tokens, pos)->ty != '}') {
+    while(get(tokens, pos)->kind != '}') {
         vec_push(stmts, stmt());
     }
     Node *block = new_node_block(stmts);
@@ -149,9 +205,19 @@ Node *stmt() {
     Node *node;
 
     if (consume(TK_INT)) {
-        if (get(tokens,pos)->ty == TK_IDENT ) {
+        Type *ty = malloc(sizeof(Type));
+        ty->ty = INT;
+        while (get(tokens,pos)->kind != TK_IDENT) {
+            if (!consume('*'))
+                error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+            Type *next = ty;
+            ty = malloc(sizeof(Type));
+            ty->ty = PTR;
+            ty->ptr_to = next;
+        }
+        if (get(tokens,pos)->kind == TK_IDENT ) {
             char *name = get(tokens,pos++)->name;
-            node = new_node_ident(name);
+            node = new_node_ident(ty, name);
             if (!consume(';'))
                 error_at(get(tokens,pos)->input, "';'ではないトークンです");
             return node;
@@ -161,7 +227,7 @@ Node *stmt() {
     }
     if (consume('{')) {
         Vector *stmts = new_vector();
-        while(get(tokens, pos)->ty != '}') {
+        while(get(tokens, pos)->kind != '}') {
             vec_push(stmts, stmt());
         }
         if(!consume('}'))
@@ -194,19 +260,19 @@ Node *stmt() {
         if(!consume('('))
             error_at(get(tokens,pos)->input, "'('ではないトークンです");
         Node *init = NULL;
-        if(get(tokens,pos)->ty != ';') {
+        if(get(tokens,pos)->kind != ';') {
             init = expr();
         }
         if(!consume(';'))
             error_at(get(tokens,pos)->input, "';'ではないトークンです");
         Node *cond = NULL;
-        if(get(tokens,pos)->ty != ';') {
+        if(get(tokens,pos)->kind != ';') {
             cond = expr();
         }
         if(!consume(';'))
             error_at(get(tokens,pos)->input, "';'ではないトークンです");
         Node *incdec = NULL;
-        if(get(tokens,pos)->ty != ')') {
+        if(get(tokens,pos)->kind != ')') {
             incdec = expr();
         }
         if(!consume(')'))
@@ -226,7 +292,7 @@ Node *stmt() {
 
 void program() {
     int i = 0;
-    while (get(tokens,pos)->ty != TK_EOF) {
+    while (get(tokens,pos)->kind != TK_EOF) {
         //code[i++] = stmt();
         code[i++] = function();
     }
@@ -301,23 +367,31 @@ Node *term() {
         return node;
     }
     
-    if ( get(tokens,pos)->ty == TK_NUM ) {
+    if ( get(tokens,pos)->kind == TK_NUM ) {
         return new_node_num(get(tokens,pos++)->val);
     }
     
-    if (get(tokens,pos)->ty == TK_IDENT ) {
+    if (get(tokens,pos)->kind == TK_IDENT ) {
         char *name = get(tokens,pos++)->name;
         if (!consume('(')) {
             if (!var_exist(variables, name)) 
                 error("未定義の変数です。：%s", name);
-            return new_node_ident(name);
+            /*Var *var;
+            while(variables->next != NULL){
+                if(strcmp(variables->name, name) == 0){
+                    var = variables;
+                }
+                variables = variables->next;
+            };*/
+            Var *var = var_get(variables, name);
+            return new_node_ident(var->ty,name);
         }
         Vector *args = new_vector();
-        while (get(tokens,pos)->ty != ')') {
+        while (get(tokens,pos)->kind != ')') {
             Node *node = add();
             vec_push(args, (void *) node);
             consume(',');
-            /*if (get(tokens,pos)->ty == TK_NUM) {
+            /*if (get(tokens,pos)->kind == TK_NUM) {
                 vec_push(args, (void *) get(tokens,pos++)->val);
                 consume(',');
             }*/
@@ -349,8 +423,15 @@ Node *unary() {
     return term();
 }
 
-int consume(int ty) {
-    if (get(tokens, pos)->ty != ty)
+Token *peek(int kind){
+    Token *token = get(tokens, pos);
+    if (token->kind != kind)
+        return NULL;
+    return token;
+}
+
+int consume(int kind) {
+    if (!peek(kind))
         return 0;
     pos++;
     return 1;

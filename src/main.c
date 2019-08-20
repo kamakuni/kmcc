@@ -4,6 +4,7 @@ int pos;
 Tokens *tokens;
 char *user_input;
 Var *variables;
+char *filename;
 
 int main(int argc, char **argv) {
     if (argc != 2) {
