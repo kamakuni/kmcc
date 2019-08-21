@@ -11,10 +11,28 @@ struct Vector{
     int len;
 };
 
+// Values for token types
+typedef enum {
+    TK_RESERVED, // Keywords or punctuators
+    TK_NUM, // Integer literals
+    TK_IDENT, // Identifiers
+    TK_IF,
+    TK_INT,
+    TK_ELSE,
+    TK_WHILE,
+    TK_FOR,
+    TK_RETURN,
+    TK_EQ,
+    TK_NE,
+    TK_LE,
+    TK_GE,
+    TK_EOF, // End-of-file markers
+} TokenKind;
+
 typedef struct Token Token;
 // Type for tokens
 struct Token {
-    int kind; // token kind
+    TokenKind kind; // token kind
     int val; // value for Integer token
     char *name; // name for Ident
     char *input; // token stirng for debugging
@@ -63,23 +81,6 @@ struct Node {
     char *name;
 };
 
-// Values for token types
-enum {
-    TK_NUM = 256, // token for integer
-    TK_IDENT,
-    TK_IF,
-    TK_INT,
-    TK_ELSE,
-    TK_WHILE,
-    TK_FOR,
-    TK_RETURN,
-    TK_EQ,
-    TK_NE,
-    TK_LE,
-    TK_GE,
-    TK_EOF, // token for EOF
-};
-
 enum {
     ND_NUM = 256,
     ND_BLOCK,
@@ -107,7 +108,7 @@ Map *new_map();
 void map_put(Map *map, char *key, void *val);
 Map *map_get(Map *map,char *key);
 
-Token *new_token(int kind, char *input);
+Token *new_token(TokenKind kind, char *input);
 Token *new_token_num(int val, char *input);
 //Token *new_token_ident(char *name);
 Token *new_token_ident(char *input, int len);
@@ -129,7 +130,8 @@ void var_insert_first(Var **var, Type *ty, char *name, int offset);
 int var_get_offset(Var *var, char *name);
 int var_len(Var *var);
 
-int consume(int kind);
+Token *peek(TokenKind kind);
+int consume(TokenKind kind);
 void tokenize();
 
 int is_alnum(char c);

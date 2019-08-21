@@ -108,7 +108,7 @@ void var_append(Var *var, Type *ty, char *name){
     var_insert_first(&variables, ty, name, offset);
 }
 
-Token *new_token(int kind, char *input) {
+Token *new_token(TokenKind kind, char *input) {
     Token *t = malloc(sizeof(Token));
     t->kind = kind;
     t->input = input;

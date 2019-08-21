@@ -423,14 +423,14 @@ Node *unary() {
     return term();
 }
 
-Token *peek(int kind){
+Token *peek(TokenKind kind){
     Token *token = get(tokens, pos);
     if (token->kind != kind)
         return NULL;
     return token;
 }
 
-int consume(int kind) {
+int consume(TokenKind kind) {
     if (!peek(kind))
         return 0;
     pos++;
