@@ -437,6 +437,15 @@ int consume(TokenKind kind) {
     return 1;
 }
 
+int expect_number() {
+    Token *token = get(tokens, pos);
+    if (token->kind != TK_NUM)
+        error("数ではありません");
+    int val = token->val;
+    pos++;
+    return val;
+}
+
 void tokenize() {
     char *p = user_input;
     
