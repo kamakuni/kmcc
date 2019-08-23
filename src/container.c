@@ -108,29 +108,31 @@ void var_append(Var *var, Type *ty, char *name){
     var_insert_first(&variables, ty, name, offset);
 }
 
-Token *new_token(TokenKind kind, char *input) {
+Token *new_token(TokenKind kind, Token *cur, char *str) {
     Token *t = malloc(sizeof(Token));
     t->kind = kind;
-    t->input = input;
+    t->next = cur;
+    t->str = str;
     return t;
 }
 
-Token *new_token_num(int val, char *input) {
+Token *new_token_num(int val, char *str) {
     Token *t = malloc(sizeof(Token));
     t->kind = TK_NUM;
     t->val = val;
-    t->input = input;
+    t->str = str;
     return t;
 }
 
-Token *new_token_ident(char *input, int len) {
+Token *new_token_ident(char *str, Token *cur, int len) {
     // if(len > strlen(input))
     // return NULL; 
     Token *t = calloc(1,sizeof(Token));
     //Token *t = malloc(sizeof(Token));
     t->kind = TK_IDENT;
-    t->name = strndup(input, len);
-    t->input = input;
+    t->next = cur;
+    t->name = strndup(str, len);
+    t->str = str;
     return t;
 }
 

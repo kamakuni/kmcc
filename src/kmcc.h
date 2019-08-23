@@ -33,9 +33,10 @@ typedef struct Token Token;
 // Type for tokens
 struct Token {
     TokenKind kind; // token kind
+    Token *next;
     int val; // value for Integer token
     char *name; // name for Ident
-    char *input; // token stirng for debugging
+    char *str; // token stirng for debugging
 };
 
 typedef struct Tokens Tokens;
@@ -108,10 +109,10 @@ Map *new_map();
 void map_put(Map *map, char *key, void *val);
 Map *map_get(Map *map,char *key);
 
-Token *new_token(TokenKind kind, char *input);
-Token *new_token_num(int val, char *input);
+Token *new_token(TokenKind kind, Token *cur, char *str);
+Token *new_token_num(Token *cur, int val, char *str);
 //Token *new_token_ident(char *name);
-Token *new_token_ident(char *input, int len);
+Token *new_token_ident(Token *cur, char *str, int len);
 
 Tokens *new_tokens();
 void append(Tokens *t, Token *elem);
@@ -154,5 +155,6 @@ extern char *filename;
 extern char *user_input;
 extern int pos;
 extern Tokens *tokens;
+extern Token *token;
 extern Node *code[];
 extern Var *variables;

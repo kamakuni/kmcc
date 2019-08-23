@@ -2,6 +2,7 @@
 
 int pos;
 Tokens *tokens;
+Token *token;
 char *user_input;
 Var *variables;
 char *filename;

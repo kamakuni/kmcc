@@ -424,7 +424,6 @@ Node *unary() {
 }
 
 Token *peek(TokenKind kind){
-    Token *token = get(tokens, pos);
     if (token->kind != kind)
         return NULL;
     return token;
@@ -438,7 +437,6 @@ int consume(TokenKind kind) {
 }
 
 int expect_number() {
-    Token *token = get(tokens, pos);
     if (token->kind != TK_NUM)
         error("数ではありません");
     int val = token->val;
@@ -447,6 +445,10 @@ int expect_number() {
 }
 
 void tokenize() {
+    Token head;
+    head.next = NULL;
+    Token *cur = &head;
+
     char *p = user_input;
     
     while (*p) {
@@ -456,13 +458,13 @@ void tokenize() {
         }
         
         if (strncmp(p,"<=",2) == 0){
-            append(tokens, new_token(TK_LE,p));
+            cur = new_token(TK_LE, cur, p);
             p = p + 2;
             continue;
         }
         
         if (strncmp(p,">=",2) == 0){
-            append(tokens, new_token(TK_GE,p));
+            cur = new_token(TK_GE, cur, p);
             p = p + 2;
             continue;
         }
@@ -480,43 +482,43 @@ void tokenize() {
           || *p == ';'
           || *p == ','
           || *p == '&') {
-            append(tokens, new_token(*p,p));
+            cur = new_token(*p, cur, p);
             p++;
             continue;
         }
 
         if (strncmp(p, "int", 3) == 0 && !is_alnum(p[3])){
-            append(tokens, new_token(TK_INT,p));
+            cur = new_token(TK_INT,cur,p);
             p += 3;
             continue;
         }
 
         if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])){
-            append(tokens, new_token(TK_IF,p));
+            cur = new_token(TK_IF,cur,p);
             p += 2;
             continue;
         }
 
         if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])){
-            append(tokens, new_token(TK_FOR,p));
+            cur = new_token(TK_FOR,cur,p);
             p += 3;
             continue;
         }
 
         if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])){
-            append(tokens, new_token(TK_ELSE,p));
+            cur = new_token(TK_ELSE,cur,p);
             p += 4;
             continue;
         }
 
         if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
-            append(tokens, new_token(TK_RETURN,p));
+            cur = new_token(TK_RETURN,cur,p);
             p += 6;
             continue;
         }
 
         if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])){
-            append(tokens, new_token(TK_WHILE,p));
+            cur = new_token(TK_WHILE,cur,p);
             p += 5;
             continue;
         }
@@ -525,30 +527,30 @@ void tokenize() {
             int i = 0;
             while(isalpha(p[i]))
                 i++;
-            append(tokens, new_token_ident(p, i));
+            cur = new_token_ident(cur,p,i);
             p += i;
             continue;
         }
         
         if (isdigit(*p)) {
-            append(tokens, new_token_num(strtol(p, &p, 10), p));
+            cur = new_token_num(cur,strtol(p, &p, 10),p);
             continue;
         }
         
         if (strncmp(p,"==",2) == 0){
-            append(tokens, new_token(TK_EQ,p));
+            cur = new_token(TK_EQ,cur,p);
             p = p + 2;
             continue;
         }
         
         if (strncmp(p,"!=",2) == 0){
-            append(tokens, new_token(TK_NE,p));
+            cur = new_token(TK_NE,cur,p);
             p = p + 2;
             continue;
         }
         
         if ( *p == '=' ) {
-            append(tokens, new_token(*p,p));
+            cur = new_token(*p,cur,p);
             p++;
             continue;
         }
