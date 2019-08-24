@@ -3,9 +3,9 @@
 int pos;
 Tokens *tokens;
 Token *token;
-char *user_input;
 Var *variables;
 char *filename;
+char *user_input;
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -19,10 +19,9 @@ int main(int argc, char **argv) {
     }
     
     pos = 0;
-    user_input = argv[1];
     variables = new_var();
-    tokens = new_tokens();
-    tokenize();
+    user_input = argv[1];
+    token = tokenize(user_input);
     
     // tokens to syntax tree
     program();

@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -132,8 +133,8 @@ int var_get_offset(Var *var, char *name);
 int var_len(Var *var);
 
 Token *peek(TokenKind kind);
-int consume(TokenKind kind);
-void tokenize();
+bool consume(char op);
+Token *tokenize(char *p);
 
 int is_alnum(char c);
 char *strndup(char *p,int len);

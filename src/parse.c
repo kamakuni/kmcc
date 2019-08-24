@@ -156,25 +156,25 @@ Node *expr() {
 Node *function() {
     Node *node;
     if (!consume(TK_INT))
-        error_at(get(tokens,pos)->input, "intではないトークンです");
+        error_at(token->str, "intではないトークンです");
     while (get(tokens,pos)->kind != TK_IDENT) {
         if (!consume('*'))
-            error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+            error_at(token->str, "'*'ではないではないトークンです");
     }
     char *name = get(tokens,pos)->name;
     if (!consume(TK_IDENT))
-        error_at(get(tokens,pos)->input, "関数名ではないではないトークンです");
+        error_at(token->str, "関数名ではないではないトークンです");
     if (!consume('('))
-        error_at(get(tokens,pos)->input, "'('ではないトークンです");        
+        error_at(token->str, "'('ではないトークンです");        
     Vector *args = new_vector();
     while (get(tokens,pos)->kind != ')') {
         if (!consume(TK_INT))
-            error_at(get(tokens,pos)->input, "intではないトークンです");
+            error_at(token->str, "intではないトークンです");
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
         while (get(tokens,pos)->kind != TK_IDENT) {
             if (!consume('*'))
-                error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+                error_at(token->str, "'*'ではないではないトークンです");
             Type *next = ty;
             ty = malloc(sizeof(Type));
             ty->ty = PTR;
@@ -188,16 +188,16 @@ Node *function() {
             pos++;
     }
     if (!consume(')'))
-        error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
+        error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
     if (!consume('{'))
-        error_at(get(tokens,pos)->input, "'{'ではないトークンです");        
+        error_at(token->str, "'{'ではないトークンです");        
     Vector *stmts = new_vector();
     while(get(tokens, pos)->kind != '}') {
         vec_push(stmts, stmt());
     }
     Node *block = new_node_block(stmts);
     if (!consume('}'))
-        error_at(get(tokens,pos)->input, "'}'ではないトークンです");        
+        error_at(token->str, "'}'ではないトークンです");        
     return new_node_function(name, args, block);
 }
 
@@ -209,7 +209,7 @@ Node *stmt() {
         ty->ty = INT;
         while (get(tokens,pos)->kind != TK_IDENT) {
             if (!consume('*'))
-                error_at(get(tokens,pos)->input, "'*'ではないではないトークンです");
+                error_at(token->str, "'*'ではないではないトークンです");
             Type *next = ty;
             ty = malloc(sizeof(Type));
             ty->ty = PTR;
@@ -219,10 +219,10 @@ Node *stmt() {
             char *name = get(tokens,pos++)->name;
             node = new_node_ident(ty, name);
             if (!consume(';'))
-                error_at(get(tokens,pos)->input, "';'ではないトークンです");
+                error_at(token->str, "';'ではないトークンです");
             return node;
         } else {
-            error_at(get(tokens,pos)->input, "識別子ではないトークンです");
+            error_at(token->str, "識別子ではないトークンです");
         }
     }
     if (consume('{')) {
@@ -231,15 +231,15 @@ Node *stmt() {
             vec_push(stmts, stmt());
         }
         if(!consume('}'))
-            error_at(get(tokens,pos)->input, "'}'ではないトークンです");
+            error_at(token->str, "'}'ではないトークンです");
         return new_node_block(stmts);
     }
     if (consume(TK_IF)) {
         if(!consume('('))
-            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+            error_at(token->str, "'('ではないトークンです");
         Node *cond = expr();
         if(!consume(')'))
-            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+            error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
         if(consume(TK_ELSE)) {
             Node *elseBody = stmt();
@@ -249,34 +249,34 @@ Node *stmt() {
     }
     if (consume(TK_WHILE)) {
         if(!consume('('))
-            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+            error_at(token->str, "'('ではないトークンです");
         Node *cond = expr();
         if(!consume(')'))
-            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+            error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
         return new_node_while(cond, body);
     }
     if (consume(TK_FOR)) {
         if(!consume('('))
-            error_at(get(tokens,pos)->input, "'('ではないトークンです");
+            error_at(token->str, "'('ではないトークンです");
         Node *init = NULL;
         if(get(tokens,pos)->kind != ';') {
             init = expr();
         }
         if(!consume(';'))
-            error_at(get(tokens,pos)->input, "';'ではないトークンです");
+            error_at(token->str, "';'ではないトークンです");
         Node *cond = NULL;
         if(get(tokens,pos)->kind != ';') {
             cond = expr();
         }
         if(!consume(';'))
-            error_at(get(tokens,pos)->input, "';'ではないトークンです");
+            error_at(token->str, "';'ではないトークンです");
         Node *incdec = NULL;
         if(get(tokens,pos)->kind != ')') {
             incdec = expr();
         }
         if(!consume(')'))
-            error_at(get(tokens,pos)->input, "')'ではないトークンです");
+            error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
         return new_node_for(init, cond, incdec, body);
     }
@@ -286,13 +286,13 @@ Node *stmt() {
         node = expr();
     }
     if (!consume(';'))
-        error_at(get(tokens,pos)->input, "';'ではないトークンです");
+        error_at(token->str, "';'ではないトークンです");
     return node;
 }
 
 void program() {
     int i = 0;
-    while (get(tokens,pos)->kind != TK_EOF) {
+    while (!at_eof()) {
         //code[i++] = stmt();
         code[i++] = function();
     }
@@ -362,7 +362,7 @@ Node *term() {
     if (consume('(')) {
         Node *node = equality();
         if (!consume(')')) {
-            error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
+            error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
         }
         return node;
     }
@@ -397,12 +397,12 @@ Node *term() {
             }*/
         }
         if (!consume(')'))
-            error("開き括弧に対する閉じ括弧がありません。：%s", get(tokens,pos)->input);
+            error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
         
         return new_node_call(name, args);
     }
     
-    error("数値でも開き括弧でもないトークンです： %s ", get(tokens,pos)->input);
+    error("数値でも開き括弧でもないトークンです： %s ", token->str);
     return NULL;
 }
 
@@ -429,27 +429,25 @@ Token *peek(TokenKind kind){
     return token;
 }
 
-int consume(TokenKind kind) {
-    if (!peek(kind))
-        return 0;
-    pos++;
-    return 1;
+bool consume(char op) {
+    if (token->kind != TK_RESERVED || token->str[0] != op)
+        return false;
+    token = token->next;
+    return true;
 }
 
 int expect_number() {
     if (token->kind != TK_NUM)
         error("数ではありません");
     int val = token->val;
-    pos++;
+    token = token->next;
     return val;
 }
 
-void tokenize() {
+Token *tokenize(char *p) {
     Token head;
     head.next = NULL;
     Token *cur = &head;
-
-    char *p = user_input;
     
     while (*p) {
         if (isspace(*p)) {
@@ -482,7 +480,7 @@ void tokenize() {
           || *p == ';'
           || *p == ','
           || *p == '&') {
-            cur = new_token(*p, cur, p);
+            cur = new_token(TK_RESERVED, cur, p);
             p++;
             continue;
         }
@@ -550,7 +548,7 @@ void tokenize() {
         }
         
         if ( *p == '=' ) {
-            cur = new_token(*p,cur,p);
+            cur = new_token(TK_RESERVED,cur,p);
             p++;
             continue;
         }
@@ -559,5 +557,6 @@ void tokenize() {
         exit(1);
     }
     
-    append(tokens, new_token(TK_EOF,p));
+    new_token(TK_EOF, cur,p );
+    return head.next;
 }

@@ -60,9 +60,7 @@ void gen(Node *node) {
         for (int i = 0; i < len; i++) {
             gen((Node *) vec_get(node->args,i));
             printf("  pop rax\n");
-            //printf("  mov %s, rax\n", argregs[len - (i + 1)]);
             printf("  mov %s, rax\n", argregs[i]);
-            //printf("  mov %s, %d\n", argregs[i], (int) vec_get(node->args,i));
         }
 
         printf("  call %s\n",node->name);
