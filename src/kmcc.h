@@ -134,6 +134,7 @@ int var_len(Var *var);
 
 Token *peek(TokenKind kind);
 bool consume(char op);
+bool at_eof();
 Token *tokenize(char *p);
 
 int is_alnum(char c);
