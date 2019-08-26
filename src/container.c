@@ -111,26 +111,26 @@ void var_append(Var *var, Type *ty, char *name){
 Token *new_token(TokenKind kind, Token *cur, char *str) {
     Token *t = calloc(1, sizeof(Token));
     t->kind = kind;
-    t->next = cur;
     t->str = str;
+    cur->next = t;
     return t;
 }
 
 Token *new_token_num(Token *cur, int val, char *str) {
     Token *t = calloc(1, sizeof(Token));
     t->kind = TK_NUM;
-    t->next = cur;
     t->val = val;
     t->str = str;
+    cur->next = t;
     return t;
 }
 
 Token *new_token_ident(Token *cur, char *str, int len) {
     Token *t = calloc(1,sizeof(Token));
     t->kind = TK_IDENT;
-    t->next = cur;
     t->name = strndup(str, len);
     t->str = str;
+    cur->next = t;
     return t;
 }
 
@@ -153,10 +153,6 @@ int expect(int line, int expected, int actual) {
         return 0;
     fprintf(stderr,"%d: %d expected, but got %d\n",line, expected, actual);
     exit(1);
-}
-
-bool at_eof() {
-    return token->kind == TK_EOF;
 }
 
 void test_map() {
