@@ -38,6 +38,7 @@ struct Token {
     int val; // value for Integer token
     char *name; // name for Ident
     char *str; // token stirng for debugging
+    int len; // token length
 };
 
 typedef struct Tokens Tokens;

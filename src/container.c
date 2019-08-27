@@ -108,10 +108,11 @@ void var_append(Var *var, Type *ty, char *name){
     var_insert_first(&variables, ty, name, offset);
 }
 
-Token *new_token(TokenKind kind, Token *cur, char *str) {
+Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     Token *t = calloc(1, sizeof(Token));
     t->kind = kind;
     t->str = str;
+    t->len = len;
     cur->next = t;
     return t;
 }
