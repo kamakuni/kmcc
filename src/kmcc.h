@@ -111,7 +111,7 @@ Map *new_map();
 void map_put(Map *map, char *key, void *val);
 Map *map_get(Map *map,char *key);
 
-Token *new_token(TokenKind kind, Token *cur, char *str);
+Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *new_token_num(Token *cur, int val, char *str);
 //Token *new_token_ident(char *name);
 Token *new_token_ident(Token *cur, char *str, int len);
