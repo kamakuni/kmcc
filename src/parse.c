@@ -460,13 +460,13 @@ Token *tokenize(char *p) {
         }
         
         if (strncmp(p,"<=",2) == 0){
-            cur = new_token(TK_LE, cur, p);
+            cur = new_token(TK_LE, cur, p, 2);
             p = p + 2;
             continue;
         }
         
         if (strncmp(p,">=",2) == 0){
-            cur = new_token(TK_GE, cur, p);
+            cur = new_token(TK_GE, cur, p, 2);
             p = p + 2;
             continue;
         }
@@ -490,13 +490,13 @@ Token *tokenize(char *p) {
         }
 
         if (strncmp(p, "int", 3) == 0 && !is_alnum(p[3])){
-            cur = new_token(TK_INT,cur,p);
+            cur = new_token(TK_INT,cur,p,3);
             p += 3;
             continue;
         }
 
         if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])){
-            cur = new_token(TK_IF,cur,p);
+            cur = new_token(TK_IF,cur,p,2);
             p += 2;
             continue;
         }
@@ -508,19 +508,19 @@ Token *tokenize(char *p) {
         }
 
         if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])){
-            cur = new_token(TK_ELSE,cur,p);
+            cur = new_token(TK_ELSE,cur,p,4);
             p += 4;
             continue;
         }
 
         if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
-            cur = new_token(TK_RETURN,cur,p);
+            cur = new_token(TK_RETURN,cur,p,6);
             p += 6;
             continue;
         }
 
         if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])){
-            cur = new_token(TK_WHILE,cur,p);
+            cur = new_token(TK_WHILE,cur,p,5);
             p += 5;
             continue;
         }
@@ -540,19 +540,19 @@ Token *tokenize(char *p) {
         }
         
         if (strncmp(p,"==",2) == 0){
-            cur = new_token(TK_EQ,cur,p);
+            cur = new_token(TK_EQ,cur,p,2);
             p = p + 2;
             continue;
         }
         
         if (strncmp(p,"!=",2) == 0){
-            cur = new_token(TK_NE,cur,p);
+            cur = new_token(TK_NE,cur,p,2);
             p = p + 2;
             continue;
         }
         
         if ( *p == '=' ) {
-            cur = new_token(TK_RESERVED,cur,p);
+            cur = new_token(TK_RESERVED,cur,p),1;
             p++;
             continue;
         }
