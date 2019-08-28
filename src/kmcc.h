@@ -17,16 +17,6 @@ typedef enum {
     TK_RESERVED, // Keywords or punctuators
     TK_NUM, // Integer literals
     TK_IDENT, // Identifiers
-    TK_IF,
-    TK_INT,
-    TK_ELSE,
-    TK_WHILE,
-    TK_FOR,
-    TK_RETURN,
-    TK_EQ,
-    TK_NE,
-    TK_LE,
-    TK_GE,
     TK_EOF, // End-of-file markers
 } TokenKind;
 
