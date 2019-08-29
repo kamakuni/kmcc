@@ -460,13 +460,13 @@ Token *tokenize(char *p) {
         }
         
         if (strncmp(p,"<=",2) == 0){
-            cur = new_token(TK_LE, cur, p, 2);
+            cur = new_token(TK_RESERVED, cur, p, 2);
             p = p + 2;
             continue;
         }
         
         if (strncmp(p,">=",2) == 0){
-            cur = new_token(TK_GE, cur, p, 2);
+            cur = new_token(TK_RESERVED, cur, p, 2);
             p = p + 2;
             continue;
         }
@@ -484,43 +484,43 @@ Token *tokenize(char *p) {
           || *p == ';'
           || *p == ','
           || *p == '&') {
-            cur = new_token(TK_RESERVED, cur, p);
+            cur = new_token(TK_RESERVED, cur, p, 1);
             p++;
             continue;
         }
 
         if (strncmp(p, "int", 3) == 0 && !is_alnum(p[3])){
-            cur = new_token(TK_INT,cur,p,3);
+            cur = new_token(TK_RESERVED,cur,p,3);
             p += 3;
             continue;
         }
 
         if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])){
-            cur = new_token(TK_IF,cur,p,2);
+            cur = new_token(TK_RESERVED,cur,p,2);
             p += 2;
             continue;
         }
 
         if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])){
-            cur = new_token(TK_FOR,cur,p);
+            cur = new_token(TK_RESERVED,cur,p,3);
             p += 3;
             continue;
         }
 
         if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])){
-            cur = new_token(TK_ELSE,cur,p,4);
+            cur = new_token(TK_RESERVED,cur,p,4);
             p += 4;
             continue;
         }
 
         if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
-            cur = new_token(TK_RETURN,cur,p,6);
+            cur = new_token(TK_RESERVED,cur,p,6);
             p += 6;
             continue;
         }
 
         if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])){
-            cur = new_token(TK_WHILE,cur,p,5);
+            cur = new_token(TK_RESERVED,cur,p,5);
             p += 5;
             continue;
         }
@@ -529,30 +529,32 @@ Token *tokenize(char *p) {
             int i = 0;
             while(isalpha(p[i]))
                 i++;
-            cur = new_token_ident(cur,p,i);
+            cur = new_token(TK_IDENT,cur,p,i);
             p += i;
             continue;
         }
         
         if (isdigit(*p)) {
-            cur = new_token_num(cur,strtol(p, &p, 10),p);
+            char *start = p;
+            long val = strtol(p, &p, 10);
+            cur = new_token(TK_NUM,cur,val,p - start);
             continue;
         }
         
         if (strncmp(p,"==",2) == 0){
-            cur = new_token(TK_EQ,cur,p,2);
+            cur = new_token(TK_RESERVED,cur,p,2);
             p = p + 2;
             continue;
         }
         
         if (strncmp(p,"!=",2) == 0){
-            cur = new_token(TK_NE,cur,p,2);
+            cur = new_token(TK_RESERVED,cur,p,2);
             p = p + 2;
             continue;
         }
         
         if ( *p == '=' ) {
-            cur = new_token(TK_RESERVED,cur,p),1;
+            cur = new_token(TK_RESERVED,cur,p,1);
             p++;
             continue;
         }
@@ -561,6 +563,6 @@ Token *tokenize(char *p) {
         exit(1);
     }
     
-    new_token(TK_EOF, cur,p );
+    new_token(TK_EOF,cur,p,0);
     return head.next;
 }
