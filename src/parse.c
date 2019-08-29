@@ -423,8 +423,9 @@ Node *unary() {
     return term();
 }
 
-Token *peek(TokenKind kind){
-    if (token->kind != kind)
+Token *peek(char *s){
+    if (token->kind != TK_RESERVED || strlen(s) != token->len ||
+        strncmp(token->str,s,token->len))
         return NULL;
     return token;
 }
