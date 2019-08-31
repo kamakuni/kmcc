@@ -430,8 +430,9 @@ Token *peek(char *s){
     return token;
 }
 
-bool consume(char op) {
-    if (token->kind != TK_RESERVED || token->str[0] != op)
+bool consume(char *s) {
+    if (token->kind != TK_RESERVED || strlen(s) != token->len ||
+        strncmp(token->str,s,token->len))
         return false;
     token = token->next;
     return true;

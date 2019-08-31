@@ -123,8 +123,8 @@ void var_insert_first(Var **var, Type *ty, char *name, int offset);
 int var_get_offset(Var *var, char *name);
 int var_len(Var *var);
 
-Token *peek(TokenKind kind);
-bool consume(char op);
+Token *peek(char *s);
+bool consume(char *s);
 bool at_eof();
 Token *tokenize(char *p);
 
