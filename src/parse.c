@@ -155,7 +155,7 @@ Node *expr() {
 
 Node *function() {
     Node *node;
-    if (!consume(TK_INT))
+    if (!consume("int"))
         error_at(token->str, "intではないトークンです");
     while (get(tokens,pos)->kind != TK_IDENT) {
         if (!consume('*'))
@@ -168,7 +168,7 @@ Node *function() {
         error_at(token->str, "'('ではないトークンです");        
     Vector *args = new_vector();
     while (get(tokens,pos)->kind != ')') {
-        if (!consume(TK_INT))
+        if (!consume("int"))
             error_at(token->str, "intではないトークンです");
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
@@ -204,7 +204,7 @@ Node *function() {
 Node *stmt() {
     Node *node;
 
-    if (consume(TK_INT)) {
+    if (consume("int")) {
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
         while (get(tokens,pos)->kind != TK_IDENT) {
@@ -234,20 +234,20 @@ Node *stmt() {
             error_at(token->str, "'}'ではないトークンです");
         return new_node_block(stmts);
     }
-    if (consume(TK_IF)) {
+    if (consume("if")) {
         if(!consume('('))
             error_at(token->str, "'('ではないトークンです");
         Node *cond = expr();
         if(!consume(')'))
             error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
-        if(consume(TK_ELSE)) {
+        if(consume("else")) {
             Node *elseBody = stmt();
             return new_node_if(cond, body, elseBody);
         }
         return new_node_if(cond, body, NULL);
     }
-    if (consume(TK_WHILE)) {
+    if (consume("while")) {
         if(!consume('('))
             error_at(token->str, "'('ではないトークンです");
         Node *cond = expr();
@@ -256,7 +256,7 @@ Node *stmt() {
         Node *body = stmt();
         return new_node_while(cond, body);
     }
-    if (consume(TK_FOR)) {
+    if (consume("for")) {
         if(!consume('('))
             error_at(token->str, "'('ではないトークンです");
         Node *init = NULL;
@@ -280,7 +280,7 @@ Node *stmt() {
         Node *body = stmt();
         return new_node_for(init, cond, incdec, body);
     }
-    if (consume(TK_RETURN)) {
+    if (consume("return")) {
         node = new_node(ND_RETURN, expr(), NULL);
     } else {
         node = expr();
@@ -303,9 +303,9 @@ Node *equality() {
     Node *node = relational();
     
     for (;;) {
-        if (consume(TK_EQ))
+        if (consume("=="))
             node = new_node(ND_EQ, node, relational());
-        else if (consume(TK_NE))
+        else if (consume("!="))
             node = new_node(ND_NE, node, relational());
         else
             return node;
@@ -319,11 +319,11 @@ Node *relational() {
     for (;;) {
         if (consume('<'))
             node = new_node('<', node, add());
-        else if (consume(TK_LE))
+        else if (consume("<="))
             node = new_node(ND_LE, node, add());
         else if (consume('>'))
             node = new_node('<', add(), node);
-        else if (consume(TK_GE))
+        else if (consume(">="))
             node = new_node(ND_LE, add(), node);
         else
             return node;
