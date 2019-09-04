@@ -111,8 +111,8 @@ void var_append(Var *var, Type *ty, char *name){
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     Token *t = calloc(1, sizeof(Token));
     t->kind = kind;
-    t->str = str;
     t->len = len;
+    t->str = str;
     cur->next = t;
     return t;
 }

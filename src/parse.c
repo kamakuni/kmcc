@@ -438,10 +438,10 @@ bool consume(char *s) {
     return true;
 }
 
-int expect_number() {
+long expect_number() {
     if (token->kind != TK_NUM)
         error("数ではありません");
-    int val = token->val;
+    long val = token->val;
     token = token->next;
     return val;
 }

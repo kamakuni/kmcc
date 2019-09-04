@@ -125,6 +125,8 @@ int var_len(Var *var);
 
 Token *peek(char *s);
 bool consume(char *s);
+long expect_number();
+char *expect_ident();
 bool at_eof();
 Token *tokenize(char *p);
 
