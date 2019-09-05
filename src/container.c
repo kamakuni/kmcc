@@ -122,13 +122,15 @@ Token *get(Tokens *t, int i) {
     return (Token *) t->vec->data[i];
 }
 
+/*
 int expect(int line, int expected, int actual) {
     if (expected == actual)
         return 0;
     fprintf(stderr,"%d: %d expected, but got %d\n",line, expected, actual);
     exit(1);
 }
-
+*/
+/*
 void test_map() {
     Map *map = new_map();
     expect(__LINE__, 0,(long)map_get(map,"foo"));
@@ -142,7 +144,8 @@ void test_map() {
     map_put(map, "foo", (void *)4);
     expect(__LINE__, 4,(long)map_get(map,"foo"));
 }
-
+*/
+/*
 void test_vector(){
     Vector *vec = new_vector();
     expect(__LINE__, 0, vec->len);
@@ -155,7 +158,7 @@ void test_vector(){
     expect(__LINE__, 50, (long)vec->data[50]);
     expect(__LINE__, 99, (long)vec->data[99]);
     
-    /*Tokens *tokens = new_tokens();
+    Tokens *tokens = new_tokens();
     append(tokens, new_token_num(2,"3"));
     Token *token = get(tokens,0);
     
@@ -169,9 +172,11 @@ void test_vector(){
     
     expect(__LINE__, TK_NUM, token->kind);
     expect(__LINE__, 3, token->val);
-    expect(__LINE__, 0, strcmp("4", token->input));*/
-}
+    expect(__LINE__, 0, strcmp("4", token->input));*
 
+}
+*/
+/*
 void test_linked_list(){
     Var *var = new_var();
     expect(__LINE__, 0, var->offset);
@@ -191,10 +196,12 @@ void test_linked_list(){
     int offset = var_get_offset(var, "name1");
     expect(__LINE__, 8, offset);
 }
-
+*/
+/*
 void runtest(){
     test_vector();
     test_map();
     test_linked_list();
     printf("OK\n");
 }
+*/
