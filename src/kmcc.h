@@ -101,11 +101,6 @@ Map *new_map();
 void map_put(Map *map, char *key, void *val);
 Map *map_get(Map *map,char *key);
 
-Token *new_token(TokenKind kind, Token *cur, char *str, int len);
-Token *new_token_num(Token *cur, int val, char *str);
-//Token *new_token_ident(char *name);
-Token *new_token_ident(Token *cur, char *str, int len);
-
 Tokens *new_tokens();
 void append(Tokens *t, Token *elem);
 Token *get(Tokens *t, int i);
@@ -125,6 +120,7 @@ int var_len(Var *var);
 
 Token *peek(char *s);
 bool consume(char *s);
+int expect(int line, int expected, int actual);
 long expect_number();
 char *expect_ident();
 bool at_eof();
@@ -149,7 +145,7 @@ void gen();
 extern char *filename;
 extern char *user_input;
 extern int pos;
-extern Tokens *tokens;
 extern Token *token;
+extern Tokens *tokens;
 extern Node *code[];
 extern Var *variables;
