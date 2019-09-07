@@ -60,13 +60,13 @@ int is_alnum(char c) {
     (c == '_');
 }
 
+/*
 char *strndup(char *p,int len) {
     char *buf = malloc(len + 1);
     strncpy(buf, p , len);
     buf[len] = '\0';
     return buf;
 }
-
 Token *token;
 
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
@@ -95,7 +95,7 @@ Token *new_token_ident(Token *cur, char *str, int len) {
     cur->next = t;
     return t;
 }
-
+*/
 Node *new_node(int kind, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
     node->kind = kind;
@@ -490,6 +490,41 @@ bool at_eof() {
     return token->kind == TK_EOF;
 }
 
+char *strndup(char *p,int len) {
+    char *buf = malloc(len + 1);
+    strncpy(buf, p , len);
+    buf[len] = '\0';
+    return buf;
+}
+//Token *token;
+
+Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
+    Token *t = calloc(1, sizeof(Token));
+    t->kind = kind;
+    t->len = len;
+    t->str = str;
+    cur->next = t;
+    return t;
+}
+
+Token *new_token_num(Token *cur, int val, char *str) {
+    Token *t = calloc(1, sizeof(Token));
+    t->kind = TK_NUM;
+    t->val = val;
+    t->str = str;
+    cur->next = t;
+    return t;
+}
+
+Token *new_token_ident(Token *cur, char *str, int len) {
+    Token *t = calloc(1,sizeof(Token));
+    t->kind = TK_IDENT;
+    t->name = strndup(str, len);
+    t->str = str;
+    cur->next = t;
+    return t;
+}
+
 Token *tokenize(char *p) {
     Token head = {};
     Token *cur = &head;
@@ -578,7 +613,8 @@ Token *tokenize(char *p) {
         if (isdigit(*p)) {
             char *start = p;
             long val = strtol(p, &p, 10);
-            cur = new_token(TK_NUM,cur,val,p - start);
+            cur = new_token(TK_NUM,cur,start,p - start);
+            cur->val = val;
             continue;
         }
         

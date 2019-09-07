@@ -25,10 +25,10 @@ typedef struct Token Token;
 struct Token {
     TokenKind kind; // token kind
     Token *next;
-    int val; // value for Integer token
+    int len; // token length
+    long val; // value for Integer token
     char *name; // name for Ident
     char *str; // token stirng for debugging
-    int len; // token length
 };
 
 typedef struct Tokens Tokens;
