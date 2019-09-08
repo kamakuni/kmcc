@@ -120,6 +120,7 @@ int var_len(Var *var);
 
 Token *peek(char *s);
 bool consume(char *s);
+Token *consume_ident(void);
 int expect(int line, int expected, int actual);
 long expect_number();
 char *expect_ident();

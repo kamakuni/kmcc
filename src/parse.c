@@ -470,6 +470,14 @@ bool consume(char *s) {
     return true;
 }
 
+Token *consume_ident(void){
+    if (token->kind != TK_IDENT)
+        return NULL;
+    Token *t = token;
+    token = token->next;
+    return t;
+}
+
 long expect_number() {
     if (token->kind != TK_NUM)
         error("数ではありません");
