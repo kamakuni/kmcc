@@ -189,8 +189,8 @@ Node *function() {
     Node *node;
     if (!consume("int"))
         error_at(token->str, "intではないトークンです");
-    while (token->kind != TK_IDENT) {
-        if (!consume('*'))
+    while (NULL != consume_ident()) {
+        if (!consume("*"))
             error_at(token->str, "'*'ではないではないトークンです");
     }
     char *name = token->name;
@@ -240,7 +240,7 @@ Node *stmt() {
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
         while (token->kind != TK_IDENT) {
-            if (!consume('*'))
+            if (!consume("*"))
                 error_at(token->str, "'*'ではないではないトークンです");
             Type *next = ty;
             ty = malloc(sizeof(Type));
@@ -250,14 +250,14 @@ Node *stmt() {
         if (token->kind == TK_IDENT ) {
             char *name = get(tokens,pos++)->name;
             node = new_node_ident(ty, name);
-            if (!consume(';'))
+            if (!consume(";"))
                 error_at(token->str, "';'ではないトークンです");
             return node;
         } else {
             error_at(token->str, "識別子ではないトークンです");
         }
     }
-    if (consume('{')) {
+    if (consume("{")) {
         Vector *stmts = new_vector();
         while(token->kind != '}') {
             vec_push(stmts, stmt());
