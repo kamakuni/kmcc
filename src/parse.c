@@ -176,7 +176,7 @@ Node *code[100];
 
 Node *assign() {
     Node *node = equality();
-    if (consume('='))
+    if (consume("="))
         node = new_node('=', node, assign());
     return node;
 }
@@ -189,14 +189,14 @@ Node *function() {
     Node *node;
     if (!consume("int"))
         error_at(token->str, "intではないトークンです");
-    while (NULL != consume_ident()) {
-        if (!consume("*"))
-            error_at(token->str, "'*'ではないではないトークンです");
+    while (consume("*")) {
+        //if (!consume("*"))
+        //    error_at(token->str, "'*'ではないではないトークンです");
     }
     char *name = token->name;
-    if (!consume(TK_IDENT))
+    if (NULL == consume_ident())
         error_at(token->str, "関数名ではないではないトークンです");
-    if (!consume('('))
+    if (!consume("("))
         error_at(token->str, "'('ではないトークンです");        
     Vector *args = new_vector();
     while (token->kind != ')') {
@@ -205,7 +205,7 @@ Node *function() {
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
         while (token->kind != TK_IDENT) {
-            if (!consume('*'))
+            if (!consume("*"))
                 error_at(token->str, "'*'ではないではないトークンです");
             Type *next = ty;
             ty = malloc(sizeof(Type));
@@ -219,16 +219,16 @@ Node *function() {
         if (token->kind ==  ',')
             pos++;
     }
-    if (!consume(')'))
+    if (!consume(")"))
         error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
-    if (!consume('{'))
+    if (!consume("{"))
         error_at(token->str, "'{'ではないトークンです");        
     Vector *stmts = new_vector();
     while(token->kind != '}') {
         vec_push(stmts, stmt());
     }
     Node *block = new_node_block(stmts);
-    if (!consume('}'))
+    if (!consume("}"))
         error_at(token->str, "'}'ではないトークンです");        
     return new_node_function(name, args, block);
 }
@@ -262,15 +262,15 @@ Node *stmt() {
         while(token->kind != '}') {
             vec_push(stmts, stmt());
         }
-        if(!consume('}'))
+        if(!consume("}"))
             error_at(token->str, "'}'ではないトークンです");
         return new_node_block(stmts);
     }
     if (consume("if")) {
-        if(!consume('('))
+        if(!consume("("))
             error_at(token->str, "'('ではないトークンです");
         Node *cond = expr();
-        if(!consume(')'))
+        if(!consume(")"))
             error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
         if(consume("else")) {
@@ -280,34 +280,34 @@ Node *stmt() {
         return new_node_if(cond, body, NULL);
     }
     if (consume("while")) {
-        if(!consume('('))
+        if(!consume("("))
             error_at(token->str, "'('ではないトークンです");
         Node *cond = expr();
-        if(!consume(')'))
+        if(!consume(")"))
             error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
         return new_node_while(cond, body);
     }
     if (consume("for")) {
-        if(!consume('('))
+        if(!consume("("))
             error_at(token->str, "'('ではないトークンです");
         Node *init = NULL;
         if(token->kind != ';') {
             init = expr();
         }
-        if(!consume(';'))
+        if(!consume(";"))
             error_at(token->str, "';'ではないトークンです");
         Node *cond = NULL;
         if(token->kind != ';') {
             cond = expr();
         }
-        if(!consume(';'))
+        if(!consume(";"))
             error_at(token->str, "';'ではないトークンです");
         Node *incdec = NULL;
         if(token->kind != ')') {
             incdec = expr();
         }
-        if(!consume(')'))
+        if(!consume(")"))
             error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
         return new_node_for(init, cond, incdec, body);
@@ -317,7 +317,7 @@ Node *stmt() {
     } else {
         node = expr();
     }
-    if (!consume(';'))
+    if (!consume(";"))
         error_at(token->str, "';'ではないトークンです");
     return node;
 }
@@ -349,11 +349,11 @@ Node *relational() {
     Node *node = add();
     
     for (;;) {
-        if (consume('<'))
+        if (consume("<"))
             node = new_node('<', node, add());
         else if (consume("<="))
             node = new_node(ND_LE, node, add());
-        else if (consume('>'))
+        else if (consume(">"))
             node = new_node('<', add(), node);
         else if (consume(">="))
             node = new_node(ND_LE, add(), node);
@@ -367,9 +367,9 @@ Node *add() {
     Node *node = mul();
     
     for (;;) {
-        if (consume('+'))
+        if (consume("+"))
             node = new_node('+', node, mul());
-        else if (consume('-'))
+        else if (consume("-"))
             node = new_node('-', node, mul());
         else
             return node;
@@ -380,9 +380,9 @@ Node *mul() {
     Node *node = unary();
     
     for (;;) {
-        if (consume('*'))
+        if (consume("*"))
             node = new_node('*', node, unary());
-        else if (consume('/'))
+        else if (consume("/"))
             node = new_node('/', node, unary());
         else
             return node;
@@ -391,9 +391,9 @@ Node *mul() {
 }
 
 Node *term() {
-    if (consume('(')) {
+    if (consume("(")) {
         Node *node = equality();
-        if (!consume(')')) {
+        if (!consume(")")) {
             error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
         }
         return node;
@@ -405,7 +405,7 @@ Node *term() {
     
     if (token->kind == TK_IDENT ) {
         char *name = get(tokens,pos++)->name;
-        if (!consume('(')) {
+        if (!consume("(")) {
             if (!var_exist(variables, name)) 
                 error("未定義の変数です。：%s", name);
             /*Var *var;
@@ -422,13 +422,13 @@ Node *term() {
         while (token->kind != ')') {
             Node *node = add();
             vec_push(args, (void *) node);
-            consume(',');
+            consume(",");
             /*if (get(tokens,pos)->kind == TK_NUM) {
                 vec_push(args, (void *) get(tokens,pos++)->val);
-                consume(',');
+                consume(",");
             }*/
         }
-        if (!consume(')'))
+        if (!consume(")"))
             error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
         
         return new_node_call(name, args);
@@ -439,17 +439,17 @@ Node *term() {
 }
 
 Node *unary() {
-    if (consume('+')) {
+    if (consume("+")) {
         return term();
     }
-    if (consume('-')) {
+    if (consume("-")) {
         // -x => 0-x
         return new_node('-',new_node_num(0), term());
     }
-    if (consume('*')) {
+    if (consume("*")) {
         return new_node(ND_DEREF, unary(), NULL);
     }
-    if (consume('&')) {
+    if (consume("&")) {
         return new_node(ND_ADDR, unary(), NULL);
     }
     return term();
