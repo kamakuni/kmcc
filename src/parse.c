@@ -190,6 +190,7 @@ Node *function() {
     if (!consume("int"))
         error_at(token->str, "intではないトークンです");
     while (consume("*")) {
+        // do something
         //if (!consume("*"))
         //    error_at(token->str, "'*'ではないではないトークンです");
     }
@@ -463,6 +464,9 @@ Token *peek(char *s){
 }
 
 bool consume(char *s) {
+    int i = strlen("1234567890");
+    printf("%d",i);
+    
     if (token->kind != TK_RESERVED || strlen(s) != token->len ||
         strncmp(token->str,s,token->len))
         return false;
@@ -476,6 +480,12 @@ Token *consume_ident(void){
     Token *t = token;
     token = token->next;
     return t;
+}
+
+void expect(char *s) {
+    if (!peek(s))
+        error("予期せぬトークンです");
+    token = token->next;
 }
 
 long expect_number() {

@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "引数の個数が正しくありません\n");
         return 1;
     }
+    
     // run testing codes
     if (strcmp(argv[1],"-test") == 0){
         //runtest();
