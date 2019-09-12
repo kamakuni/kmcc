@@ -200,7 +200,7 @@ Node *function() {
     if (!consume("("))
         error_at(token->str, "'('ではないトークンです");        
     Vector *args = new_vector();
-    while (token->kind != ')') {
+    while (!consume(")")) {
         if (!consume("int"))
             error_at(token->str, "intではないトークンです");
         Type *ty = malloc(sizeof(Type));
@@ -220,8 +220,6 @@ Node *function() {
         if (token->kind ==  ',')
             pos++;
     }
-    if (!consume(")"))
-        error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
     if (!consume("{"))
         error_at(token->str, "'{'ではないトークンです");        
     Vector *stmts = new_vector();
@@ -464,9 +462,6 @@ Token *peek(char *s){
 }
 
 bool consume(char *s) {
-    int i = strlen("1234567890");
-    printf("%d",i);
-    
     if (token->kind != TK_RESERVED || strlen(s) != token->len ||
         strncmp(token->str,s,token->len))
         return false;
