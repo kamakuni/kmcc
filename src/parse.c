@@ -195,7 +195,8 @@ Node *function() {
         //    error_at(token->str, "'*'ではないではないトークンです");
     }
     char *name = token->name;
-    if (NULL == consume_ident())
+    Token *ident = consume_ident();
+    if (ident == NULL)
         error_at(token->str, "関数名ではないではないトークンです");
     if (!consume("("))
         error_at(token->str, "'('ではないトークンです");        
@@ -223,12 +224,10 @@ Node *function() {
     if (!consume("{"))
         error_at(token->str, "'{'ではないトークンです");        
     Vector *stmts = new_vector();
-    while(token->kind != '}') {
+    while(!consume("}")) {
         vec_push(stmts, stmt());
     }
     Node *block = new_node_block(stmts);
-    if (!consume("}"))
-        error_at(token->str, "'}'ではないトークンです");        
     return new_node_function(name, args, block);
 }
 
