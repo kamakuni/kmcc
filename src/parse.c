@@ -398,7 +398,7 @@ Node *term() {
     }
     
     if (token->kind == TK_NUM ) {
-        return new_node_num(get(tokens,pos++)->val);
+        return new_node_num(token->val);
     }
     
     if (token->kind == TK_IDENT ) {
