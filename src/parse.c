@@ -128,7 +128,7 @@ Node *new_node_function(char *name, Vector *args, Node *block) {
     return node;
 }
 
-Node *new_node_num(int val) {
+Node *new_node_num(long val) {
     Node *node = malloc(sizeof(Node));
     node->kind = ND_NUM;
     node->val = val;
@@ -398,7 +398,7 @@ Node *term() {
     }
     
     if (token->kind == TK_NUM ) {
-        return new_node_num(token->val);
+        return new_node_num(expect_number());
     }
     
     if (token->kind == TK_IDENT ) {

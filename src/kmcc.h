@@ -108,7 +108,7 @@ Token *get(Tokens *t, int i);
 void runtest();
 
 Node *new_node(int kind, Node *lhs, Node *rhs);
-Node *new_node_num(int val);
+Node *new_node_num(long val);
 Node *new_node_ident(Type *ty, char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
 
