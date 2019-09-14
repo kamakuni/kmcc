@@ -60,42 +60,6 @@ int is_alnum(char c) {
     (c == '_');
 }
 
-/*
-char *strndup(char *p,int len) {
-    char *buf = malloc(len + 1);
-    strncpy(buf, p , len);
-    buf[len] = '\0';
-    return buf;
-}
-Token *token;
-
-Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
-    Token *t = calloc(1, sizeof(Token));
-    t->kind = kind;
-    t->len = len;
-    t->str = str;
-    cur->next = t;
-    return t;
-}
-
-Token *new_token_num(Token *cur, int val, char *str) {
-    Token *t = calloc(1, sizeof(Token));
-    t->kind = TK_NUM;
-    t->val = val;
-    t->str = str;
-    cur->next = t;
-    return t;
-}
-
-Token *new_token_ident(Token *cur, char *str, int len) {
-    Token *t = calloc(1,sizeof(Token));
-    t->kind = TK_IDENT;
-    t->name = strndup(str, len);
-    t->str = str;
-    cur->next = t;
-    return t;
-}
-*/
 Node *new_node(int kind, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
     node->kind = kind;
@@ -194,9 +158,8 @@ Node *function() {
         //if (!consume("*"))
         //    error_at(token->str, "'*'ではないではないトークンです");
     }
-    char *name = token->name;
-    Token *ident = consume_ident();
-    if (ident == NULL)
+    Token *name = consume_ident();
+    if (name == NULL)
         error_at(token->str, "関数名ではないではないトークンです");
     if (!consume("("))
         error_at(token->str, "'('ではないトークンです");        
@@ -228,7 +191,7 @@ Node *function() {
         vec_push(stmts, stmt());
     }
     Node *block = new_node_block(stmts);
-    return new_node_function(name, args, block);
+    return new_node_function(strndup(name->str,name->len), args, block);
 }
 
 Node *stmt() {
