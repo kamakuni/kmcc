@@ -158,8 +158,8 @@ Node *function() {
         //if (!consume("*"))
         //    error_at(token->str, "'*'ではないではないトークンです");
     }
-    Token *name = consume_ident();
-    if (name == NULL)
+    Token *ident = consume_ident();
+    if (ident == NULL)
         error_at(token->str, "関数名ではないではないトークンです");
     if (!consume("("))
         error_at(token->str, "'('ではないトークンです");        
@@ -191,7 +191,7 @@ Node *function() {
         vec_push(stmts, stmt());
     }
     Node *block = new_node_block(stmts);
-    return new_node_function(strndup(name->str,name->len), args, block);
+    return new_node_function(strndup(ident->str,ident->len), args, block);
 }
 
 Node *stmt() {
@@ -208,8 +208,9 @@ Node *stmt() {
             ty->ty = PTR;
             ty->ptr_to = next;
         }
-        if (token->kind == TK_IDENT ) {
-            char *name = get(tokens,pos++)->name;
+        Token *ident = consume_ident();
+        if (ident != NULL) {
+            char *name = strndup(ident->str,ident->len);
             node = new_node_ident(ty, name);
             if (!consume(";"))
                 error_at(token->str, "';'ではないトークンです");
@@ -365,7 +366,8 @@ Node *term() {
     }
     
     if (token->kind == TK_IDENT ) {
-        char *name = get(tokens,pos++)->name;
+        Token *ident = consume_ident();
+        char *name = strndup(ident->str,ident->len);
         if (!consume("(")) {
             if (!var_exist(variables, name)) 
                 error("未定義の変数です。：%s", name);
