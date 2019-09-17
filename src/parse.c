@@ -221,11 +221,9 @@ Node *stmt() {
     }
     if (consume("{")) {
         Vector *stmts = new_vector();
-        while(token->kind != '}') {
+        while(!consume("}")) {
             vec_push(stmts, stmt());
         }
-        if(!consume("}"))
-            error_at(token->str, "'}'ではないトークンです");
         return new_node_block(stmts);
     }
     if (consume("if")) {
@@ -254,23 +252,23 @@ Node *stmt() {
         if(!consume("("))
             error_at(token->str, "'('ではないトークンです");
         Node *init = NULL;
-        if(token->kind != ';') {
+        if(!consume(";")) {
             init = expr();
+            if(!consume(";"))
+                error_at(token->str, "';'ではないトークンです");
         }
-        if(!consume(";"))
-            error_at(token->str, "';'ではないトークンです");
         Node *cond = NULL;
-        if(token->kind != ';') {
+        if(!consume(";")) {
             cond = expr();
+            if(!consume(";"))
+                error_at(token->str, "';'ではないトークンです");
         }
-        if(!consume(";"))
-            error_at(token->str, "';'ではないトークンです");
         Node *incdec = NULL;
-        if(token->kind != ')') {
+        if(!consume(")")) {
             incdec = expr();
+            if(!consume(")"))
+                error_at(token->str, "')'ではないトークンです");
         }
-        if(!consume(")"))
-            error_at(token->str, "')'ではないトークンです");
         Node *body = stmt();
         return new_node_for(init, cond, incdec, body);
     }
