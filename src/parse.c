@@ -380,7 +380,7 @@ Node *term() {
             return new_node_ident(var->ty,name);
         }
         Vector *args = new_vector();
-        while (token->kind != ')') {
+        while (!consume(")")) {
             Node *node = add();
             vec_push(args, (void *) node);
             consume(",");
@@ -389,8 +389,6 @@ Node *term() {
                 consume(",");
             }*/
         }
-        if (!consume(")"))
-            error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
         
         return new_node_call(name, args);
     }
