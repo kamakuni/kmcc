@@ -169,17 +169,19 @@ Node *function() {
             error_at(token->str, "intではないトークンです");
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
-        while (token->kind != TK_IDENT) {
-            if (!consume("*"))
-                error_at(token->str, "'*'ではないではないトークンです");
-            Type *next = ty;
-            ty = malloc(sizeof(Type));
-            ty->ty = PTR;
-            ty->ptr_to = next;
-        }
-        if (token->kind == TK_IDENT) {
-            var_append(variables, ty, token->name);
-            vec_push(args, (void *) get(tokens,pos++)->name);
+        Token *var = consume_ident();
+        if (var != NULL) {
+            var_append(variables, ty, strndup(var->str,var->len));
+            vec_push(args, (void *) strndup(var->str,var->len));
+        } else {
+            while (!consume_ident()) {
+                if (!consume("*"))
+                    error_at(token->str, "'*'ではないではないトークンです");
+                Type *next = ty;
+                ty = malloc(sizeof(Type));
+                ty->ty = PTR;
+                ty->ptr_to = next;
+            }
         }
         if (token->kind ==  ',')
             pos++;
@@ -362,9 +364,8 @@ Node *term() {
     if (token->kind == TK_NUM ) {
         return new_node_num(expect_number());
     }
-    
-    if (token->kind == TK_IDENT ) {
-        Token *ident = consume_ident();
+    Token *ident = consume_ident();
+    if (ident != NULL) {
         char *name = strndup(ident->str,ident->len);
         if (!consume("(")) {
             if (!var_exist(variables, name)) 
