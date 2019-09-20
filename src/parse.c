@@ -183,8 +183,7 @@ Node *function() {
                 ty->ptr_to = next;
             }
         }
-        if (token->kind ==  ',')
-            pos++;
+        consume(",");
     }
     if (!consume("{"))
         error_at(token->str, "'{'ではないトークンです");        
