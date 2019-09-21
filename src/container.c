@@ -108,35 +108,8 @@ void var_append(Var *var, Type *ty, char *name){
     var_insert_first(&variables, ty, name, offset);
 }
 
-Token *new_token(int kind, char *input) {
-    Token *t = malloc(sizeof(Token));
-    t->kind = kind;
-    t->input = input;
-    return t;
-}
-
-Token *new_token_num(int val, char *input) {
-    Token *t = malloc(sizeof(Token));
-    t->kind = TK_NUM;
-    t->val = val;
-    t->input = input;
-    return t;
-}
-
-Token *new_token_ident(char *input, int len) {
-    // if(len > strlen(input))
-    // return NULL; 
-    Token *t = calloc(1,sizeof(Token));
-    //Token *t = malloc(sizeof(Token));
-    t->kind = TK_IDENT;
-    t->name = strndup(input, len);
-    t->input = input;
-    return t;
-}
-
 Tokens *new_tokens(){
     Tokens *t = malloc(sizeof(Tokens));
-    //t->i = 0;
     t->vec = new_vector();
     return t;
 }
@@ -149,13 +122,15 @@ Token *get(Tokens *t, int i) {
     return (Token *) t->vec->data[i];
 }
 
+/*
 int expect(int line, int expected, int actual) {
     if (expected == actual)
         return 0;
     fprintf(stderr,"%d: %d expected, but got %d\n",line, expected, actual);
     exit(1);
 }
-
+*/
+/*
 void test_map() {
     Map *map = new_map();
     expect(__LINE__, 0,(long)map_get(map,"foo"));
@@ -169,7 +144,8 @@ void test_map() {
     map_put(map, "foo", (void *)4);
     expect(__LINE__, 4,(long)map_get(map,"foo"));
 }
-
+*/
+/*
 void test_vector(){
     Vector *vec = new_vector();
     expect(__LINE__, 0, vec->len);
@@ -196,9 +172,11 @@ void test_vector(){
     
     expect(__LINE__, TK_NUM, token->kind);
     expect(__LINE__, 3, token->val);
-    expect(__LINE__, 0, strcmp("4", token->input));
-}
+    expect(__LINE__, 0, strcmp("4", token->input));*
 
+}
+*/
+/*
 void test_linked_list(){
     Var *var = new_var();
     expect(__LINE__, 0, var->offset);
@@ -218,10 +196,12 @@ void test_linked_list(){
     int offset = var_get_offset(var, "name1");
     expect(__LINE__, 8, offset);
 }
-
+*/
+/*
 void runtest(){
     test_vector();
     test_map();
     test_linked_list();
     printf("OK\n");
 }
+*/
