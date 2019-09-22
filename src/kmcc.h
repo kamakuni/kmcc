@@ -122,7 +122,7 @@ Token *peek(char *s);
 bool consume(char *s);
 Token *consume_ident(void);
 //int expect(int line, int expected, int actual);
-void expect(char *s);
+void expect(char *op);
 long expect_number();
 char *expect_ident();
 bool at_eof();

@@ -442,15 +442,15 @@ Token *consume_ident(void){
     return t;
 }
 
-void expect(char *s) {
-    if (!peek(s))
-        error("予期せぬトークンです");
+void expect(char *op) {
+    if (!peek(op))
+        error_at(token->str, "expected '%c'", op);
     token = token->next;
 }
 
 long expect_number() {
     if (token->kind != TK_NUM)
-        error("数ではありません");
+        error_at(token->str,"expected a number");
     long val = token->val;
     token = token->next;
     return val;
@@ -458,7 +458,7 @@ long expect_number() {
 
 char *expect_ident() {
     if (token->kind != TK_IDENT)
-        error("識別子ではありません");
+        error_at(token->str,"expected a identifier");
     char *s = strndup(token->str, token->len);
     token = token->next;
     return s;
