@@ -74,8 +74,12 @@ struct Node {
     char *name;
 };
 
-enum {
-    ND_NUM = 256,
+typedef enum {
+    ND_ADD,
+    ND_SUM,
+    ND_MUL,
+    ND_DIV,
+    ND_NUM,
     ND_BLOCK,
     ND_CALL,
     ND_FUNC,
@@ -91,7 +95,7 @@ enum {
     ND_EOF,
     ND_ADDR,
     ND_DEREF,
-};
+} NodeKind;
 
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
@@ -107,8 +111,9 @@ Token *get(Tokens *t, int i);
 
 void runtest();
 
-Node *new_node(int kind, Node *lhs, Node *rhs);
-Node *new_node_num(long val);
+Node *new_node(NodeKind Kind);
+Node *new_binary(NodeKind kind, Node *lhs, Node *rhs);
+Node *new_num(long val);
 Node *new_node_ident(Type *ty, char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
 
