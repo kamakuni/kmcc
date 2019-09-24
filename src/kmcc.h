@@ -76,7 +76,7 @@ struct Node {
 
 typedef enum {
     ND_ADD,
-    ND_SUM,
+    ND_SUB,
     ND_MUL,
     ND_DIV,
     ND_NUM,

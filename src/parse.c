@@ -340,7 +340,7 @@ Node *add() {
         if (consume("+"))
             node = new_binary(ND_ADD, node, mul());
         else if (consume("-"))
-            node = new_binary(ND_SUM, node, mul());
+            node = new_binary(ND_SUB, node, mul());
         else
             return node;
     }
@@ -408,11 +408,11 @@ Node *term() {
 
 Node *unary() {
     if (consume("+")) {
-        return term();
+        return new_binary(ND_ADD,new_num(0), term());
     }
     if (consume("-")) {
         // -x => 0-x
-        return new_binary('-',new_num(0), term());
+        return new_binary(ND_SUB,new_num(0), term());
     }
     if (consume("*")) {
         return new_binary(ND_DEREF, unary(), NULL);
