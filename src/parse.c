@@ -408,7 +408,7 @@ Node *term() {
 
 Node *unary() {
     if (consume("+")) {
-        return new_binary(ND_ADD,new_num(0), term());
+        return new_binary(ND_ADD,term(), NULL);
     }
     if (consume("-")) {
         // -x => 0-x
