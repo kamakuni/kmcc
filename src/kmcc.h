@@ -143,7 +143,7 @@ Node *stmt();
 Node *add();
 Node *equality();
 Node *relational();
-Node *term();
+Node *primary();
 Node *mul();
 Node *unary();
 

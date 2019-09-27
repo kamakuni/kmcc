@@ -360,7 +360,7 @@ Node *mul() {
     }
 }
 
-Node *term() {
+Node *primary() {
     if (consume("(")) {
         Node *node = equality();
         if (!consume(")")) {
@@ -420,7 +420,7 @@ Node *unary() {
     if (consume("&")) {
         return new_binary(ND_ADDR, unary(), NULL);
     }
-    return term();
+    return primary();
 }
 
 Token *peek(char *s){
