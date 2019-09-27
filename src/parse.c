@@ -360,7 +360,7 @@ Node *mul() {
     }
 }
 
-Node *term() {
+Node *primary() {
     if (consume("(")) {
         Node *node = equality();
         if (!consume(")")) {
@@ -408,11 +408,11 @@ Node *term() {
 
 Node *unary() {
     if (consume("+")) {
-        return new_binary(ND_ADD,term(), NULL);
+        return unary();
     }
     if (consume("-")) {
         // -x => 0-x
-        return new_binary(ND_SUB,new_num(0), term());
+        return new_binary(ND_SUB, new_num(0), unary());
     }
     if (consume("*")) {
         return new_binary(ND_DEREF, unary(), NULL);
@@ -420,7 +420,7 @@ Node *unary() {
     if (consume("&")) {
         return new_binary(ND_ADDR, unary(), NULL);
     }
-    return term();
+    return primary();
 }
 
 Token *peek(char *s){
