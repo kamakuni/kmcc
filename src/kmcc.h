@@ -87,6 +87,7 @@ enum {
     ND_EQ,
     ND_NE,
     ND_LE,
+    ND_LT,
     ND_GE,
     ND_EOF,
     ND_ADDR,

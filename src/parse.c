@@ -316,11 +316,11 @@ Node *relational() {
     
     for (;;) {
         if (consume("<"))
-            node = new_node('<', node, add());
+            node = new_node(ND_LT, node, add());
         else if (consume("<="))
             node = new_node(ND_LE, node, add());
         else if (consume(">"))
-            node = new_node('<', add(), node);
+            node = new_node(ND_LT, add(), node);
         else if (consume(">="))
             node = new_node(ND_LE, add(), node);
         else
