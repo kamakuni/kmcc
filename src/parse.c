@@ -419,6 +419,10 @@ Node *unary() {
     return term();
 }
 
+bool startswith(char *p, char * q) {
+    return memcmp(p, q, strlen(q)) == 0;
+}
+
 Token *peek(char *s){
     if (token->kind != TK_RESERVED || strlen(s) != token->len ||
         strncmp(token->str,s,token->len))
@@ -513,31 +517,16 @@ Token *tokenize(char *p) {
             continue;
         }
         
-        if (strncmp(p,"<=",2) == 0){
+        // Multi-letter punctuator
+        if (startswith(p, "==") || startswith(p, "!=") ||
+            startswith(p, "<=") || startswith(p, ">=")) {
             cur = new_token(TK_RESERVED, cur, p, 2);
             p = p + 2;
             continue;
         }
         
-        if (strncmp(p,">=",2) == 0){
-            cur = new_token(TK_RESERVED, cur, p, 2);
-            p = p + 2;
-            continue;
-        }
-        
-        if ( *p == '+'
-          || *p == '-'
-          || *p == '*'
-          || *p == '/'
-          || *p == '('
-          || *p == ')'
-          || *p == '{'
-          || *p =='}'
-          || *p == '<'
-          || *p == '>'
-          || *p == ';'
-          || *p == ','
-          || *p == '&') {
+        // single-letter punctuator
+        if (strchr("+-*/(){}<>;,&=", *p)) {
             cur = new_token(TK_RESERVED, cur, p, 1);
             p++;
             continue;
@@ -588,29 +577,12 @@ Token *tokenize(char *p) {
             continue;
         }
         
+        // Integer literal
         if (isdigit(*p)) {
             char *start = p;
             long val = strtol(p, &p, 10);
             cur = new_token(TK_NUM,cur,start,p - start);
             cur->val = val;
-            continue;
-        }
-        
-        if (strncmp(p,"==",2) == 0){
-            cur = new_token(TK_RESERVED,cur,p,2);
-            p = p + 2;
-            continue;
-        }
-        
-        if (strncmp(p,"!=",2) == 0){
-            cur = new_token(TK_RESERVED,cur,p,2);
-            p = p + 2;
-            continue;
-        }
-        
-        if ( *p == '=' ) {
-            cur = new_token(TK_RESERVED,cur,p,1);
-            p++;
             continue;
         }
         
