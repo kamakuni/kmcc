@@ -334,9 +334,9 @@ Node *add() {
     
     for (;;) {
         if (consume("+"))
-            node = new_node('+', node, mul());
+            node = new_node(ND_ADD, node, mul());
         else if (consume("-"))
-            node = new_node('-', node, mul());
+            node = new_node(ND_SUB, node, mul());
         else
             return node;
     }
@@ -347,16 +347,17 @@ Node *mul() {
     
     for (;;) {
         if (consume("*"))
-            node = new_node('*', node, unary());
+            node = new_node(ND_MUL, node, unary());
         else if (consume("/"))
-            node = new_node('/', node, unary());
+            node = new_node(ND_DIV, node, unary());
         else
             return node;
         
     }
+    
 }
 
-Node *term() {
+Node *primary() {
     if (consume("(")) {
         Node *node = equality();
         if (!consume(")")) {
@@ -404,11 +405,11 @@ Node *term() {
 
 Node *unary() {
     if (consume("+")) {
-        return term();
+        return unary();
     }
     if (consume("-")) {
         // -x => 0-x
-        return new_node('-',new_node_num(0), term());
+        return new_node(ND_SUB,new_node_num(0), unary());
     }
     if (consume("*")) {
         return new_node(ND_DEREF, unary(), NULL);
@@ -416,7 +417,7 @@ Node *unary() {
     if (consume("&")) {
         return new_node(ND_ADDR, unary(), NULL);
     }
-    return term();
+    return primary();
 }
 
 bool startswith(char *p, char * q) {
@@ -501,7 +502,6 @@ Token *new_token_num(Token *cur, int val, char *str) {
 Token *new_token_ident(Token *cur, char *str, int len) {
     Token *t = calloc(1,sizeof(Token));
     t->kind = TK_IDENT;
-    t->name = strndup(str, len);
     t->str = str;
     cur->next = t;
     return t;
