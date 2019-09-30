@@ -501,7 +501,6 @@ Token *new_token_num(Token *cur, int val, char *str) {
 Token *new_token_ident(Token *cur, char *str, int len) {
     Token *t = calloc(1,sizeof(Token));
     t->kind = TK_IDENT;
-    t->name = strndup(str, len);
     t->str = str;
     cur->next = t;
     return t;

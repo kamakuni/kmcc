@@ -27,7 +27,6 @@ struct Token {
     Token *next;
     int len; // token length
     long val; // value for Integer token
-    char *name; // name for Ident
     char *str; // token stirng for debugging
 };
 
