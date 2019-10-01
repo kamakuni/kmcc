@@ -65,14 +65,9 @@ int is_alnum(char c) {
     (c == '_');
 }
 
-Node *new_node(NodeKind kind) {
-    Node *node = calloc(1,sizeof(Node));
+Node *new_node(int kind, Node *lhs, Node *rhs) {
+    Node *node = malloc(sizeof(Node));
     node->kind = kind;
-    return node;
-}
-
-Node *new_binary(NodeKind kind, Node *lhs, Node *rhs) {
-    Node *node = new_node(kind);
     node->lhs = lhs;
     node->rhs = rhs;
     return node;
@@ -102,8 +97,9 @@ Node *new_node_function(char *name, Vector *args, Node *block) {
     return node;
 }
 
-Node *new_num(long val) {
-    Node *node = new_node(ND_NUM);
+Node *new_node_num(long val) {
+    Node *node = malloc(sizeof(Node));
+    node->kind = ND_NUM;
     node->val = val;
     return node;
 }
@@ -150,7 +146,7 @@ Node *code[100];
 Node *assign() {
     Node *node = equality();
     if (consume("="))
-        node = new_binary('=', node, assign());
+        node = new_node('=', node, assign());
     return node;
 }
 
@@ -283,7 +279,7 @@ Node *stmt() {
         return new_node_for(init, cond, incdec, body);
     }
     if (consume("return")) {
-        node = new_binary(ND_RETURN, expr(), NULL);
+        node = new_node(ND_RETURN, expr(), NULL);
     } else {
         node = expr();
     }
@@ -306,9 +302,9 @@ Node *equality() {
     
     for (;;) {
         if (consume("=="))
-            node = new_binary(ND_EQ, node, relational());
+            node = new_node(ND_EQ, node, relational());
         else if (consume("!="))
-            node = new_binary(ND_NE, node, relational());
+            node = new_node(ND_NE, node, relational());
         else
             return node;
     }
@@ -320,13 +316,13 @@ Node *relational() {
     
     for (;;) {
         if (consume("<"))
-            node = new_binary('<', node, add());
+            node = new_node(ND_LT, node, add());
         else if (consume("<="))
-            node = new_binary(ND_LE, node, add());
+            node = new_node(ND_LE, node, add());
         else if (consume(">"))
-            node = new_binary('<', add(), node);
+            node = new_node(ND_LT, add(), node);
         else if (consume(">="))
-            node = new_binary(ND_LE, add(), node);
+            node = new_node(ND_LE, add(), node);
         else
             return node;
     }
@@ -338,9 +334,9 @@ Node *add() {
     
     for (;;) {
         if (consume("+"))
-            node = new_binary(ND_ADD, node, mul());
+            node = new_node(ND_ADD, node, mul());
         else if (consume("-"))
-            node = new_binary(ND_SUB, node, mul());
+            node = new_node(ND_SUB, node, mul());
         else
             return node;
     }
@@ -351,13 +347,14 @@ Node *mul() {
     
     for (;;) {
         if (consume("*"))
-            node = new_binary(ND_MUL, node, unary());
+            node = new_node(ND_MUL, node, unary());
         else if (consume("/"))
-            node = new_binary(ND_DIV, node, unary());
+            node = new_node(ND_DIV, node, unary());
         else
             return node;
         
     }
+    
 }
 
 Node *primary() {
@@ -370,7 +367,7 @@ Node *primary() {
     }
     
     if (token->kind == TK_NUM ) {
-        return new_num(expect_number());
+        return new_node_num(expect_number());
     }
     Token *ident = consume_ident();
     if (ident != NULL) {
@@ -412,15 +409,19 @@ Node *unary() {
     }
     if (consume("-")) {
         // -x => 0-x
-        return new_binary(ND_SUB, new_num(0), unary());
+        return new_node(ND_SUB,new_node_num(0), unary());
     }
     if (consume("*")) {
-        return new_binary(ND_DEREF, unary(), NULL);
+        return new_node(ND_DEREF, unary(), NULL);
     }
     if (consume("&")) {
-        return new_binary(ND_ADDR, unary(), NULL);
+        return new_node(ND_ADDR, unary(), NULL);
     }
     return primary();
+}
+
+bool startswith(char *p, char * q) {
+    return memcmp(p, q, strlen(q)) == 0;
 }
 
 Token *peek(char *s){
@@ -501,7 +502,6 @@ Token *new_token_num(Token *cur, int val, char *str) {
 Token *new_token_ident(Token *cur, char *str, int len) {
     Token *t = calloc(1,sizeof(Token));
     t->kind = TK_IDENT;
-    t->name = strndup(str, len);
     t->str = str;
     cur->next = t;
     return t;
@@ -517,19 +517,16 @@ Token *tokenize(char *p) {
             continue;
         }
         
-        if (strncmp(p,"<=",2) == 0){
+        // Multi-letter punctuator
+        if (startswith(p, "==") || startswith(p, "!=") ||
+            startswith(p, "<=") || startswith(p, ">=")) {
             cur = new_token(TK_RESERVED, cur, p, 2);
             p = p + 2;
             continue;
         }
         
-        if (strncmp(p,">=",2) == 0){
-            cur = new_token(TK_RESERVED, cur, p, 2);
-            p = p + 2;
-            continue;
-        }
-        
-        if(strchr("+-*/(){}<>;,&",*p)) {
+        // single-letter punctuator
+        if (strchr("+-*/(){}<>;,&=", *p)) {
             cur = new_token(TK_RESERVED, cur, p, 1);
             p++;
             continue;
@@ -580,6 +577,7 @@ Token *tokenize(char *p) {
             continue;
         }
         
+        // Integer literal
         if (isdigit(*p)) {
             char *start = p;
             long val = strtol(p, &p, 10);
@@ -588,25 +586,7 @@ Token *tokenize(char *p) {
             continue;
         }
         
-        if (strncmp(p,"==",2) == 0){
-            cur = new_token(TK_RESERVED,cur,p,2);
-            p = p + 2;
-            continue;
-        }
-        
-        if (strncmp(p,"!=",2) == 0){
-            cur = new_token(TK_RESERVED,cur,p,2);
-            p = p + 2;
-            continue;
-        }
-        
-        if ( *p == '=' ) {
-            cur = new_token(TK_RESERVED,cur,p,1);
-            p++;
-            continue;
-        }
-        
-        error_at(p,"invalid token");
+        error("トークナイズできません: %s", p);
         exit(1);
     }
     
