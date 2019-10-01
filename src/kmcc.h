@@ -111,7 +111,7 @@ Token *get(Tokens *t, int i);
 
 void runtest();
 
-Node *new_node(int kind, Node *lhs, Node *rhs);
+Node *new_node(NodeKind kind);
 Node *new_binary(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_num(long val);
 Node *new_node_ident(Type *ty, char *name);
