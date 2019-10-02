@@ -65,32 +65,34 @@ int is_alnum(char c) {
     (c == '_');
 }
 
-Node *new_node(int kind, Node *lhs, Node *rhs) {
-    Node *node = malloc(sizeof(Node));
+Node *new_node(NodeKind kind) {
+    Node *node = calloc(1,sizeof(Node));
     node->kind = kind;
+    return node;
+}
+
+Node *new_binary(NodeKind kind, Node *lhs, Node *rhs) {
+    Node *node = new_node(kind);
     node->lhs = lhs;
     node->rhs = rhs;
     return node;
 }
 
 Node *new_node_block(Vector *stmts) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_BLOCK;
+    Node *node = new_node(ND_BLOCK);
     node->stmts = stmts;
     return node;
 }
 
 Node *new_node_call(char *name, Vector *args) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_CALL;
+    Node *node = new_node(ND_CALL);
     node->name = name;
     node->args = args;
     return node;
 }
 
 Node *new_node_function(char *name, Vector *args, Node *block) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_FUNC;
+    Node *node = new_node(ND_FUNC);
     node->name = name;
     node->args = args;
     node->block = block;
@@ -98,16 +100,13 @@ Node *new_node_function(char *name, Vector *args, Node *block) {
 }
 
 Node *new_node_num(long val) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_NUM;
+    Node *node = new_node(ND_NUM);
     node->val = val;
     return node;
 }
 
 Node *new_node_ident(Type *ty, char *name) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_IDENT;
-    //node->name = malloc(sizeof(char));
+    Node *node = new_node(ND_IDENT);
     node->ty = ty;
     node->name = strndup(name, strlen(name));
     var_append(variables, ty, name);
@@ -115,8 +114,7 @@ Node *new_node_ident(Type *ty, char *name) {
 }
 
 Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_FOR;
+    Node *node = new_node(ND_FOR);
     node->init = init;
     node->cond = cond;
     node->incdec = incdec;
@@ -125,8 +123,7 @@ Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
 }
 
 Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_IF;
+    Node *node = new_node(ND_IF);
     node->cond = cond;
     node->body = body;
     node->elseBody = elseBody;
@@ -134,8 +131,7 @@ Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
 }
 
 Node *new_node_while(Node *cond, Node *body) {
-    Node *node = malloc(sizeof(Node));
-    node->kind = ND_WHILE;
+    Node *node = new_node(ND_WHILE);
     node->cond = cond;
     node->body = body;
     return node;
@@ -146,7 +142,7 @@ Node *code[100];
 Node *assign() {
     Node *node = equality();
     if (consume("="))
-        node = new_node('=', node, assign());
+        node = new_binary('=', node, assign());
     return node;
 }
 
@@ -279,7 +275,7 @@ Node *stmt() {
         return new_node_for(init, cond, incdec, body);
     }
     if (consume("return")) {
-        node = new_node(ND_RETURN, expr(), NULL);
+        node = new_binary(ND_RETURN, expr(), NULL);
     } else {
         node = expr();
     }
@@ -302,11 +298,11 @@ Node *equality() {
     
     for (;;) {
         if (consume("=="))
-            node = new_node(ND_EQ, node, relational());
+	  node = new_binary(ND_EQ, node, relational());
         else if (consume("!="))
-            node = new_node(ND_NE, node, relational());
+	  node = new_binary(ND_NE, node, relational());
         else
-            return node;
+          return node;
     }
 }
 
@@ -316,13 +312,13 @@ Node *relational() {
     
     for (;;) {
         if (consume("<"))
-            node = new_node(ND_LT, node, add());
+            node = new_binary(ND_LT, node, add());
         else if (consume("<="))
-            node = new_node(ND_LE, node, add());
+            node = new_binary(ND_LE, node, add());
         else if (consume(">"))
-            node = new_node(ND_LT, add(), node);
+            node = new_binary(ND_LT, add(), node);
         else if (consume(">="))
-            node = new_node(ND_LE, add(), node);
+            node = new_binary(ND_LE, add(), node);
         else
             return node;
     }
@@ -334,9 +330,9 @@ Node *add() {
     
     for (;;) {
         if (consume("+"))
-            node = new_node(ND_ADD, node, mul());
+            node = new_binary(ND_ADD, node, mul());
         else if (consume("-"))
-            node = new_node(ND_SUB, node, mul());
+            node = new_binary(ND_SUB, node, mul());
         else
             return node;
     }
@@ -347,9 +343,9 @@ Node *mul() {
     
     for (;;) {
         if (consume("*"))
-            node = new_node(ND_MUL, node, unary());
+            node = new_binary(ND_MUL, node, unary());
         else if (consume("/"))
-            node = new_node(ND_DIV, node, unary());
+            node = new_binary(ND_DIV, node, unary());
         else
             return node;
         
@@ -409,13 +405,13 @@ Node *unary() {
     }
     if (consume("-")) {
         // -x => 0-x
-        return new_node(ND_SUB,new_node_num(0), unary());
+        return new_binary(ND_SUB,new_node_num(0), unary());
     }
     if (consume("*")) {
-        return new_node(ND_DEREF, unary(), NULL);
+        return new_binary(ND_DEREF, unary(), NULL);
     }
     if (consume("&")) {
-        return new_node(ND_ADDR, unary(), NULL);
+        return new_binary(ND_ADDR, unary(), NULL);
     }
     return primary();
 }
