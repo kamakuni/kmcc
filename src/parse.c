@@ -142,7 +142,7 @@ Node *code[100];
 Node *assign() {
     Node *node = equality();
     if (consume("="))
-        node = new_binary('=', node, assign());
+        node = new_binary(ND_ASSIGN, node, assign());
     return node;
 }
 
