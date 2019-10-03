@@ -167,7 +167,7 @@ void gen(Node *node) {
         return;
     }
     
-    if (node->kind == '=') {
+    if (node->kind == ND_ASSIGN) {
         gen_lval(node->lhs);    
         gen(node->rhs);
         
