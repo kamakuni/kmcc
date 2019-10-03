@@ -55,6 +55,16 @@ struct Var {
     int offset;
 };
 
+typedef struct LVar LVar;
+struct LVar {
+    LVar *next;
+    char *name;
+    int len;
+  int offset;
+};
+
+LVar *locals;
+
 typedef struct Node Node;
 struct Node {
     int kind;
