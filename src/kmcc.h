@@ -65,6 +65,8 @@ struct LVar {
 
 LVar *locals;
 
+LVar *find_lvar(Token *tok);
+
 typedef struct Node Node;
 struct Node {
     int kind;
