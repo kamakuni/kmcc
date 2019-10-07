@@ -217,9 +217,9 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if ('a' <= *p && *p <= 'z') {
+        if (is_alpha(*p)) {
             int i = 0;
-            while(isalpha(p[i]))
+            while(is_alnum(p[i]))
                 i++;
             cur = new_token(TK_IDENT,cur,p,i);
             p += i;
