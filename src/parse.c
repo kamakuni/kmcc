@@ -191,14 +191,12 @@ Node *stmt() {
         Node *init = NULL;
         if(!consume(";")) {
             init = expr();
-            if(!consume(";"))
-                error_at(token->str, "';'ではないトークンです");
+	    expect(";");
         }
         Node *cond = NULL;
         if(!consume(";")) {
             cond = expr();
-            if(!consume(";"))
-                error_at(token->str, "';'ではないトークンです");
+            expect(";");
         }
         Node *incdec = NULL;
         if(!consume(")")) {
@@ -214,8 +212,7 @@ Node *stmt() {
     } else {
         node = expr();
     }
-    if (!consume(";"))
-        error_at(token->str, "';'ではないトークンです");
+    expect(";");
     return node;
 }
 
