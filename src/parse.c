@@ -87,8 +87,7 @@ Node *expr() {
 
 Node *function() {
     Node *node;
-    if (!consume("int"))
-        error_at(token->str, "intではないトークンです");
+    expect("int");
     while (consume("*")) {
         // do something
         //if (!consume("*"))
@@ -97,12 +96,10 @@ Node *function() {
     Token *ident = consume_ident();
     if (ident == NULL)
         error_at(token->str, "関数名ではないではないトークンです");
-    if (!consume("("))
-        error_at(token->str, "'('ではないトークンです");        
+    expect("(");
     Vector *args = new_vector();
     while (!consume(")")) {
-        if (!consume("int"))
-            error_at(token->str, "intではないトークンです");
+        expect("int");
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
         Token *var = consume_ident();
@@ -111,8 +108,7 @@ Node *function() {
             vec_push(args, (void *) strndup(var->str,var->len));
         } else {
             while (!consume_ident()) {
-                if (!consume("*"))
-                    error_at(token->str, "'*'ではないではないトークンです");
+ 	        expect("*");
                 Type *next = ty;
                 ty = malloc(sizeof(Type));
                 ty->ty = PTR;
@@ -121,8 +117,7 @@ Node *function() {
         }
         consume(",");
     }
-    if (!consume("{"))
-        error_at(token->str, "'{'ではないトークンです");        
+    expect("{");
     Vector *stmts = new_vector();
     while(!consume("}")) {
         vec_push(stmts, stmt());
@@ -149,8 +144,7 @@ Node *stmt() {
         if (ident != NULL) {
             char *name = strndup(ident->str,ident->len);
             node = new_node_ident(ty, name);
-            if (!consume(";"))
-                error_at(token->str, "';'ではないトークンです");
+	    expect(";");
             return node;
         } else {
             error_at(token->str, "識別子ではないトークンです");
@@ -164,11 +158,9 @@ Node *stmt() {
         return new_node_block(stmts);
     }
     if (consume("if")) {
-        if(!consume("("))
-            error_at(token->str, "'('ではないトークンです");
-        Node *cond = expr();
-        if(!consume(")"))
-            error_at(token->str, "')'ではないトークンです");
+	expect("(");
+	Node *cond = expr();
+	expect(")");
         Node *body = stmt();
         if(consume("else")) {
             Node *elseBody = stmt();
@@ -177,17 +169,14 @@ Node *stmt() {
         return new_node_if(cond, body, NULL);
     }
     if (consume("while")) {
-        if(!consume("("))
-            error_at(token->str, "'('ではないトークンです");
-        Node *cond = expr();
-        if(!consume(")"))
-            error_at(token->str, "')'ではないトークンです");
+	expect("(");
+	Node *cond = expr();
+	expect(")");
         Node *body = stmt();
         return new_node_while(cond, body);
     }
     if (consume("for")) {
-        if(!consume("("))
-            error_at(token->str, "'('ではないトークンです");
+	expect("(");
         Node *init = NULL;
         if(!consume(";")) {
             init = expr();
@@ -201,8 +190,7 @@ Node *stmt() {
         Node *incdec = NULL;
         if(!consume(")")) {
             incdec = expr();
-            if(!consume(")"))
-                error_at(token->str, "')'ではないトークンです");
+	    expect(")");
         }
         Node *body = stmt();
         return new_node_for(init, cond, incdec, body);
@@ -288,9 +276,7 @@ Node *mul() {
 Node *primary() {
     if (consume("(")) {
         Node *node = equality();
-        if (!consume(")")) {
-            error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
-        }
+	expect(")");
         return node;
     }
     
