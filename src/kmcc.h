@@ -69,20 +69,21 @@ LVar *find_lvar(Token *tok);
 
 typedef struct Node Node;
 struct Node {
-    int kind;
-    Node *lhs;
-    Node *rhs;
-    Node *cond; // for ND_IF | ND_FOR | ND_WHILE
-    Node *block; // for ND_FUNC
-    Node *body; // for ND_IF | ND_FOR | ND_WHILE
-    Node *elseBody; // for ND_IF
-    Node *init; // for ND_FOR
-    Node *incdec; // for ND_FOR
-    Vector *stmts; // for ND_BLOCK | ND_FUNC
-    Vector *args; // for ND_CALL
-    Type *ty;
-    int val;
-    char *name;
+  int kind;
+  Node *next;
+  Node *lhs;
+  Node *rhs;
+  Node *cond; // for ND_IF | ND_FOR | ND_WHILE
+  Node *block; // for ND_FUNC
+  Node *body; // for ND_IF | ND_FOR | ND_WHILE
+  Node *elseBody; // for ND_IF
+  Node *init; // for ND_FOR
+  Node *incdec; // for ND_FOR
+  Vector *stmts; // for ND_BLOCK | ND_FUNC
+  Vector *args; // for ND_CALL
+  Type *ty;
+  int val;
+  char *name;
 };
 
 typedef enum {
@@ -109,6 +110,15 @@ typedef enum {
     ND_ADDR,
     ND_DEREF,
 } NodeKind;
+
+typedef struct Function Function;
+struct Function {
+  Node *node;
+  Var *locals;
+  int stack_size;
+};
+
+Function *program(void);
 
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
@@ -152,16 +162,15 @@ bool is_alpha(char c);
 char *strndup(char *p,int len);
 void error(char *fmt, ...);
 
-void program();
-Node *function();
-Node *stmt();
-Node *add();
-Node *equality();
-Node *relational();
-Node *primary();
-Node *mul();
-Node *unary();
-
+//Node *function();
+//Node *stmt();
+//Node *add();
+//Node *equality();
+//Node *relational();
+//Node *primary();
+//Node *mul();
+//Node *unary();
+void codegen(Function *prog);
 void gen();
 
 extern char *filename;

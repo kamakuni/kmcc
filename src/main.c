@@ -25,14 +25,14 @@ int main(int argc, char **argv) {
     token = tokenize(user_input);
     
     // tokens to syntax tree
-    program();
-    
-    printf(".intel_syntax noprefix\n");
+    Function *prog = program();
+    codegen(prog);
+    /*printf(".intel_syntax noprefix\n");
     printf(".global main\n");
 
     for (int i = 0; code[i]; i++) {
         gen_func(code[i]);
     }
-
+    */
     return 0;
 }

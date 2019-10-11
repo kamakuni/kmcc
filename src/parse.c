@@ -74,18 +74,27 @@ Node *new_node_while(Node *cond, Node *body) {
 
 Node *code[100];
 
-Node *assign() {
+static Node *function();
+static Node *stmt();
+static Node *add();
+static Node *equality();
+static Node *relational();
+static Node *primary();
+static Node *mul();
+static Node *unary();      
+
+static Node *assign() {
     Node *node = equality();
     if (consume("="))
         node = new_binary(ND_ASSIGN, node, assign());
     return node;
 }
 
-Node *expr() {
+static Node *expr() {
     return assign();
 }
 
-Node *function() {
+static Node *function() {
     Node *node;
     expect("int");
     while (consume("*")) {
@@ -126,7 +135,7 @@ Node *function() {
     return new_node_function(strndup(ident->str,ident->len), args, block);
 }
 
-Node *stmt() {
+static Node *stmt() {
     Node *node;
 
     if (consume("int")) {
@@ -204,16 +213,27 @@ Node *stmt() {
     return node;
 }
 
-void program() {
-    int i = 0;
+Function *program() {
+    /*int i = 0;
     while (!at_eof()) {
         //code[i++] = stmt();
         code[i++] = function();
     }
-    code[i] = NULL;
+    code[i] = NULL;*/
+    Node head = {};
+    Node *cur = &head;
+
+    while (!at_eof()) {
+      cur->next = function();
+      cur = cur->next;
+    }
+
+    Function *prog = calloc(1, sizeof(Function));
+    prog->node = head.next;
+    return prog;
 }
 
-Node *equality() {
+static Node *equality() {
     Node *node = relational();
     
     for (;;) {
@@ -226,7 +246,7 @@ Node *equality() {
     }
 }
 
-Node *relational() {
+static Node *relational() {
     // lhs
     Node *node = add();
     
@@ -244,7 +264,7 @@ Node *relational() {
     }
 }
 
-Node *add() {
+static Node *add() {
     // lhs
     Node *node = mul();
     
@@ -258,7 +278,7 @@ Node *add() {
     }
 }
 
-Node *mul() {
+static Node *mul() {
     Node *node = unary();
     
     for (;;) {
@@ -273,7 +293,7 @@ Node *mul() {
     
 }
 
-Node *primary() {
+static Node *primary() {
     if (consume("(")) {
         Node *node = equality();
 	expect(")");
@@ -317,7 +337,7 @@ Node *primary() {
     return NULL;
 }
 
-Node *unary() {
+static Node *unary() {
     if (consume("+")) {
         return unary();
     }
