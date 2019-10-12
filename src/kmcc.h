@@ -84,6 +84,7 @@ struct Node {
   Type *ty;
   int val;
   char *name;
+  Var *var;
 };
 
 typedef enum {
@@ -109,6 +110,7 @@ typedef enum {
     ND_EOF,
     ND_ADDR,
     ND_DEREF,
+    ND_VAR,
 } NodeKind;
 
 typedef struct Function Function;

@@ -72,6 +72,12 @@ Node *new_node_while(Node *cond, Node *body) {
     return node;
 }
 
+static Node *new_var_node(Var *var) {
+  Node *node = new_node(ND_VAR);
+  node->var = var;
+  return node;
+}
+
 Node *code[100];
 
 static Node *function();
