@@ -26,6 +26,16 @@ int main(int argc, char **argv) {
     
     // tokens to syntax tree
     Function *prog = program();
+
+    // Assign offsets to local variables.
+    int offset = 0;
+    for (Var *var = prog->locals; var; var = var->next) {
+      offset += 8;
+      var->offset = offset;
+    }
+    prog->stack_size = offset;
+    
+
     codegen(prog);
     /*printf(".intel_syntax noprefix\n");
     printf(".global main\n");
