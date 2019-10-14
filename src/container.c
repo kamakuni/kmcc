@@ -108,14 +108,6 @@ void var_append(Var *var, Type *ty, char *name){
     var_insert_first(&variables, ty, name, offset);
 }
 
-
-LVar *find_lvar(Token *tok) {
-  for (LVar *var = locals; var; var = var->next)
-    if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
-      return var;
-  return NULL;
-}
-
 Tokens *new_tokens(){
     Tokens *t = malloc(sizeof(Tokens));
     t->vec = new_vector();

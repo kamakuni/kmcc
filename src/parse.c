@@ -1,5 +1,14 @@
 #include "kmcc.h"
 
+Var *locals;
+
+Var *find_lvar(Token *tok) {
+  for (Var *var = locals; var; var = var->next)
+    if (tok->len == tok->len && !memcmp(tok->str, var->name, tok->len))
+     return var;
+  return NULL;
+}
+
 Node *new_node(NodeKind kind) {
     Node *node = calloc(1,sizeof(Node));
     node->kind = kind;
@@ -76,6 +85,14 @@ static Node *new_var_node(Var *var) {
   Node *node = new_node(ND_VAR);
   node->var = var;
   return node;
+}
+
+static Var *new_lvar(char *name){
+  Var *var = calloc(1,sizeof(Var));
+  var->next = locals;
+  var->name = name;
+  locals = var;
+  return var;
 }
 
 Node *code[100];
