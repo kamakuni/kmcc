@@ -5,12 +5,17 @@ char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 void gen_lval(Node *node) {
     switch (node->kind) {
-    case ND_IDENT:{
+      /*case ND_IDENT:{
         int offset = var_get_offset(variables, node->name);
         printf("  mov rax, rbp\n");
         printf("  sub rax, %d\n", offset);
         printf("  push rax\n");
         return;
+	}*/
+    case ND_VAR: {
+      printf("  lea rax, [rbp-%d]\n", node->var->offset);
+      printf("  push rax\n");
+      return;
     }
     case ND_DEREF:
         gen(node->lhs);

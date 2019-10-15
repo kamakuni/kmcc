@@ -332,7 +332,7 @@ static Node *primary() {
         if (!consume("(")) {
 	  Var *var = find_var(ident);
 	  if(!var)
-	    var = new_lvar(strndup(ident->str, ident->len));
+	    var = new_lvar(strndup(var->str, var->len));
 	  return new_var_node(var);
 	  /*if (!var_exist(variables, name)) 
             error("未定義の変数です。：%s", name);

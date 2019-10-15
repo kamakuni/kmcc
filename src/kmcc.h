@@ -49,10 +49,11 @@ struct Type {
 
 typedef struct Var Var;
 struct Var {
-    Var *next;
-    char *name;
-    Type *ty;
-    int offset;
+  Var *next;
+  char *name;
+  Type *ty;
+  int len;
+  int offset;
 };
 
 typedef struct LVar LVar;
