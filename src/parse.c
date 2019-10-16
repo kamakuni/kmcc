@@ -174,10 +174,12 @@ static Node *stmt() {
         }
         Token *ident = consume_ident();
         if (ident != NULL) {
-            char *name = strndup(ident->str,ident->len);
-            node = new_node_ident(ty, name);
-	    expect(";");
-            return node;
+	  //char *name = strndup(ident->str,ident->len);
+	  //node = new_node_ident(ty, name);
+	  Var *var = new_lvar(strndup(ident->str, ident->len));
+	  node = new_var_node(var);
+	  expect(";");
+          return node;
         } else {
             error_at(token->str, "識別子ではないトークンです");
         }
