@@ -348,10 +348,6 @@ static Node *primary() {
             Node *node = add();
             vec_push(args, (void *) node);
             consume(",");
-            /*if (get(tokens,pos)->kind == TK_NUM) {
-                vec_push(args, (void *) get(tokens,pos++)->val);
-                consume(",");
-            }*/
         }
         
         return new_node_call(name, args);
