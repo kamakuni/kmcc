@@ -32,18 +32,19 @@ void gen_block(Node *node){
     }
 }
 
-void gen_func(Node *node){
+void gen_func(Function *prog, Node *node){
     if(node->kind != ND_FUNC)
         error("関数でありません。");
     printf("%s:\n",node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    int buf = (node->args->len + var_len(variables)) * 8;
-    printf("  sub rsp, %d\n", buf);
+    //int buf = (node->args->len + var_len(variables)) * 8;
+    printf("  sub rsp, %d\n", prog->stack_size);
     for (int i = 0; i < node->args->len; i++) {
     //for (int i = node->args->len; i >= 0 ; i--) {
-        int offset = var_get_offset(variables,vec_get(node->args,i));
-        if (offset != 0) {
+      int offset = var_get_offset(variables,vec_get(node->args,i));
+      //int offset = prog->stack_size;
+      if (offset != 0) {
             printf("  mov rax, rbp\n");
             printf("  sub rax, %d\n", offset);
             printf("  mov [rax], %s\n", argregs[i]);
@@ -248,5 +249,5 @@ void codegen(Function *prog){
   //  gen_func(code[i]);
   //}
   for (Node *node = prog->node; node; node = node->next)
-    gen_func(node);
+    gen_func(prog,node);
 }
