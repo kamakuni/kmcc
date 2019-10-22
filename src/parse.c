@@ -1,5 +1,5 @@
 #include "kmcc.h"
-
+1;95;0c
 Var *locals;
 
 static Var *find_var(Token *tok) {
@@ -174,8 +174,6 @@ static Node *stmt() {
         }
         Token *ident = consume_ident();
         if (ident != NULL) {
-	  //char *name = strndup(ident->str,ident->len);
-	  //node = new_node_ident(ty, name);
 	  Var *var = new_lvar(strndup(ident->str, ident->len));
 	  node = new_var_node(var);
 	  expect(";");
@@ -338,10 +336,6 @@ static Node *primary() {
 	  if(!var)
 	    var = new_lvar(strndup(ident->str, ident->len));
 	  return new_var_node(var);
-	  /*if (!var_exist(variables, name)) 
-            error("未定義の変数です。：%s", name);
-          Var *var = var_get(variables, name);
-          return new_node_ident(var->ty,name);*/
         }
         Vector *args = new_vector();
         while (!consume(")")) {
