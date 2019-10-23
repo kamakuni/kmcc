@@ -1,5 +1,4 @@
 #include "kmcc.h"
-1;95;0c
 Var *locals;
 
 static Var *find_var(Token *tok) {
