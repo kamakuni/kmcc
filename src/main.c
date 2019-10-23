@@ -25,14 +25,24 @@ int main(int argc, char **argv) {
     token = tokenize(user_input);
     
     // tokens to syntax tree
-    program();
+    Function *prog = program();
+
+    // Assign offsets to local variables.
+    int offset = 0;
+    for (Var *var = prog->locals; var; var = var->next) {
+      offset += 8;
+      var->offset = offset;
+    }
+    prog->stack_size = offset;
     
-    printf(".intel_syntax noprefix\n");
+
+    codegen(prog);
+    /*printf(".intel_syntax noprefix\n");
     printf(".global main\n");
 
     for (int i = 0; code[i]; i++) {
         gen_func(code[i]);
     }
-
+    */
     return 0;
 }

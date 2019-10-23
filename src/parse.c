@@ -1,68 +1,11 @@
 #include "kmcc.h"
+Var *locals;
 
-char *filename;
-char *user_input;
-
-// Report an error and exit.
-void error(char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    vfprintf(stderr, fmt, ap);
-    fprintf(stderr, "\n");
-    exit(1);
-}
-
-// Report an error message in the following format and exit.
-//
-// foo.c:10: x = y + 1;
-//               ^ <error message here>
-void verror_at(char *loc, char *fmt, va_list ap) {
-    // Find a line containing `loc`.
-    char *line = loc;
-    while (user_input < line && line[-1] != '\n')
-        line--;
-    
-    char *end = loc;
-    while (*end != '\n')
-        end++;
-    
-    // Get a line number.
-    int line_num = 1;
-    for (char *p = user_input; p < line; p++)
-        if (*p == '\n')
-            line_num++;
-    
-    // Print out the line.
-    int ident = fprintf(stderr, "%s:%d: ", filename, line_num);
-    fprintf(stderr, "%.*s\n", (int)(end - line), line);
-
-    // Show the error message.
-    int pos = loc - line + ident;
-    fprintf(stderr, "%*s", pos, ""); // print pos spaces.
-    fprintf(stderr, "^ ");
-    fprintf(stderr, fmt, ap);
-    fprintf(stderr, "\n");
-    exit(1);
-}
-
-void error_at(char *loc, char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-
-    int pos = loc - user_input;
-    fprintf(stderr, "%s\n", user_input);
-    fprintf(stderr, "%*s", pos, ""); // pos個の空白を出力
-    fprintf(stderr, "^ ");
-    vfprintf(stderr, fmt, ap);
-    fprintf(stderr, "¥n");
-    exit(1);
-}
-
-int is_alnum(char c) {
-    return ('a' <= c && c <= 'z') ||
-    ('A' <= c && c <= 'Z') ||
-    ('0' <= c && c <= '9') ||
-    (c == '_');
+static Var *find_var(Token *tok) {
+  for (Var *var = locals; var; var = var->next)
+    if (tok->len == tok->len && !memcmp(tok->str, var->name, tok->len))
+     return var;
+  return NULL;
 }
 
 Node *new_node(NodeKind kind) {
@@ -137,23 +80,45 @@ Node *new_node_while(Node *cond, Node *body) {
     return node;
 }
 
+static Node *new_var_node(Var *var) {
+  Node *node = new_node(ND_VAR);
+  node->var = var;
+  return node;
+}
+
+static Var *new_lvar(char *name){
+  Var *var = calloc(1,sizeof(Var));
+  var->next = locals;
+  var->name = name;
+  locals = var;
+  return var;
+}
+
 Node *code[100];
 
-Node *assign() {
+static Node *function();
+static Node *stmt();
+static Node *add();
+static Node *equality();
+static Node *relational();
+static Node *primary();
+static Node *mul();
+static Node *unary();      
+
+static Node *assign() {
     Node *node = equality();
     if (consume("="))
         node = new_binary(ND_ASSIGN, node, assign());
     return node;
 }
 
-Node *expr() {
+static Node *expr() {
     return assign();
 }
 
-Node *function() {
+static Node *function() {
     Node *node;
-    if (!consume("int"))
-        error_at(token->str, "intではないトークンです");
+    expect("int");
     while (consume("*")) {
         // do something
         //if (!consume("*"))
@@ -162,12 +127,10 @@ Node *function() {
     Token *ident = consume_ident();
     if (ident == NULL)
         error_at(token->str, "関数名ではないではないトークンです");
-    if (!consume("("))
-        error_at(token->str, "'('ではないトークンです");        
+    expect("(");
     Vector *args = new_vector();
     while (!consume(")")) {
-        if (!consume("int"))
-            error_at(token->str, "intではないトークンです");
+        expect("int");
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
         Token *var = consume_ident();
@@ -176,8 +139,7 @@ Node *function() {
             vec_push(args, (void *) strndup(var->str,var->len));
         } else {
             while (!consume_ident()) {
-                if (!consume("*"))
-                    error_at(token->str, "'*'ではないではないトークンです");
+ 	        expect("*");
                 Type *next = ty;
                 ty = malloc(sizeof(Type));
                 ty->ty = PTR;
@@ -186,8 +148,7 @@ Node *function() {
         }
         consume(",");
     }
-    if (!consume("{"))
-        error_at(token->str, "'{'ではないトークンです");        
+    expect("{");
     Vector *stmts = new_vector();
     while(!consume("}")) {
         vec_push(stmts, stmt());
@@ -196,7 +157,7 @@ Node *function() {
     return new_node_function(strndup(ident->str,ident->len), args, block);
 }
 
-Node *stmt() {
+static Node *stmt() {
     Node *node;
 
     if (consume("int")) {
@@ -212,11 +173,10 @@ Node *stmt() {
         }
         Token *ident = consume_ident();
         if (ident != NULL) {
-            char *name = strndup(ident->str,ident->len);
-            node = new_node_ident(ty, name);
-            if (!consume(";"))
-                error_at(token->str, "';'ではないトークンです");
-            return node;
+	  Var *var = new_lvar(strndup(ident->str, ident->len));
+	  node = new_var_node(var);
+	  expect(";");
+          return node;
         } else {
             error_at(token->str, "識別子ではないトークンです");
         }
@@ -229,11 +189,9 @@ Node *stmt() {
         return new_node_block(stmts);
     }
     if (consume("if")) {
-        if(!consume("("))
-            error_at(token->str, "'('ではないトークンです");
-        Node *cond = expr();
-        if(!consume(")"))
-            error_at(token->str, "')'ではないトークンです");
+	expect("(");
+	Node *cond = expr();
+	expect(")");
         Node *body = stmt();
         if(consume("else")) {
             Node *elseBody = stmt();
@@ -242,34 +200,28 @@ Node *stmt() {
         return new_node_if(cond, body, NULL);
     }
     if (consume("while")) {
-        if(!consume("("))
-            error_at(token->str, "'('ではないトークンです");
-        Node *cond = expr();
-        if(!consume(")"))
-            error_at(token->str, "')'ではないトークンです");
+	expect("(");
+	Node *cond = expr();
+	expect(")");
         Node *body = stmt();
         return new_node_while(cond, body);
     }
     if (consume("for")) {
-        if(!consume("("))
-            error_at(token->str, "'('ではないトークンです");
+	expect("(");
         Node *init = NULL;
         if(!consume(";")) {
             init = expr();
-            if(!consume(";"))
-                error_at(token->str, "';'ではないトークンです");
+	    expect(";");
         }
         Node *cond = NULL;
         if(!consume(";")) {
             cond = expr();
-            if(!consume(";"))
-                error_at(token->str, "';'ではないトークンです");
+            expect(";");
         }
         Node *incdec = NULL;
         if(!consume(")")) {
             incdec = expr();
-            if(!consume(")"))
-                error_at(token->str, "')'ではないトークンです");
+	    expect(")");
         }
         Node *body = stmt();
         return new_node_for(init, cond, incdec, body);
@@ -279,21 +231,33 @@ Node *stmt() {
     } else {
         node = expr();
     }
-    if (!consume(";"))
-        error_at(token->str, "';'ではないトークンです");
+    expect(";");
     return node;
 }
 
-void program() {
-    int i = 0;
+Function *program() {
+    /*int i = 0;
     while (!at_eof()) {
         //code[i++] = stmt();
         code[i++] = function();
     }
-    code[i] = NULL;
+    code[i] = NULL;*/
+  locals = NULL;
+  Node head = {};
+  Node *cur = &head;
+
+  while (!at_eof()) {
+    cur->next = function();
+    cur = cur->next;
+  }
+
+  Function *prog = calloc(1, sizeof(Function));
+  prog->node = head.next;
+  prog->locals = locals;
+  return prog;
 }
 
-Node *equality() {
+static Node *equality() {
     Node *node = relational();
     
     for (;;) {
@@ -306,7 +270,7 @@ Node *equality() {
     }
 }
 
-Node *relational() {
+static Node *relational() {
     // lhs
     Node *node = add();
     
@@ -324,7 +288,7 @@ Node *relational() {
     }
 }
 
-Node *add() {
+static Node *add() {
     // lhs
     Node *node = mul();
     
@@ -338,7 +302,7 @@ Node *add() {
     }
 }
 
-Node *mul() {
+static Node *mul() {
     Node *node = unary();
     
     for (;;) {
@@ -353,12 +317,10 @@ Node *mul() {
     
 }
 
-Node *primary() {
+static Node *primary() {
     if (consume("(")) {
         Node *node = equality();
-        if (!consume(")")) {
-            error("開き括弧に対する閉じ括弧がありません。：%s", token->str);
-        }
+	expect(")");
         return node;
     }
     
@@ -369,27 +331,16 @@ Node *primary() {
     if (ident != NULL) {
         char *name = strndup(ident->str,ident->len);
         if (!consume("(")) {
-            if (!var_exist(variables, name)) 
-                error("未定義の変数です。：%s", name);
-            /*Var *var;
-            while(variables->next != NULL){
-                if(strcmp(variables->name, name) == 0){
-                    var = variables;
-                }
-                variables = variables->next;
-            };*/
-            Var *var = var_get(variables, name);
-            return new_node_ident(var->ty,name);
+	  Var *var = find_var(ident);
+	  if(!var)
+	    var = new_lvar(strndup(ident->str, ident->len));
+	  return new_var_node(var);
         }
         Vector *args = new_vector();
         while (!consume(")")) {
             Node *node = add();
             vec_push(args, (void *) node);
             consume(",");
-            /*if (get(tokens,pos)->kind == TK_NUM) {
-                vec_push(args, (void *) get(tokens,pos++)->val);
-                consume(",");
-            }*/
         }
         
         return new_node_call(name, args);
@@ -399,7 +350,7 @@ Node *primary() {
     return NULL;
 }
 
-Node *unary() {
+static Node *unary() {
     if (consume("+")) {
         return unary();
     }
@@ -414,178 +365,4 @@ Node *unary() {
         return new_binary(ND_ADDR, unary(), NULL);
     }
     return primary();
-}
-
-bool startswith(char *p, char * q) {
-    return memcmp(p, q, strlen(q)) == 0;
-}
-
-Token *peek(char *s){
-    if (token->kind != TK_RESERVED || strlen(s) != token->len ||
-        strncmp(token->str,s,token->len))
-        return NULL;
-    return token;
-}
-
-bool consume(char *s) {
-    if (token->kind != TK_RESERVED || strlen(s) != token->len ||
-        strncmp(token->str,s,token->len))
-        return false;
-    token = token->next;
-    return true;
-}
-
-Token *consume_ident(void){
-    if (token->kind != TK_IDENT)
-        return NULL;
-    Token *t = token;
-    token = token->next;
-    return t;
-}
-
-void expect(char *op) {
-    if (!peek(op))
-        error_at(token->str, "expected '%c'", op);
-    token = token->next;
-}
-
-long expect_number() {
-    if (token->kind != TK_NUM)
-        error_at(token->str,"expected a number");
-    long val = token->val;
-    token = token->next;
-    return val;
-}
-
-char *expect_ident() {
-    if (token->kind != TK_IDENT)
-        error_at(token->str,"expected a identifier");
-    char *s = strndup(token->str, token->len);
-    token = token->next;
-    return s;
-}
-
-bool at_eof() {
-    return token->kind == TK_EOF;
-}
-
-char *strndup(char *p,int len) {
-    char *buf = malloc(len + 1);
-    strncpy(buf, p , len);
-    buf[len] = '\0';
-    return buf;
-}
-//Token *token;
-
-Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
-    Token *t = calloc(1, sizeof(Token));
-    t->kind = kind;
-    t->len = len;
-    t->str = str;
-    cur->next = t;
-    return t;
-}
-
-Token *new_token_num(Token *cur, int val, char *str) {
-    Token *t = calloc(1, sizeof(Token));
-    t->kind = TK_NUM;
-    t->val = val;
-    t->str = str;
-    cur->next = t;
-    return t;
-}
-
-Token *new_token_ident(Token *cur, char *str, int len) {
-    Token *t = calloc(1,sizeof(Token));
-    t->kind = TK_IDENT;
-    t->str = str;
-    cur->next = t;
-    return t;
-}
-
-Token *tokenize(char *p) {
-    Token head = {};
-    Token *cur = &head;
-    
-    while (*p) {
-        if (isspace(*p)) {
-            p++;
-            continue;
-        }
-        
-        // Multi-letter punctuator
-        if (startswith(p, "==") || startswith(p, "!=") ||
-            startswith(p, "<=") || startswith(p, ">=")) {
-            cur = new_token(TK_RESERVED, cur, p, 2);
-            p = p + 2;
-            continue;
-        }
-        
-        // single-letter punctuator
-        if (strchr("+-*/(){}<>;,&=", *p)) {
-            cur = new_token(TK_RESERVED, cur, p, 1);
-            p++;
-            continue;
-        }
-
-        if (strncmp(p, "int", 3) == 0 && !is_alnum(p[3])){
-            cur = new_token(TK_RESERVED,cur,p,3);
-            p += 3;
-            continue;
-        }
-
-        if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])){
-            cur = new_token(TK_RESERVED,cur,p,2);
-            p += 2;
-            continue;
-        }
-
-        if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3])){
-            cur = new_token(TK_RESERVED,cur,p,3);
-            p += 3;
-            continue;
-        }
-
-        if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])){
-            cur = new_token(TK_RESERVED,cur,p,4);
-            p += 4;
-            continue;
-        }
-
-        if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
-            cur = new_token(TK_RESERVED,cur,p,6);
-            p += 6;
-            continue;
-        }
-
-        if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])){
-            cur = new_token(TK_RESERVED,cur,p,5);
-            p += 5;
-            continue;
-        }
-
-        if ('a' <= *p && *p <= 'z') {
-            int i = 0;
-            while(isalpha(p[i]))
-                i++;
-            cur = new_token(TK_IDENT,cur,p,i);
-            p += i;
-            continue;
-        }
-        
-        // Integer literal
-        if (isdigit(*p)) {
-            char *start = p;
-            long val = strtol(p, &p, 10);
-            cur = new_token(TK_NUM,cur,start,p - start);
-            cur->val = val;
-            continue;
-        }
-        
-        error("トークナイズできません: %s", p);
-        exit(1);
-    }
-    
-    new_token(TK_EOF,cur,p,0);
-    return head.next;
 }
