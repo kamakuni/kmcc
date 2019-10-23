@@ -3,4 +3,5 @@
 *.s
 tmp*
 kmcc
-/.vscode
+.gdb_history
+./src/.vscode
