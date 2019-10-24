@@ -38,12 +38,10 @@ void gen_func(Function *prog, Node *node){
     printf("%s:\n",node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    //int buf = (node->args->len + var_len(variables)) * 8;
+
     printf("  sub rsp, %d\n", prog->stack_size);
     for (int i = 0; i < node->args->len; i++) {
-    //for (int i = node->args->len; i >= 0 ; i--) {
       int offset = var_get_offset(variables,vec_get(node->args,i));
-      //int offset = prog->stack_size;
       if (offset != 0) {
             printf("  mov rax, rbp\n");
             printf("  sub rax, %d\n", offset);
@@ -245,9 +243,6 @@ void codegen(Function *prog){
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
   
-  //for (int i = 0; code[i]; i++) {
-  //  gen_func(code[i]);
-  //}
   for (Node *node = prog->node; node; node = node->next)
     gen_func(prog,node);
 }
