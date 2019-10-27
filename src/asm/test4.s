@@ -16,7 +16,7 @@ main:
   pop rdi
   pop rax
   mov [rax], rdi
-  push rdi
+  push rdi  
   pop rax
   push 10
   push 1
@@ -28,15 +28,6 @@ main:
   push rax
   pop rax
   cmp rax, 0
-  je  .Lend0
-  lea rax, [rbp-8]
-  push rax
-  push 10
-  pop rdi
-  pop rax
-  mov [rax], rdi
-  push rdi
-.Lend0:
   pop rax
   lea rax, [rbp-8]
   push rax

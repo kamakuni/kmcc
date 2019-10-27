@@ -94,7 +94,7 @@ void gen(Node *node) {
         int label_count_if = label_count;
         label_count += 1;
         gen(node->cond);
-        printf("  pop rax\n");
+        //printf("  pop rax\n");
         printf("  cmp rax, 0\n");
         if(node->elseBody == NULL){
             printf("  je  .Lend%d\n", label_count_if);
