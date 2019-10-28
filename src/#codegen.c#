@@ -128,7 +128,7 @@ void gen(Node *node) {
         label_count += 1;
         printf(".Lbegin%d:\n", label_count_while);
         gen(node->cond);
-        //printf("  pop rax\n");
+        printf("  pop rax\n");
         printf("  cmp rax, 0\n");
         printf("  je  .Lend%d\n", label_count_while);
         if(node->body->kind == ND_BLOCK){
