@@ -116,6 +116,20 @@ static Node *expr() {
     return assign();
 }
 
+static Node *func_args() {
+  if (consume(")"))
+    return NULL;
+
+  Node *head = assign();
+  Node *cur = head;
+  while (consume(",")) {
+    cur->next = assign();
+    cur = cur->next;
+  }
+  expect(")");
+  return head;
+}
+
 static Node *function() {
     Node *node;
     expect("int");
