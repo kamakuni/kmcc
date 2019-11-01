@@ -27,7 +27,7 @@ Node *new_node_block(Vector *stmts) {
     return node;
 }
 
-Node *new_node_call(char *name, Vector *args) {
+Node *new_node_call(char *name, Node *args) {
     Node *node = new_node(ND_CALL);
     node->name = name;
     node->args = args;
@@ -350,13 +350,13 @@ static Node *primary() {
 	    var = new_lvar(strndup(ident->str, ident->len));
 	  return new_var_node(var);
         }
-        Vector *args = new_vector();
+	/* Vector *args = new_vector();
         while (!consume(")")) {
             Node *node = add();
             vec_push(args, (void *) node);
             consume(",");
-        }
-        
+	    }*/
+	Node *args = func_args();
         return new_node_call(name, args);
     }
     

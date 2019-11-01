@@ -77,7 +77,7 @@ struct Node {
   Node *init; // for ND_FOR
   Node *incdec; // for ND_FOR
   Vector *stmts; // for ND_BLOCK | ND_FUNC
-  Vector *args; // for ND_CALL
+  Node *args; // for ND_CALL
   Type *ty;
   int val;
   char *name;
