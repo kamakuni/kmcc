@@ -40,8 +40,10 @@ void gen_func(Function *prog, Node *node){
     printf("  mov rbp, rsp\n");
 
     printf("  sub rsp, %d\n", prog->stack_size);
-    for (int i = 0; i < node->args->len; i++) {
-      int offset = var_get_offset(variables,vec_get(node->args,i));
+    //for (int i = 0; i < node->args->len; i++) {
+
+    for (Node *arg = node->args; arg; arg = arg->next) {
+    int offset = var_get_offset(variables,vec_get(node->args,i));
       if (offset != 0) {
             printf("  mov rax, rbp\n");
             printf("  sub rax, %d\n", offset);
@@ -74,10 +76,24 @@ void gen(Node *node) {
 
       for (int i = nargs - 1; i >= 0; i--)
         printf("  pop %s\n", argregs[i]);
-
-        printf("  call %s\n",node->name);
-        printf("  push rax\n");
-        return;
+      // We need to align RSP to a 16 byte boundary before
+      // calling a function because it is an ABI requirement.
+      // RAX is set to 0 for variadic function
+      int seq = label_count++;
+      printf("  mov rax, rsp\n");
+      printf("  and rax, 15\n");
+      printf("  jnz .L.call.%d\n", seq);
+      printf("  mov rax, 0\n");
+      printf("  call %s\n", node->name);
+      printf("  jmp .L.end.%d\n", seq);
+      printf(".L.call.%d:\n", seq);
+      printf("  sub rsp, 8\n");
+      printf("  mov rax, 0\n");
+      printf("  call %s\n", node->name);
+      printf("  add rsp, 8\n");
+      printf(".L.end.%d:\n", seq);
+      printf("  push rax\n");
+      return;
     }
 
     if (node->kind == ND_BLOCK) {
