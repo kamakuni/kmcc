@@ -256,19 +256,19 @@ Function *program() {
         code[i++] = function();
     }
     code[i] = NULL;*/
-  locals = NULL;
-  Node head = {};
-  Node *cur = &head;
+  //locals = NULL;
+  Function head = {};
+  Function *cur = &head;
 
   while (!at_eof()) {
     cur->next = function();
     cur = cur->next;
   }
-
-  Function *prog = calloc(1, sizeof(Function));
+  return head.next;
+  /*Function *prog = calloc(1, sizeof(Function));
   prog->node = head.next;
   prog->locals = locals;
-  return prog;
+  return prog;*/
 }
 
 static Node *equality() {
