@@ -130,6 +130,30 @@ static Node *func_args() {
   return head;
 }
 
+static Function *function() {
+  locals = NULL;
+
+  char *name = expect_ident();
+  expect("(");
+  expect(")");
+  expect("{");
+
+  Node head = {};
+  Node *cur = &head;
+
+  while(!consume("}")){
+    cur->next = stmt();
+    cur = cur->next;
+  }
+
+  Function *fn = calloc(1, sizeof(Function));
+  fn->name = name;
+  fn->node = head.next;
+  fn->locals = locals;
+  return fn;
+}
+
+/*
 static Node *function() {
     Node *node;
     expect("int");
@@ -169,7 +193,7 @@ static Node *function() {
     }
     Node *block = new_node_block(stmts);
     return new_node_function(strndup(ident->str,ident->len), args, block);
-}
+    }*/
 
 static Node *stmt() {
     Node *node;
