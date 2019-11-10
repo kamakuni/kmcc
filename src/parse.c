@@ -96,7 +96,7 @@ static Var *new_lvar(char *name){
 
 Node *code[100];
 
-static Node *function();
+static Function *function();
 static Node *stmt();
 static Node *add();
 static Node *equality();
