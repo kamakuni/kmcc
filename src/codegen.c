@@ -33,7 +33,7 @@ void gen_block(Node *node){
     }
 }
 
-void gen_func(Function *prog, Node *node){
+/*void gen_func(Function *prog, Node *node){
     if(node->kind != ND_FUNC)
         error("関数でありません。");
     printf("%s:\n",node->name);
@@ -58,7 +58,7 @@ void gen_func(Function *prog, Node *node){
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");
     printf("  ret\n");
-}
+    }*/
 
 void gen(Node *node) {
 
