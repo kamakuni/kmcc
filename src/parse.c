@@ -133,6 +133,13 @@ static Node *func_args() {
 static Function *function() {
   locals = NULL;
 
+  expect("int");
+  while (consume("*")) {
+    // do something
+    //if (!consume("*"))
+    //    error_at(token->str, "'*'ではないではないトークンです");
+  }    
+  
   char *name = expect_ident();
   expect("(");
   expect(")");
