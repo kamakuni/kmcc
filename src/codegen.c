@@ -190,7 +190,7 @@ void gen(Node *node) {
     if (node->kind == ND_RETURN) {
         gen(node->lhs);
         printf("  pop rax\n");
-	printf("  jmp .L.return.%s", funcname);
+	printf("  jmp .L.return.%s\n", funcname);
 	//printf("  mov rsp, rbp\n");
         //printf("  pop rbp\n");
         //printf("  ret\n");
@@ -280,7 +280,7 @@ void codegen(Function *prog){
     for (Node *node = fn->node; node; node = node->next)
       gen(node);
     // Epilogue
-    printf(".L.return.%s\n",funcname);
+    printf(".L.return.%s:\n",funcname);
     printf("  mov rsp, rbp\n");
     printf("  pop rbp\n");
     printf("  ret\n");
