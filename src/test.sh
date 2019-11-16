@@ -47,7 +47,7 @@ try 0 "int main(){2 + 3 != 5;}"
 
 try 30 "int main(){int a;a=30; a;}"
 try 24 "int main(){int a;a=9+15; a;}"
-try 3 "int main(){1;2;3;}"
+try 2 "int main(){1; return 2;3;}"
 try 3 "int main(){int a;int b;a=1;b=2;a+b;}"
 try 4 "int main(){int a;int b;int c;a=b=2;c=a+b;c;}"
 
