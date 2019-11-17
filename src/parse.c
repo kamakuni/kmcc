@@ -281,13 +281,6 @@ static Node *stmt() {
 }
 
 Function *program() {
-    /*int i = 0;
-    while (!at_eof()) {
-        //code[i++] = stmt();
-        code[i++] = function();
-    }
-    code[i] = NULL;*/
-  //locals = NULL;
   Function head = {};
   Function *cur = &head;
 
@@ -296,10 +289,6 @@ Function *program() {
     cur = cur->next;
   }
   return head.next;
-  /*Function *prog = calloc(1, sizeof(Function));
-  prog->node = head.next;
-  prog->locals = locals;
-  return prog;*/
 }
 
 static Node *equality() {
