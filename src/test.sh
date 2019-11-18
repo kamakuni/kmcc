@@ -56,11 +56,11 @@ try 7 "int main(){int a; a=4+3; return a ;}"
 
 try 6 "int main(){int foo; int bar;foo=1;bar=2+3;return foo + bar;}"
 
-try 2 "int main(){if(1<10)2;}"
+try 2 "int main(){if(1<10) return 2;}"
 try 2 "int main(){if(1<10){return 2;}}"
 try 2 "int main(){if(1<10){int a;a=2;return a;}}"
-try 10 "int main(){int var; var=1;if(1<10)var=10;var;}"
-try 1 "int main(){int var; var=1;if(1>10)var=10;var;}"
+try 10 "int main(){int var; var=1;if(1<10) return var=10; return var;}"
+try 1 "int main(){int var; var=1;if(1>10) return var=10; return var;}"
 
 try 2 "int main(){if(1<10) 2; else 3;}"
 try 3 "int main(){if(11<10) 2; else 3;}"
