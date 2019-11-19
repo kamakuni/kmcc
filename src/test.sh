@@ -62,8 +62,8 @@ try 2 "int main(){if(1<10){int a;a=2;return a;}}"
 try 10 "int main(){int var; var=1;if(1<10) return var=10; return var;}"
 try 1 "int main(){int var; var=1;if(1>10) return var=10; return var;}"
 
-try 2 "int main(){if(1<10) 2; else 3;}"
-try 3 "int main(){if(11<10) 2; else 3;}"
+try 2 "int main(){if(1<10) return 2; else return 3;}"
+try 3 "int main(){if(11<10) return 2; else return 3;}"
 try 2 "int main(){if(1<10) {return 2;} else {return 3;}}"
 try 3 "int main(){if(11<10) {return 2;} else {return 3;}}"
 
