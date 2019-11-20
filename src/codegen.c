@@ -267,7 +267,6 @@ void gen(Node *node) {
 
 void codegen(Function *prog){
   printf(".intel_syntax noprefix\n");
-  //printf(".global main\n");
   for (Function *fn = prog; fn; fn = fn->next){
     printf(".global %s\n",fn->name);
     printf("%s:\n",fn->name);
