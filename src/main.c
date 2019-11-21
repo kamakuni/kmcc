@@ -37,12 +37,5 @@ int main(int argc, char **argv) {
     }
 
     codegen(prog);
-    /*printf(".intel_syntax noprefix\n");
-    printf(".global main\n");
-
-    for (int i = 0; code[i]; i++) {
-        gen_func(code[i]);
-    }
-    */
     return 0;
 }

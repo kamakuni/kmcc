@@ -1,2 +1,2 @@
-break main:1
+break /home/superradio86/workspace/c/kmcc/src/asm/test5.s:40
 
