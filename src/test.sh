@@ -78,7 +78,7 @@ try 0 "int main(){int i; i=0;for(;i<=10;)if(i==0) return i; return 11;}"
 try 5 "int main(){int i; i=0;for(;i<=10;)if(i<5) i=i+1; else return i; return 11;}"
 try 5 "int main(){int i; i=0;for(;i<=10;)if(i<5) i=i+1; else return i;int ret; ret=11;}"
 
-try 10 "int func(){10;}int main(){func();}"
+try 10 "int func(){return 10;}int main(){func();}"
 try 10 "int func(){return 10;}int main(){func();}"
 try 10 "int func(){return 10;}int main(){return func();}"
 try 10 "int three(){return 3;}int seven(){return 7;}int main(){return three() + seven();}"
