@@ -230,6 +230,8 @@ void gen(Node *node) {
         case ND_MUL:
             printf("  mul rdi\n");
             break;
+        case ND_NULL:
+	    break;
         case ND_DIV:
             printf("  mov rdx, 0\n");
             printf("  div rdi\n");
