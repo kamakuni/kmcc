@@ -1,6 +1,14 @@
 #include "kmcc.h"
 Var *locals;
 
+static Type *basetype(void) {
+  expect("int");
+  Type *ty = int_type;
+  while (consume("*"))
+    ty = pointer_to(ty);
+  return ty;
+}
+
 static Var *find_var(Token *tok) {
   for (Var *var = locals; var; var = var->next)
     if (tok->len == tok->len && !memcmp(tok->str, var->name, tok->len))
