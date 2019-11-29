@@ -12,3 +12,8 @@ Type *pointer_to(Type *base) {
   ty->base = base;
   return ty;
 }
+
+void add_type(Node *node) {
+  if (!node || node->ty)
+    return;
+}
