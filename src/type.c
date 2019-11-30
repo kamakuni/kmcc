@@ -24,4 +24,7 @@ void add_type(Node *node) {
   add_type(node->else);
   add_type(node->init);
   add_type(node->inc);
+
+  for (Node *n = node->body; n;n = n->next)
+    add_type(n);
 }
