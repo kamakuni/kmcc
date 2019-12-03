@@ -32,6 +32,16 @@ void add_type(Node *node) {
 
   switch(node->kind) {
   case ND_ADD:
+  case ND_SUB:
+  case ND_PTR_DIFF:
+  case ND_MUL:
+  case ND_DIV:
+  case ND_EQ:
+  case ND_NE:
+  case ND_LT:
+  case ND_LE:
+  case ND_FUNCALL:
+  case ND_NUM:
     node->ty = int_type;
     return;
   case ND_ASSIGN:
