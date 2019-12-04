@@ -44,6 +44,8 @@ void add_type(Node *node) {
   case ND_NUM:
     node->ty = int_type;
     return;
+  case ND_PTR_ADD:
+  case ND_PTR_SUB:
   case ND_ASSIGN:
     node->ty = node->lhs->ty;
     return;
