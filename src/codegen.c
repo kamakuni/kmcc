@@ -26,33 +26,6 @@ void gen_block(Node *node){
     }
 }
 
-/*void gen_func(Function *prog, Node *node){
-    if(node->kind != ND_FUNC)
-        error("関数でありません。");
-    printf("%s:\n",node->name);
-    printf("  push rbp\n");
-    printf("  mov rbp, rsp\n");
-
-    printf("  sub rsp, %d\n", prog->stack_size);
-    //for (int i = 0; i < node->args->len; i++) {
-
-    for (Node *arg = node->args; arg; arg = arg->next) {
-    int offset = var_get_offset(variables,vec_get(node->args,i));
-      if (offset != 0) {
-            printf("  mov rax, rbp\n");
-            printf("  sub rax, %d\n", offset);
-            printf("  mov [rax], %s\n", argregs[i]);
-        }
-    }
-    if(node->block->kind != ND_BLOCK)
-        error("ブロックでありません。");
-    gen_block(node->block);
-
-    printf("  mov rsp, rbp\n");
-    printf("  pop rbp\n");
-    printf("  ret\n");
-    }*/
-
 void gen(Node *node) {
 
     if(node->kind == ND_CALL) {
