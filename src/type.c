@@ -49,5 +49,8 @@ void add_type(Node *node) {
   case ND_ASSIGN:
     node->ty = node->lhs->ty;
     return;
+  case ND_ADDR:
+    node->ty = pointer_to(node->lhs->ty);
+    return;
   }
 }
