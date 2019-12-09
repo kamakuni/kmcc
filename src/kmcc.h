@@ -94,6 +94,7 @@ typedef enum {
     ND_NULL,
     ND_BLOCK,
     ND_CALL,
+    ND_FUNCALL
     ND_FUNC,
     ND_IDENT,
     ND_IF,
@@ -109,6 +110,9 @@ typedef enum {
     ND_ADDR,
     ND_DEREF,
     ND_VAR,
+    ND_PTR_DIFF,
+    ND_PTR_ADD,
+    ND_PTR_SUB,
 } NodeKind;
 
 typedef struct Function Function;
