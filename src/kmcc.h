@@ -94,7 +94,7 @@ typedef enum {
     ND_NULL,
     ND_BLOCK,
     ND_CALL,
-    ND_FUNCALL
+    ND_FUNCALL,
     ND_FUNC,
     ND_IDENT,
     ND_IF,
