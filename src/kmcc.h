@@ -41,9 +41,11 @@ struct Map {
     Vector *vals;
 };
 
-typedef struct Type Type;
+typedef enum { TY_INT, TY_PTR } TypeKind;
+
+typedef struct Type Type
 struct Type {
-    enum { INT, PTR } ty;
+    TypeKind kind;
     Type *ptr_to;
 };
 
