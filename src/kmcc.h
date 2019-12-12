@@ -43,7 +43,7 @@ struct Map {
 
 typedef enum { TY_INT, TY_PTR } TypeKind;
 
-typedef struct Type Type
+typedef struct Type Type;
 struct Type {
     TypeKind kind;
     Type *ptr_to;
