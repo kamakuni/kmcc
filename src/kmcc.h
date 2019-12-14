@@ -45,8 +45,9 @@ typedef enum { TY_INT, TY_PTR } TypeKind;
 
 typedef struct Type Type;
 struct Type {
-    TypeKind kind;
-    Type *ptr_to;
+  TypeKind kind;
+  Type *ptr_to;
+  Type *base;
 };
 
 typedef struct Var Var;
