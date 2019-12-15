@@ -74,10 +74,13 @@ struct Node {
   Node *lhs;
   Node *rhs;
   Node *cond; // for ND_IF | ND_FOR | ND_WHILE
+  Node *then;
   Node *block; // for ND_FUNC
   Node *body; // for ND_IF | ND_FOR | ND_WHILE
   Node *elseBody; // for ND_IF
+  Node *els;
   Node *init; // for ND_FOR
+  Node *inc;
   Node *incdec; // for ND_FOR
   Vector *stmts; // for ND_BLOCK | ND_FUNC
   Node *args; // for ND_CALL
