@@ -77,11 +77,9 @@ struct Node {
   Node *then;
   Node *block; // for ND_FUNC
   Node *body; // for ND_IF | ND_FOR | ND_WHILE
-  Node *elseBody; // for ND_IF
-  Node *els;
+  Node *els; // for ND_IF
   Node *init; // for ND_FOR
-  Node *inc;
-  Node *incdec; // for ND_FOR
+  Node *inc; // for ND_FOR
   Vector *stmts; // for ND_BLOCK | ND_FUNC
   Node *args; // for ND_CALL
   Type *ty;
@@ -150,7 +148,7 @@ Node *new_node(NodeKind kind);
 Node *new_binary(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_num(long val);
 Node *new_node_ident(Type *ty, char *name);
-Node *new_node_if(Node *ifCond, Node *ifBody, Node *elseBody);
+Node *new_node_if(Node *ifCond, Node *ifBody, Node *els);
 
 Var *new_var();
 Var *var_get(Var *var,char *name);

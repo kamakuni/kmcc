@@ -64,20 +64,20 @@ Node *new_node_ident(Type *ty, char *name) {
     return node;
 }
 
-Node *new_node_for(Node *init, Node *cond, Node * incdec, Node *body) {
+Node *new_node_for(Node *init, Node *cond, Node * inc, Node *body) {
     Node *node = new_node(ND_FOR);
     node->init = init;
     node->cond = cond;
-    node->incdec = incdec;
+    node->inc = inc;
     node->body = body;
     return node;
 }
 
-Node *new_node_if(Node *cond, Node *body, Node *elseBody) {
+Node *new_node_if(Node *cond, Node *body, Node *els) {
     Node *node = new_node(ND_IF);
     node->cond = cond;
     node->body = body;
-    node->elseBody = elseBody;
+    node->els = els;
     return node;
 }
 
@@ -247,8 +247,8 @@ static Node *stmt() {
 	expect(")");
         Node *body = stmt();
         if(consume("else")) {
-            Node *elseBody = stmt();
-            return new_node_if(cond, body, elseBody);
+            Node *els = stmt();
+            return new_node_if(cond, body, els);
         }
         return new_node_if(cond, body, NULL);
     }
@@ -271,13 +271,13 @@ static Node *stmt() {
             cond = expr();
             expect(";");
         }
-        Node *incdec = NULL;
+        Node *inc = NULL;
         if(!consume(")")) {
-            incdec = expr();
+            inc = expr();
 	    expect(")");
         }
         Node *body = stmt();
-        return new_node_for(init, cond, incdec, body);
+        return new_node_for(init, cond, inc, body);
     }
     if (consume("return")) {
         node = new_binary(ND_RETURN, expr(), NULL);

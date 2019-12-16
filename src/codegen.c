@@ -87,7 +87,7 @@ void gen(Node *node) {
         gen(node->cond);
         //printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        if(node->elseBody == NULL){
+        if(node->els == NULL){
             printf("  je  .Lend%d\n", label_count_if);
             if(node->body->kind == ND_BLOCK){
                 gen_block(node->body);
@@ -104,10 +104,10 @@ void gen(Node *node) {
             }
             printf("  jmp  .Lend%d\n", label_count_if);
             printf(".Lelse%d:\n", label_count_if);
-            if(node->elseBody->kind == ND_BLOCK){
-                gen_block(node->elseBody);
+            if(node->els->kind == ND_BLOCK){
+                gen_block(node->els);
             } else {
-                gen(node->elseBody);
+                gen(node->els);
             }
             printf(".Lend%d:\n", label_count_if);
         }
@@ -146,8 +146,8 @@ void gen(Node *node) {
             printf("  je  .Lend%d\n", label_count_for);
         }
         gen(node->body);
-        if(node->incdec)
-          gen(node->incdec);
+        if(node->inc)
+          gen(node->inc);
         printf("  jmp  .Lbegin%d\n", label_count_for);
         printf(".Lend%d:\n", label_count_for);
         return;
