@@ -21,7 +21,7 @@ void add_type(Node *node) {
   add_type(node->rhs);
   add_type(node->cond);
   add_type(node->then);
-  add_type(node->else);
+  add_type(node->els);
   add_type(node->init);
   add_type(node->inc);
 
