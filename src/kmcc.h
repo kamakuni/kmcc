@@ -171,6 +171,7 @@ bool is_alpha(char c);
 
 char *strndup(char *p,int len);
 void error(char *fmt, ...);
+void error_tok(Token *tok, char *fmt, ...);
 
 //Node *function();
 //Node *stmt();

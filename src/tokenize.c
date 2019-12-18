@@ -58,6 +58,14 @@ void error_at(char *loc, char *fmt, ...) {
     exit(1);
 }
 
+// Reports an error location and exit.
+void error_tok(Token *tok, char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  verror_at(tok->str,fmt, ap);
+  exit(1)
+}
+
 bool is_alpha(char c) {
   return  ('a' <= c && c <= 'z') ||
     ('A' <= c && c <= 'Z') ||
