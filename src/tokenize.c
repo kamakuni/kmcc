@@ -63,7 +63,7 @@ void error_tok(Token *tok, char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   verror_at(tok->str,fmt, ap);
-  exit(1)
+  exit(1);
 }
 
 bool is_alpha(char c) {
