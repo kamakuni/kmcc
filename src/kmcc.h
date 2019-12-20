@@ -83,6 +83,7 @@ struct Node {
   Vector *stmts; // for ND_BLOCK | ND_FUNC
   Node *args; // for ND_CALL
   Type *ty;
+  Token *tok;
   int val;
   char *name;
   Var *var;
