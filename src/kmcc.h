@@ -50,6 +50,8 @@ struct Type {
   Type *base;
 };
 
+extern Type *int_type;
+
 typedef struct Var Var;
 struct Var {
   Var *next;
