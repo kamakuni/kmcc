@@ -19,6 +19,18 @@ void gen_lval(Node *node) {
     error("not a left value");
 }
 
+static void gen_addr(Node *node) {
+  switch(node->kind) {
+  case ND_VAR:
+    printf("  lea rax, [rbp-%d]\n", node->var->offset);
+    printf("  push rax\n");
+    return;
+  case ND_DEREF:
+    gen(node->lhs);
+    return;
+  }
+}
+
 void gen_block(Node *node){
     for (int i = 0; i < node->stmts->len; i++) {
         gen((Node *)vec_get(node->stmts, i));
@@ -26,7 +38,7 @@ void gen_block(Node *node){
     }
 }
 
-void gen(Node *node) {
+static void gen(Node *node) {
 
     if(node->kind == ND_CALL) {
       /*int len = node->args->len;
