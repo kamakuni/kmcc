@@ -210,7 +210,13 @@ static Node *function() {
     return new_node_function(strndup(ident->str,ident->len), args, block);
     }*/
 
-static Node *stmt() {
+static Node stmt() {
+  Node *node = stmt2();
+  add_type(node);
+  return node;
+}
+
+static Node *stmt2() {
     Node *node;
 
     if (consume("int")) {
