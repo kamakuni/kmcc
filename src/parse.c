@@ -102,6 +102,12 @@ static Var *new_lvar(char *name){
   return var;
 }
 
+static Node *new_unary(NodeKind kind, Node *expr, Token *tok){
+  Node *node = new_node(kind, tok);
+  node->lhs = expr;
+  return node;
+}
+
 Node *code[100];
 
 static Function *function();
@@ -210,12 +216,23 @@ static Node *function() {
     return new_node_function(strndup(ident->str,ident->len), args, block);
     }*/
 
-static Node stmt() {
+static Node *read_expr_stmt(){
+  Token *tok = token;
+  return new_unary(ND_EXPR_STMT, expr(), tok);
+}
+
+static Node *stmt() {
   Node *node = stmt2();
   add_type(node);
   return node;
 }
 
+// stmt2 = "return" expr ";"
+//       | "if" "(" expr ")" stmt ("else" stmt)?
+//       | "while" "(" expr ")" stmt
+//       | "for" "(" expr? ";" expr? ";" expr? ")" stmt  
+//       | "{" stmt* "}"
+//       | expr ";"
 static Node *stmt2() {
     Node *node;
 
@@ -287,9 +304,8 @@ static Node *stmt2() {
     }
     if (consume("return")) {
         node = new_binary(ND_RETURN, expr(), NULL);
-    } else {
-        node = expr();
     }
+    Node *node = read_expr_stmt();
     expect(";");
     return node;
 }
