@@ -221,6 +221,8 @@ static Node *read_expr_stmt(){
   return new_unary(ND_EXPR_STMT, expr(), tok);
 }
 
+static Node *stmt2();
+
 static Node *stmt() {
   Node *node = stmt2();
   add_type(node);
@@ -305,7 +307,7 @@ static Node *stmt2() {
     if (consume("return")) {
         node = new_binary(ND_RETURN, expr(), NULL);
     }
-    Node *node = read_expr_stmt();
+    node = read_expr_stmt();
     expect(";");
     return node;
 }
