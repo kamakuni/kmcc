@@ -94,6 +94,7 @@ struct Node {
 typedef enum {
     ND_ADD,
     ND_ASSIGN,
+    ND_EXPR_STMT,
     ND_SUB,
     ND_MUL,
     ND_DIV,
