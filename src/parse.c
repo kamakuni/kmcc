@@ -16,14 +16,15 @@ static Var *find_var(Token *tok) {
   return NULL;
 }
 
-Node *new_node(NodeKind kind) {
+Node *new_node(NodeKind kind, Token *tok) {
     Node *node = calloc(1,sizeof(Node));
     node->kind = kind;
+    node->tok = tok;
     return node;
 }
 
-Node *new_binary(NodeKind kind, Node *lhs, Node *rhs) {
-    Node *node = new_node(kind);
+Node *new_binary(NodeKind kind, Node *lhs, Node *rhs, Token *tok) {
+  Node *node = new_node(kind,tok);
     node->lhs = lhs;
     node->rhs = rhs;
     return node;
@@ -88,8 +89,8 @@ Node *new_node_while(Node *cond, Node *body) {
     return node;
 }
 
-static Node *new_var_node(Var *var) {
-  Node *node = new_node(ND_VAR);
+static Node *new_var_node(Var *var, Token *tokB) {
+  Node *node = new_node(ND_VAR, tok);
   node->var = var;
   return node;
 }
