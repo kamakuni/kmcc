@@ -51,8 +51,8 @@ Node *new_node_function(char *name, Vector *args, Node *block) {
     return node;
 }
 
-Node *new_node_num(long val) {
-    Node *node = new_node(ND_NUM);
+Node *new_num(long val, Token *tok) {
+  Node *node = new_node(ND_NUM, tok);
     node->val = val;
     return node;
 }
@@ -417,6 +417,7 @@ static Node *add() {
     }
 }
 
+// mul = unary ("*" unary | "/" unary)*
 static Node *mul() {
     Node *node = unary();
     Token *tok;
@@ -439,7 +440,7 @@ static Node *primary() {
     }
     
     if (token->kind == TK_NUM ) {
-        return new_node_num(expect_number());
+        return new_num(expect_number());
     }
     Token *ident = consume_ident();
     if (ident != NULL) {
@@ -465,18 +466,19 @@ static Node *primary() {
 }
 
 static Node *unary() {
-    if (consume("+")) {
-        return unary();
-    }
-    if (consume("-")) {
-        // -x => 0-x
-        return new_binary(ND_SUB,new_node_num(0), unary());
-    }
-    if (consume("*")) {
-        return new_binary(ND_DEREF, unary(), NULL);
-    }
-    if (consume("&")) {
-        return new_binary(ND_ADDR, unary(), NULL);
-    }
-    return primary();
+  Token *tok;
+  if (consume("+")) {
+    return unary();
+  }
+  if (tok = consume("-")) {
+    // -x => 0-x
+    return new_binary(ND_SUB,new_num(0, tok), unary() tok);
+  }
+  if (tok = consume("*")) {
+    return new_unary(ND_DEREF, unary(), tok);
+  }
+  if (tok = consume("&")) {
+    return new_unary(ND_ADDR, unary(), tok);
+  }
+  return primary();
 }
