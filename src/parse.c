@@ -342,6 +342,7 @@ Function *program() {
   return head.next;
 }
 
+// equality = relational ("==" relational | "!=" relational)*
 static Node *equality() {
     Node *node = relational();
     Token *tok;
@@ -356,19 +357,21 @@ static Node *equality() {
     }
 }
 
+// relational = add ("<" add | "<=" add | ">" add | ">=" add)*
 static Node *relational() {
     // lhs
     Node *node = add();
+    Token *tok;
     
     for (;;) {
-        if (consume("<"))
-            node = new_binary(ND_LT, node, add());
-        else if (consume("<="))
-            node = new_binary(ND_LE, node, add());
-        else if (consume(">"))
-            node = new_binary(ND_LT, add(), node);
-        else if (consume(">="))
-            node = new_binary(ND_LE, add(), node);
+        if (tok = consume("<"))
+	  node = new_binary(ND_LT, node, add(), tok);
+        else if (tok = consume("<="))
+	  node = new_binary(ND_LE, node, add(), tok);
+        else if (tok = consume(">"))
+	  node = new_binary(ND_LT, add(), node, tok);
+        else if (tok = consume(">="))
+	  node = new_binary(ND_LE, add(), node, tok);
         else
             return node;
     }
