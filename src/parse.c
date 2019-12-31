@@ -406,12 +406,12 @@ static Node *new_sub(Node *lhs, Node *rhs, Token *tok) {
 static Node *add() {
     // lhs
     Node *node = mul();
-    
+    Token *tok;
     for (;;) {
-        if (consume("+"))
-            node = new_binary(ND_ADD, node, mul());
-        else if (consume("-"))
-            node = new_binary(ND_SUB, node, mul());
+        if (tok = consume("+"))
+	  node = new_binary(ND_ADD, node, mul(), tok);
+        else if (tok = consume("-"))
+	  node = new_binary(ND_SUB, node, mul(), tok);
         else
             return node;
     }
