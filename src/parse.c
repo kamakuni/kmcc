@@ -344,12 +344,13 @@ Function *program() {
 
 static Node *equality() {
     Node *node = relational();
+    Token *tok;
     
     for (;;) {
-        if (consume("=="))
-	  node = new_binary(ND_EQ, node, relational());
-        else if (consume("!="))
-	  node = new_binary(ND_NE, node, relational());
+        if (tok = consume("=="))
+	  node = new_binary(ND_EQ, node, relational(), tok);
+        else if (tok = consume("!="))
+	  node = new_binary(ND_NE, node, relational(), tok);
         else
           return node;
     }
