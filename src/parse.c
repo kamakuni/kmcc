@@ -122,8 +122,9 @@ static Node *unary();
 
 static Node *assign() {
     Node *node = equality();
-    if (consume("="))
-        node = new_binary(ND_ASSIGN, node, assign());
+    Token *tok;
+    if (tok = consume("="))
+      node = new_binary(ND_ASSIGN, node, assign(), tok);
     return node;
 }
 
@@ -175,48 +176,6 @@ static Function *function() {
   return fn;
 }
 
-/*
-static Node *function() {
-    Node *node;
-    expect("int");
-    while (consume("*")) {
-        // do something
-        //if (!consume("*"))
-        //    error_at(token->str, "'*'ではないではないトークンです");
-    }
-    Token *ident = consume_ident();
-    if (ident == NULL)
-        error_at(token->str, "関数名ではないではないトークンです");
-    expect("(");
-    Vector *args = new_vector();
-    while (!consume(")")) {
-        expect("int");
-        Type *ty = malloc(sizeof(Type));
-        ty->ty = INT;
-        Token *var = consume_ident();
-        if (var != NULL) {
-            var_append(variables, ty, strndup(var->str,var->len));
-            vec_push(args, (void *) strndup(var->str,var->len));
-        } else {
-            while (!consume_ident()) {
- 	        expect("*");
-                Type *next = ty;
-                ty = malloc(sizeof(Type));
-                ty->ty = PTR;
-                ty->ptr_to = next;
-            }
-        }
-        consume(",");
-    }
-    expect("{");
-    Vector *stmts = new_vector();
-    while(!consume("}")) {
-        vec_push(stmts, stmt());
-    }
-    Node *block = new_node_block(stmts);
-    return new_node_function(strndup(ident->str,ident->len), args, block);
-    }*/
-
 static Node *read_expr_stmt(){
   Token *tok = token;
   return new_unary(ND_EXPR_STMT, expr(), tok);
@@ -237,8 +196,66 @@ static Node *stmt() {
 //       | "{" stmt* "}"
 //       | expr ";"
 static Node *stmt2() {
-    Node *node;
+  Token *tok;
+  if (tok = consume("return")) {
+    Node *node = ew_uary(ND_RETURN, expr(), tok);
+    expect(";");
+    return node;
+  }
 
+  if (tok = consume("if")) {
+    Node *node = new_node(ND_IF,tok);
+    expect("(");
+    node->code = expr();
+    expect(")");
+    node->then = stmt();
+    if(consume("else"))
+      node->els = stmt();
+    return node;
+  }
+
+  if(tok = consume("while")) {
+    Node *node = new_node(ND_WHILE, tok);
+    expect("(");
+    node->cond = expr();
+    expect(")");
+    node->then = stmt();
+    return node;
+  }
+
+  if (tok = consume("for")) {
+    Node *node = new_node(ND_FOR, tok);
+    expect("(");
+    if (!consume(";")) {
+      node->init = read_expr_stmt();
+      expect(";");
+    }
+    if (!consume(")")) {
+      node->inc = read_expr_stmt();
+      expect(")");
+    }
+    node->then = stmt();
+    return node;
+  }
+
+  if (tok = consume("{")) {
+    Node head = {};
+    Node *cur = &head;
+
+    while(!consume("}")){
+      cur->next = stmt();
+      cur = cur->next;
+    }
+
+    Node *node = new_node(ND_BLOCK, tok);
+    node->body = head.next;
+    return node;
+  }
+
+  Node *node = read_expr_stmt();
+  expect(";");
+  return node;
+  /*  
     if (consume("int")) {
         Type *ty = malloc(sizeof(Type));
         ty->ty = INT;
@@ -311,6 +328,7 @@ static Node *stmt2() {
     node = read_expr_stmt();
     expect(";");
     return node;
+  */
 }
 
 Function *program() {

@@ -161,7 +161,7 @@ int var_get_offset(Var *var, char *name);
 int var_len(Var *var);
 
 Token *peek(char *s);
-bool consume(char *s);
+Token *consume(char *op);
 Token *consume_ident(void);
 //int expect(int line, int expected, int actual);
 void expect(char *op);

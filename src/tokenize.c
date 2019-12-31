@@ -88,12 +88,13 @@ Token *peek(char *s){
     return token;
 }
 
-bool consume(char *s) {
-    if (token->kind != TK_RESERVED || strlen(s) != token->len ||
-        strncmp(token->str,s,token->len))
-        return false;
+Token *consume(char *op) {
+    if (token->kind != TK_RESERVED || strlen(op) != token->len ||
+        strncmp(token->str,op,token->len))
+        return NULL;
+    Token *t = token;
     token = token->next;
-    return true;
+    return t;
 }
 
 Token *consume_ident(void){
