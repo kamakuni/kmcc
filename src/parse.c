@@ -355,6 +355,32 @@ static Node *relational() {
     }
 }
 
+static Node *new_add(Node *lhs, Node *rhs, Token *tok) {
+  add_type(lhs);
+  add_type(rhs);
+
+  if (is_integer(lhs->ty) && is_integer(rhs->ty))
+    return new_binary(ND_ADD, lhs, rhs, tok);
+  if (lhs->ty->base && is_integer(rhs->ty))
+    return new_binary(ND_PTR_ADD, lhs, rhs, tok);
+  if (is_integer(lhs->ty) && rhs->ty->base)
+    return new_binary(ND_PTR_ADD, rhs, lhs, tok);
+  error_tok(tok, "invalid operands");
+}
+
+static Node *new_sub(Node *lhs, Node *rhs, Token *tok) {
+  add_type(lhs);
+  add_type(rhs);
+
+  if (is_integr(lhs->ty) && is_integer(rhs->ty))
+    return new_binary(ND_SUB, lhs, rhs, tok);
+  if (lhs->ty->base && is_integer(rhs->ty))
+    return new_binary(ND_PTR_SUB, lhs, rhs, tok);
+  if (lhs->ty->base && rhs->ty->base)
+    return new_binary(ND_PTR_DIFF, lhs, rhs,tok);
+  error_tok(tok,"invalid operands");
+}
+
 static Node *add() {
     // lhs
     Node *node = mul();
