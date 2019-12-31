@@ -419,17 +419,16 @@ static Node *add() {
 
 static Node *mul() {
     Node *node = unary();
-    
+    Token *tok;
     for (;;) {
-        if (consume("*"))
-            node = new_binary(ND_MUL, node, unary());
-        else if (consume("/"))
-            node = new_binary(ND_DIV, node, unary());
+        if (tok = consume("*"))
+	  node = new_binary(ND_MUL, node, unary(), tok);
+        else if (tok = consume("/"))
+	  node = new_binary(ND_DIV, node, unary(), tok);
         else
             return node;
         
     }
-    
 }
 
 static Node *primary() {
