@@ -340,6 +340,7 @@ static Node *stmt2() {
   */
 }
 
+// program = function*
 Function *program() {
   Function head = {};
   Function *cur = &head;
@@ -349,6 +350,24 @@ Function *program() {
     cur = cur->next;
   }
   return head.next;
+}
+
+static VarList *read_func_params() {
+  if (consume(")"))
+    return NULL;
+
+  VarList *head = calloc(1, sizeof(VarList));
+  head->var = new_lvar(expect_ident());
+  VarList *cur = head;
+
+  while (!consume(")")) {
+    expect(",");
+    cur->next = calloc(1, sizeof(VarList));
+    cur->next->var = new_lvar(expect_ident());
+    cur = cur->next;
+  }
+
+  return head;
 }
 
 // equality = relational ("==" relational | "!=" relational)*
