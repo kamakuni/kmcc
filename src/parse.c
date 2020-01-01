@@ -12,10 +12,13 @@ static Type *basetype(void) {
   return ty;
 }
 
+// Find a local variable by name
 static Var *find_var(Token *tok) {
-  for (Var *var = locals; var; var = var->next)
-    if (tok->len == tok->len && !memcmp(tok->str, var->name, tok->len))
-     return var;
+  for (VarList *vl = locals; vl; vl = vl->next) {
+    Var *var = vl->var;
+    if (strlen(var->name) == tok->len && !strncmp(tok->str, var->name, tok->len))
+      return var;
+  }
   return NULL;
 }
 
