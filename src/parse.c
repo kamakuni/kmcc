@@ -412,35 +412,31 @@ static Node *func_args() {
 
 // primary = "(" expr ")" | ident func-args? | num
 static Node *primary() {
-    if (consume("(")) {
-        Node *node = equality();
-	expect(")");
-        return node;
-    }
-    
-    if (token->kind == TK_NUM ) {
-        return new_num(expect_number());
-    }
-    Token *ident = consume_ident();
-    if (ident != NULL) {
-        char *name = strndup(ident->str,ident->len);
-        if (!consume("(")) {
-	  Var *var = find_var(ident);
-	  if(!var)
-	    var = new_lvar(strndup(ident->str, ident->len));
-	  return new_var_node(var);
-        }
-	/* Vector *args = new_vector();
-        while (!consume(")")) {
-            Node *node = add();
-            vec_push(args, (void *) node);
-            consume(",");
-	    }*/
-	Node *args = func_args();
-        return new_node_call(name, args);
-    }
-    
-    error("数値でも開き括弧でもないトークンです： %s ", token->str);
-    return NULL;
-}
+  if (consume("(")) {
+    Node *node = expr();
+    expect(")");
+    return node;
+  }
 
+  Token *tok;
+  if (tok = consume_ident()) {
+    // Function call
+    if (consume("(")) {
+      Node *node = new_node(ND_FUNCALL, tok);
+      node->funcname = strndup(tok->str, tok->len);
+      node->args = func_args();
+      return node;
+    }
+
+    // Variable
+    Var *var = find_var(tok);
+    if(!var)
+      var = new_lvar(strndup(tok->str, tok->len));
+    return new_var_node(var, tok);
+  }
+
+  tok = token;
+  if (tok->kind != TK_NUM)
+    error_tok(tok, "expected expression");
+  return new_num(expect_number(), tok);
+}
