@@ -95,7 +95,7 @@ Node *new_node_while(Node *cond, Node *body) {
     return node;
 }
 
-static Node *new_var_node(Var *var, Token *tokB) {
+static Node *new_var_node(Var *var, Token *tok) {
   Node *node = new_node(ND_VAR, tok);
   node->var = var;
   return node;
@@ -103,9 +103,12 @@ static Node *new_var_node(Var *var, Token *tokB) {
 
 static Var *new_lvar(char *name){
   Var *var = calloc(1,sizeof(Var));
-  var->next = locals;
   var->name = name;
-  locals = var;
+
+  VarList *vl = calloc(1 sizeof(VarList));
+  vl->var = var;
+  vl->next = locals;
+  locals = vl;
   return var;
 }
 
