@@ -69,6 +69,12 @@ struct LVar {
   int offset;
 };
 
+typedef struct VarList;
+struct VarList {
+  VarList *next;
+  Var *var;
+};
+
 typedef struct Node Node;
 struct Node {
   int kind;

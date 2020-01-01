@@ -1,5 +1,8 @@
 #include "kmcc.h"
-Var *locals;
+
+// All local variable instances created during parsing are
+// accumulated to this list.
+static VarList *locals;
 
 static Type *basetype(void) {
   expect("int");
