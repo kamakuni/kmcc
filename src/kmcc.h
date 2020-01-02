@@ -89,6 +89,8 @@ struct Node {
   Node *init; // for ND_FOR
   Node *inc; // for ND_FOR
   Vector *stmts; // for ND_BLOCK | ND_FUNC
+  // Function call
+  char *funcname;
   Node *args; // for ND_CALL
   Type *ty;
   Token *tok;
@@ -192,7 +194,7 @@ void error_tok(Token *tok, char *fmt, ...);
 //Node *mul();
 //Node *unary();
 void codegen(Function *prog);
-void gen();
+//void gen();
 
 extern char *filename;
 extern char *user_input;

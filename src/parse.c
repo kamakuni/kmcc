@@ -229,7 +229,7 @@ static Node *stmt() {
 static Node *stmt2() {
   Token *tok;
   if (tok = consume("return")) {
-    Node *node = new_uary(ND_RETURN, expr(), tok);
+    Node *node = new_unary(ND_RETURN, expr(), tok);
     expect(";");
     return node;
   }
@@ -340,7 +340,7 @@ static Node *new_sub(Node *lhs, Node *rhs, Token *tok) {
   add_type(lhs);
   add_type(rhs);
 
-  if (is_integr(lhs->ty) && is_integer(rhs->ty))
+  if (is_integer(lhs->ty) && is_integer(rhs->ty))
     return new_binary(ND_SUB, lhs, rhs, tok);
   if (lhs->ty->base && is_integer(rhs->ty))
     return new_binary(ND_PTR_SUB, lhs, rhs, tok);
