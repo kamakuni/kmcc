@@ -33,6 +33,19 @@ static void gen_addr(Node *node) {
   }
 }
 
+static void load() {
+  printf("  pop rax\n");
+  printf("  mov rax, [rax]\n");
+  printf("  push rax\n");
+}
+
+static void store() {
+  printf("  pop rdi\n");
+  printf("  pop rax\n");
+  printf("  mov [rax], rdi\n");
+  printf("  push rdi\n");
+}
+
 void gen_block(Node *node){
     for (int i = 0; i < node->stmts->len; i++) {
         gen((Node *)vec_get(node->stmts, i));
