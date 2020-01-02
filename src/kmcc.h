@@ -156,7 +156,7 @@ void runtest();
 
 Node *new_node(NodeKind kind, Token *tok);
 Node *new_binary(NodeKind kind, Node *lhs, Node *rhs, Token *tok);
-Node *new_num(long val);
+Node *new_num(long val, Token *tok);
 Node *new_node_ident(Type *ty, char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *els);
 

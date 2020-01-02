@@ -36,19 +36,19 @@ Node *new_binary(NodeKind kind, Node *lhs, Node *rhs, Token *tok) {
     return node;
 }
 
-Node *new_node_block(Vector *stmts) {
+/*Node *new_node_block(Vector *stmts) {
     Node *node = new_node(ND_BLOCK);
     node->stmts = stmts;
     return node;
-}
+    }*/
 
-Node *new_node_call(char *name, Node *args) {
+/*Node *new_node_call(char *name, Node *args) {
     Node *node = new_node(ND_CALL);
     node->name = name;
     node->args = args;
     return node;
-}
-
+    }*/
+/*
 Node *new_node_function(char *name, Vector *args, Node *block) {
     Node *node = new_node(ND_FUNC);
     node->name = name;
@@ -56,13 +56,13 @@ Node *new_node_function(char *name, Vector *args, Node *block) {
     node->block = block;
     return node;
 }
-
+*/
 Node *new_num(long val, Token *tok) {
   Node *node = new_node(ND_NUM, tok);
     node->val = val;
     return node;
 }
-
+/*
 Node *new_node_ident(Type *ty, char *name) {
     Node *node = new_node(ND_IDENT);
     node->ty = ty;
@@ -70,7 +70,8 @@ Node *new_node_ident(Type *ty, char *name) {
     var_append(variables, ty, name);
     return node;
 }
-
+*/
+/*
 Node *new_node_for(Node *init, Node *cond, Node * inc, Node *body) {
     Node *node = new_node(ND_FOR);
     node->init = init;
@@ -79,7 +80,8 @@ Node *new_node_for(Node *init, Node *cond, Node * inc, Node *body) {
     node->body = body;
     return node;
 }
-
+*/
+/*
 Node *new_node_if(Node *cond, Node *body, Node *els) {
     Node *node = new_node(ND_IF);
     node->cond = cond;
@@ -87,14 +89,15 @@ Node *new_node_if(Node *cond, Node *body, Node *els) {
     node->els = els;
     return node;
 }
-
+*/
+/*
 Node *new_node_while(Node *cond, Node *body) {
     Node *node = new_node(ND_WHILE);
     node->cond = cond;
     node->body = body;
     return node;
 }
-
+*/
 static Node *new_var_node(Var *var, Token *tok) {
   Node *node = new_node(ND_VAR, tok);
   node->var = var;
@@ -105,7 +108,7 @@ static Var *new_lvar(char *name){
   Var *var = calloc(1,sizeof(Var));
   var->name = name;
 
-  VarList *vl = calloc(1 sizeof(VarList));
+  VarList *vl = calloc(1,sizeof(VarList));
   vl->var = var;
   vl->next = locals;
   locals = vl;
@@ -123,6 +126,7 @@ Node *code[100];
 static Function *function();
 static Node *stmt();
 static Node *stmt2();
+static Node *expr();
 static Node *add();
 static Node *equality();
 static Node *relational();
@@ -233,7 +237,7 @@ static Node *stmt2() {
   if (tok = consume("if")) {
     Node *node = new_node(ND_IF,tok);
     expect("(");
-    node->code = expr();
+    node->cond = expr();
     expect(")");
     node->then = stmt();
     if(consume("else"))
@@ -384,7 +388,7 @@ static Node *unary() {
   }
   if (tok = consume("-")) {
     // -x => 0-x
-    return new_binary(ND_SUB,new_num(0, tok), unary() tok);
+    return new_binary(ND_SUB, new_num(0, tok), unary(), tok);
   }
   if (tok = consume("*")) {
     return new_unary(ND_DEREF, unary(), tok);
