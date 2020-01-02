@@ -69,7 +69,7 @@ struct LVar {
   int offset;
 };
 
-typedef struct VarList;
+typedef struct VarList VarList;
 struct VarList {
   VarList *next;
   Var *var;
