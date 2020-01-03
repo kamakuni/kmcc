@@ -55,15 +55,10 @@ void gen_block(Node *node){
     }
 }
 
+// Generatecode for given code
 static void gen(Node *node) {
 
     if(node->kind == ND_CALL) {
-      /*int len = node->args->len;
-        for (int i = 0; i < len; i++) {
-            gen((Node *) vec_get(node->args,i));
-            printf("  pop rax\n");
-            printf("  mov %s, rax\n", argregs[i]);
-	    }*/
       int nargs = 0;
       for (Node *arg = node->args; arg; arg = arg->next) {
 	gen(arg);
