@@ -169,28 +169,19 @@ static VarList *read_func_params() {
 static Function *function() {
   locals = NULL;
 
-  expect("int");
-  while (consume("*")) {
-    // do something
-    //if (!consume("*"))
-    //    error_at(token->str, "'*'ではないではないトークンです");
-  }    
-  
-  char *name = expect_ident();
+  Function *fn = calloc(1,sizeof(Function));
+  fn->name = expect_ident();
   expect("(");
-  expect(")");
+  fn->params = read_func_params();
   expect("{");
-
+  
   Node head = {};
   Node *cur = &head;
-
   while(!consume("}")){
     cur->next = stmt();
     cur = cur->next;
   }
 
-  Function *fn = calloc(1, sizeof(Function));
-  fn->name = name;
   fn->node = head.next;
   fn->locals = locals;
   return fn;
