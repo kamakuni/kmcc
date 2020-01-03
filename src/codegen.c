@@ -31,6 +31,8 @@ static void gen_addr(Node *node) {
     gen(node->lhs);
     return;
   }
+
+  error_tok(node->tok, "not an lvalue");
 }
 
 static void load() {
