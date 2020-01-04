@@ -78,7 +78,7 @@ bool is_alnum(char c) {
 }
 
 bool startswith(char *p, char * q) {
-    return memcmp(p, q, strlen(q)) == 0;
+  return strncmp(p, q, strlen(q)) == 0;
 }
 
 Token *peek(char *s){
