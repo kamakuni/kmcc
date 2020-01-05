@@ -104,10 +104,11 @@ static Node *new_var_node(Var *var, Token *tok) {
   return node;
 }
 
-static Var *new_lvar(char *name){
+static Var *new_lvar(char *name, Type *ty){
   Var *var = calloc(1,sizeof(Var));
   var->name = name;
-
+  var->ty = ty;
+  
   VarList *vl = calloc(1,sizeof(VarList));
   vl->var = var;
   vl->next = locals;
@@ -146,18 +147,23 @@ Function *program() {
   return head.next;
 }
 
+static VarList *read_func_param() {
+  VarList *vl = calloc(1 , sizeof(VarList));
+  Type *ty = basetype();
+  vl->var = new_lvar(expect_ident(),ty);
+  return vl;
+}
+
 static VarList *read_func_params() {
   if (consume(")"))
     return NULL;
 
-  VarList *head = calloc(1, sizeof(VarList));
-  head->var = new_lvar(expect_ident());
+  VarList *head = read_func_param();
   VarList *cur = head;
 
   while (!consume(")")) {
     expect(",");
-    cur->next = calloc(1, sizeof(VarList));
-    cur->next->var = new_lvar(expect_ident());
+    cur->next = read_func_param();
     cur = cur->next;
   }
 
