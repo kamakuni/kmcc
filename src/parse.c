@@ -188,6 +188,23 @@ static Function *function() {
   return fn;
 }
 
+// declaration = basetype ident ("=" expr) ";"
+static Node *declaration(){
+  Token *tok = token;
+  Type *ty = basetype();
+  Var *var = new_lvar(expect_ident(), ty);
+
+  if (consume(";"))
+    return new_node(ND_NULL, tok);
+
+  expect("=");
+  Node *lhs = new_var_node(var, tok);
+  Node *rhs = expr();
+  expect(";");
+  Node *node = new_binary(ND_ASSGIN, lhs, rhs, tok);
+  return new_unary(ND_EXPR_STMT, node, tok);
+}
+
 static Node *read_expr_stmt(){
   Token *tok = token;
   return new_unary(ND_EXPR_STMT, expr(), tok);
