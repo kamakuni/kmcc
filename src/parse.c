@@ -169,8 +169,8 @@ static VarList *read_func_params() {
 static Function *function() {
   locals = NULL;
 
-  expect("int");
   Function *fn = calloc(1,sizeof(Function));
+  basetype();
   fn->name = expect_ident();
   expect("(");
   fn->params = read_func_params();

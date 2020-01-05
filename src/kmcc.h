@@ -55,10 +55,10 @@ extern Type *int_type;
 typedef struct Var Var;
 struct Var {
   Var *next;
-  char *name;
-  Type *ty;
+  char *name; // Variable name
+  Type *ty; // Type
   int len;
-  int offset;
+  int offset; // Offset from RBP
 };
 
 typedef struct LVar LVar;
