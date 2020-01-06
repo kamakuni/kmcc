@@ -207,7 +207,7 @@ static Node *declaration(){
   Node *lhs = new_var_node(var, tok);
   Node *rhs = expr();
   expect(";");
-  Node *node = new_binary(ND_ASSGIN, lhs, rhs, tok);
+  Node *node = new_binary(ND_ASSIGN, lhs, rhs, tok);
   return new_unary(ND_EXPR_STMT, node, tok);
 }
 
