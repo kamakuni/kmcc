@@ -450,7 +450,7 @@ static Node *primary() {
     // Variable
     Var *var = find_var(tok);
     if(!var)
-      var = new_lvar(strndup(tok->str, tok->len));
+      error_tok(tok, "undefined variable");
     return new_var_node(var, tok);
   }
 
