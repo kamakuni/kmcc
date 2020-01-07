@@ -1,26 +1,22 @@
 #include "kmcc.h"
 
-int pos;
 Tokens *tokens;
 Token *token;
-Var *variables;
 char *filename;
 char *user_input;
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "引数の個数が正しくありません\n");
-        return 1;
-    }
+
+  if (argc != 2)
+    error("%s: invalid number of arguments", argv[0]);
     
-    // run testing codes
-    if (strcmp(argv[1],"-test") == 0){
-        //runtest();
-        return 0;
-    }
-    
-    pos = 0;
-    variables = new_var();
+  // run testing codes
+  if (strcmp(argv[1],"-test") == 0){
+    //runtest();
+    return 0;
+  }
+
+  // Tokenize and parse
     user_input = argv[1];
     token = tokenize(user_input);
     
