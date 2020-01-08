@@ -100,13 +100,13 @@ int var_len(Var *var){
     return i;
 }
 
-void var_append(Var *var, Type *ty, char *name){
+/*void var_append(Var *var, Type *ty, char *name){
     int offset = (var_len(variables) + 1) * 8;
     int current = var_get_offset(variables, name);
     if (current != 0)
         offset = current;
     var_insert_first(&variables, ty, name, offset);
-}
+    }*/
 
 Tokens *new_tokens(){
     Tokens *t = malloc(sizeof(Tokens));
