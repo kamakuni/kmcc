@@ -127,7 +127,7 @@ Token *consume_ident(void){
 
 void expect(char *op) {
     if (!peek(op))
-        error_at(token->str, "expected '%c'", op);
+        error_at(token->str, "expected \"%s\"", op);
     token = token->next;
 }
 
