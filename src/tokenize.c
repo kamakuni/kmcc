@@ -101,6 +101,7 @@ static char *starts_with_reserved(char *p) {
   return NULL;
 }
 
+// Returns true if the current token matches a ginven string.
 Token *peek(char *s){
     if (token->kind != TK_RESERVED || strlen(s) != token->len ||
         strncmp(token->str,s,token->len))
@@ -125,9 +126,10 @@ Token *consume_ident(void){
     return t;
 }
 
-void expect(char *op) {
-    if (!peek(op))
-        error_at(token->str, "expected \"%s\"", op);
+// Ensure that he current token is `op`
+void expect(char *s) {
+    if (!peek(s))
+        error_at(token->str, "expected \"%s\"", s);
     token = token->next;
 }
 

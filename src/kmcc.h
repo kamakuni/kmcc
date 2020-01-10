@@ -174,7 +174,7 @@ Token *peek(char *s);
 Token *consume(char *op);
 Token *consume_ident(void);
 //int expect(int line, int expected, int actual);
-void expect(char *op);
+void expect(char *s);
 long expect_number();
 char *expect_ident();
 bool at_eof();
