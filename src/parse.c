@@ -298,7 +298,7 @@ static Node *stmt2() {
     return node;
   }
 
-  if (tok == peek("int"))
+  if (tok = peek("int"))
     return declaration();
   
   Node *node = read_expr_stmt();
