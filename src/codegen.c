@@ -58,6 +58,9 @@ void gen_block(Node *node){
 // Generatecode for given code
 static void gen(Node *node) {
 
+  if(node->kind == ND_NULL) {
+    return;
+  }
     if(node->kind == ND_FUNCALL) {
       int nargs = 0;
       for (Node *arg = node->args; arg; arg = arg->next) {
