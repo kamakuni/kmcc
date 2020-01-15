@@ -61,6 +61,16 @@ static void gen(Node *node) {
   if(node->kind == ND_NULL) {
     return;
   }
+  if (node->kind == ND_NUM) {
+    printf("  push %d\n", node->val);
+    return;
+  }
+
+  if(node->kind == ND_EXPR_STMT) {
+    gen(node->lhs);
+    printf("  add rsp, 8\n");
+    return;
+  }
     if(node->kind == ND_FUNCALL) {
       int nargs = 0;
       for (Node *arg = node->args; arg; arg = arg->next) {
@@ -92,11 +102,6 @@ static void gen(Node *node) {
 
     if (node->kind == ND_BLOCK) {
         gen_block(node->block);
-        return;
-    }
-
-    if (node->kind == ND_NUM) {
-        printf("  push %d\n", node->val);
         return;
     }
     
