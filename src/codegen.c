@@ -1,6 +1,6 @@
 #include "kmcc.h"
 
-static int label_count = 0;
+static int label_count = 1;
 static char *funcname;
 static void gen(Node *node);
 
@@ -114,38 +114,28 @@ static void gen(Node *node) {
         return;
     }
     
-    if (node->kind == ND_IF) {
-        int label_count_if = label_count;
-        label_count += 1;
-        gen(node->cond);
-        //printf("  pop rax\n");
-        printf("  cmp rax, 0\n");
-        if(node->els == NULL){
-            printf("  je  .Lend%d\n", label_count_if);
-            if(node->body->kind == ND_BLOCK){
-                gen_block(node->body);
-            } else {
-                gen(node->body);
-            }
-            printf(".Lend%d:\n", label_count_if);
-        } else {
-            printf("  je  .Lelse%d\n", label_count_if);
-            if(node->body->kind == ND_BLOCK){
-                gen_block(node->body);
-            } else {
-                gen(node->body);
-            }
-            printf("  jmp  .Lend%d\n", label_count_if);
-            printf(".Lelse%d:\n", label_count_if);
-            if(node->els->kind == ND_BLOCK){
-                gen_block(node->els);
-            } else {
-                gen(node->els);
-            }
-            printf(".Lend%d:\n", label_count_if);
-        }
-        return;
+  if (node->kind == ND_IF) {
+    int seq = label_count++;
+    if(node->els) {
+      gen(node->cond);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je .L.else.%d\n", seq);
+      gen(node->then);
+      printf("  jmp .L.end.%d\n", seq);
+      printf(".L.else.%d:\n", seq);
+      gen(node->els);
+      printf(".L.end.%d:\n", seq);
+    } else {
+      gen(node->cond);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je .L.end.%d\n", seq);
+      gen(node->then);
+      printf(".L.end.%d:\n", seq);
     }
+    return;
+  }
 
     if (node->kind == ND_WHILE) {
         int label_count_while = label_count;
