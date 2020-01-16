@@ -100,10 +100,11 @@ static void gen(Node *node) {
       return;
     }
 
-    if (node->kind == ND_BLOCK) {
-        gen_block(node->block);
-        return;
-    }
+  if (node->kind == ND_BLOCK) {
+    for (Node *n = node->body; n; n = n->next)
+      gen(n);
+    return;
+  }
     
     if (node->kind == ND_VAR) {
         gen_lval(node);
