@@ -138,20 +138,15 @@ static void gen(Node *node) {
   }
 
     if (node->kind == ND_WHILE) {
-        int label_count_while = label_count;
-        label_count += 1;
-        printf(".Lbegin%d:\n", label_count_while);
+        int seq = label_count++;
+        printf(".L.begin.%d:\n", seq);
         gen(node->cond);
-        //printf("  pop rax\n");
+        printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je  .Lend%d\n", label_count_while);
-        if(node->body->kind == ND_BLOCK){
-            gen_block(node->body);
-        } else {
-            gen(node->body);
-        }
-        printf("  jmp  .Lbegin%d\n", label_count_while);
-        printf(".Lend%d:\n", label_count_while);
+        printf("  je  .L.end.%d\n", seq);
+        gen(node->then);
+        printf("  jmp  .L.begin.%d\n", seq);
+        printf(".L.end.%d:\n", seq);
         return;
     }
 
