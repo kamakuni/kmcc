@@ -150,26 +150,24 @@ static void gen(Node *node) {
         return;
     }
 
-    if (node->kind == ND_FOR) {
-        int label_count_for = label_count;
-        label_count += 1;
-        if(node->init) {
-            gen(node->init);
-        }
-        printf(".Lbegin%d:\n", label_count_for);
-        if(node->cond) {
-            gen(node->cond);
-            printf("  pop rax\n");
-            printf("  cmp rax, 0\n");
-            printf("  je  .Lend%d\n", label_count_for);
-        }
-        gen(node->body);
-        if(node->inc)
-          gen(node->inc);
-        printf("  jmp  .Lbegin%d\n", label_count_for);
-        printf(".Lend%d:\n", label_count_for);
-        return;
+  if (node->kind == ND_FOR) {
+    int seq = label_count++;
+    if(node->init)
+      gen(node->init);
+    printf(".L.begin.%d:\n", seq);
+    if(node->cond) {
+      gen(node->cond);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je  .L.end.%d\n", seq);
     }
+    gen(node->then);
+    if(node->inc)
+      gen(node->inc);
+    printf("  jmp  .L.begin.%d\n", seq);
+    printf(".L.end.%d:\n", seq);
+    return;
+  }
 
     if (node->kind == ND_RETURN) {
         gen(node->lhs);
