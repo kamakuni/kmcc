@@ -276,6 +276,10 @@ static Node *stmt2() {
       node->init = read_expr_stmt();
       expect(";");
     }
+    if (!consume(";")) {
+      node->cond = expr();
+      expect(";");
+    }
     if (!consume(")")) {
       node->inc = read_expr_stmt();
       expect(")");
