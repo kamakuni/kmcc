@@ -88,12 +88,12 @@ static void gen(Node *node) {
       printf("  and rax, 15\n");
       printf("  jnz .L.call.%d\n", seq);
       printf("  mov rax, 0\n");
-      printf("  call %s\n", node->name);
+      printf("  call %s\n", node->funcname);
       printf("  jmp .L.end.%d\n", seq);
       printf(".L.call.%d:\n", seq);
       printf("  sub rsp, 8\n");
       printf("  mov rax, 0\n");
-      printf("  call %s\n", node->name);
+      printf("  call %s\n", node->funcname);
       printf("  add rsp, 8\n");
       printf(".L.end.%d:\n", seq);
       printf("  push rax\n");
