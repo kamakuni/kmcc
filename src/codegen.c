@@ -4,7 +4,7 @@ static int label_count = 1;
 static char *funcname;
 static void gen(Node *node);
 
-char* argregs[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+char* argreg[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 void gen_lval(Node *node) {
     switch (node->kind) {
@@ -79,7 +79,7 @@ static void gen(Node *node) {
       }
 
       for (int i = nargs - 1; i >= 0; i--)
-        printf("  pop %s\n", argregs[i]);
+        printf("  pop %s\n", argreg[i]);
       // We need to align RSP to a 16 byte boundary before
       // calling a function because it is an ABI requirement.
       // RAX is set to 0 for variadic function
@@ -273,6 +273,14 @@ void codegen(Function *prog){
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
     printf("  sub rsp, %d\n",fn->stack_size);
+
+    // Push arguments to the stack
+    int i = 0;
+    for (VarList *vl = fn->params; vl; vl = vl->next) {
+      Var *var = vl->var;
+      printf("  mov [rbp-%d], %s\n", var->offset, argreg[i++]);
+    }
+
     // Emit
     for (Node *node = fn->node; node; node = node->next)
       gen(node);
