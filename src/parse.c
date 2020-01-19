@@ -36,68 +36,12 @@ Node *new_binary(NodeKind kind, Node *lhs, Node *rhs, Token *tok) {
     return node;
 }
 
-/*Node *new_node_block(Vector *stmts) {
-    Node *node = new_node(ND_BLOCK);
-    node->stmts = stmts;
-    return node;
-    }*/
-
-/*Node *new_node_call(char *name, Node *args) {
-    Node *node = new_node(ND_CALL);
-    node->name = name;
-    node->args = args;
-    return node;
-    }*/
-/*
-Node *new_node_function(char *name, Vector *args, Node *block) {
-    Node *node = new_node(ND_FUNC);
-    node->name = name;
-    node->args = args;
-    node->block = block;
-    return node;
-}
-*/
 Node *new_num(long val, Token *tok) {
   Node *node = new_node(ND_NUM, tok);
     node->val = val;
     return node;
 }
-/*
-Node *new_node_ident(Type *ty, char *name) {
-    Node *node = new_node(ND_IDENT);
-    node->ty = ty;
-    node->name = strndup(name, strlen(name));
-    var_append(variables, ty, name);
-    return node;
-}
-*/
-/*
-Node *new_node_for(Node *init, Node *cond, Node * inc, Node *body) {
-    Node *node = new_node(ND_FOR);
-    node->init = init;
-    node->cond = cond;
-    node->inc = inc;
-    node->body = body;
-    return node;
-}
-*/
-/*
-Node *new_node_if(Node *cond, Node *body, Node *els) {
-    Node *node = new_node(ND_IF);
-    node->cond = cond;
-    node->body = body;
-    node->els = els;
-    return node;
-}
-*/
-/*
-Node *new_node_while(Node *cond, Node *body) {
-    Node *node = new_node(ND_WHILE);
-    node->cond = cond;
-    node->body = body;
-    return node;
-}
-*/
+
 static Node *new_var_node(Var *var, Token *tok) {
   Node *node = new_node(ND_VAR, tok);
   node->var = var;
