@@ -86,8 +86,8 @@ try 10 "int three(){return 3;}int seven(){return 7;}int main(){return three() + 
 try 10 "int func(int a){a;}int main(){func(10);}"
 try 10 "int func(int a,int b){b;}int main(){func(0,10);}"
 try 10 "int func(int a,int b){a;}int main(){func(10,0);}"
-try 10 "int func(int a){if(a==1) 10; else 11;}int main(){func(1);}"
-try 10 "int func(int a){if(a==1) 11; else 10;}int main(){func(0);}"
+try 10 "int func(int a){if(a==1) return 10; else return 11;}int main(){func(1);}"
+try 10 "int func(int a){if(a==1) return 11; else return 10;}int main(){func(0);}"
 
 try 10 "int func(int a,int b){a + b;}int main(){func(3,7);}"
 try 10 "int func(int a,int b){return a + b;}int main(){func(3,7);}"
