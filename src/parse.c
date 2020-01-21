@@ -356,11 +356,11 @@ static Node *unary() {
     // -x => 0-x
     return new_binary(ND_SUB, new_num(0, tok), unary(), tok);
   }
-  if (tok = consume("*")) {
-    return new_unary(ND_DEREF, unary(), tok);
-  }
   if (tok = consume("&")) {
     return new_unary(ND_ADDR, unary(), tok);
+  }
+  if (tok = consume("*")) {
+    return new_unary(ND_DEREF, unary(), tok);
   }
   return primary();
 }

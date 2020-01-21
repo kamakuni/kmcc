@@ -159,7 +159,6 @@ char *strndup(char *p,int len) {
     buf[len] = '\0';
     return buf;
 }
-//Token *token;
 
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     Token *t = calloc(1, sizeof(Token));

@@ -188,15 +188,13 @@ static void gen(Node *node) {
   }
 
   if (node->kind == ND_ADDR) {
-    gen_lval(node->lhs);
+    gen_addr(node->lhs);
     return;
   }
 
   if (node->kind == ND_DEREF) {
     gen(node->lhs);
-    printf("  pop rax\n");
-    printf("  mov rax, [rax]\n");
-    printf("  push rax\n");
+    load();
     return;
   }
 
