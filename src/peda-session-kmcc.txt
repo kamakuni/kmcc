@@ -1,8 +1,4 @@
-break gen
-
-
-
-
-
-
+break parse.c:11
+break basetype
+break declaration
 
