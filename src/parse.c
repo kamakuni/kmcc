@@ -322,9 +322,9 @@ static Node *add() {
     Token *tok;
     for (;;) {
         if (tok = consume("+"))
-	  node = new_binary(ND_ADD, node, mul(), tok);
+	  node = new_add(node, mul(), tok);
         else if (tok = consume("-"))
-	  node = new_binary(ND_SUB, node, mul(), tok);
+	  node = new_sub(node, mul(), tok);
         else
             return node;
     }
