@@ -81,19 +81,16 @@ struct Node {
   Node *rhs;
   Node *cond; // for ND_IF | ND_FOR | ND_WHILE
   Node *then;
-  Node *block; // for ND_FUNC
   Node *body; // for ND_IF | ND_FOR | ND_WHILE
   Node *els; // for ND_IF
   Node *init; // for ND_FOR
   Node *inc; // for ND_FOR
-  Vector *stmts; // for ND_BLOCK | ND_FUNC
   // Function call
   char *funcname;
   Node *args; // for ND_CALL
   Type *ty;
   Token *tok;
   int val;
-  char *name;
   Var *var;
 };
 
