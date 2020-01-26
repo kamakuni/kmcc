@@ -48,12 +48,12 @@ static void store() {
   printf("  push rdi\n");
 }
 
-void gen_block(Node *node){
-    for (int i = 0; i < node->stmts->len; i++) {
-        gen((Node *)vec_get(node->stmts, i));
-        printf("  pop rax\n");
-    }
-}
+//void gen_block(Node *node){
+//    for (int i = 0; i < node->stmts->len; i++) {
+//        gen((Node *)vec_get(node->stmts, i));
+//        printf("  pop rax\n");
+//    }
+//}
 
 // Generatecode for given code
 static void gen(Node *node) {

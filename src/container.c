@@ -41,7 +41,6 @@ Map *map_get(Map *map,char *key){
 
 Var *new_var(){
     Var *var = malloc(sizeof(Var));
-    var->next = NULL;
     var->ty = NULL;
     var->offset = 0;
     return var;
@@ -49,19 +48,9 @@ Var *new_var(){
 
 void var_insert_first(Var **var, Type *ty, char *name, int offset){
     Var *new = malloc(sizeof(Var));
-    new->next = *var;
     new->ty = ty;
     new->offset = offset;
     *var = new;
-}
-
-int var_len(Var *var){
-    int i = 0;
-    while(var->next != NULL){
-        i++;
-        var = var->next;
-    };
-    return i;
 }
 
 Tokens *new_tokens(){
