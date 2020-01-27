@@ -41,16 +41,7 @@ struct Map {
     Vector *vals;
 };
 
-typedef enum { TY_INT, TY_PTR } TypeKind;
-
 typedef struct Type Type;
-struct Type {
-  TypeKind kind;
-  Type *ptr_to;
-  Type *base;
-};
-
-extern Type *int_type;
 
 typedef struct Var Var;
 struct Var {
@@ -176,6 +167,19 @@ bool is_alpha(char c);
 char *strndup(char *p,int len);
 void error(char *fmt, ...);
 void error_tok(Token *tok, char *fmt, ...);
+
+typedef enum { TY_INT, TY_PTR } TypeKind;
+
+struct Type {
+  TypeKind kind;
+  Type *base;
+};
+
+extern Type *int_type;
+
+bool is_integer(Type *ty);
+Type *pointer_to(Type *base);
+void add_type(Node *node);
 
 //Node *function();
 //Node *stmt();

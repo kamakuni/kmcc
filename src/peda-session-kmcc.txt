@@ -1,5 +1,2 @@
-break parse.c:11
-break basetype
-break declaration
-
+break add_type
 
