@@ -1,48 +1,38 @@
 #include "kmcc.h"
 
-int pos;
 Tokens *tokens;
 Token *token;
-Var *variables;
 char *filename;
 char *user_input;
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "引数の個数が正しくありません\n");
-        return 1;
-    }
-    
-    // run testing codes
-    if (strcmp(argv[1],"-test") == 0){
-        //runtest();
-        return 0;
-    }
-    
-    pos = 0;
-    variables = new_var();
-    user_input = argv[1];
-    token = tokenize(user_input);
-    
-    // tokens to syntax tree
-    Function *prog = program();
 
-    // Assign offsets to local variables.
-    int offset = 0;
-    for (Var *var = prog->locals; var; var = var->next) {
-      offset += 8;
-      var->offset = offset;
-    }
-    prog->stack_size = offset;
+  if (argc != 2)
+    error("%s: invalid number of arguments", argv[0]);
     
-
-    codegen(prog);
-    /*printf(".intel_syntax noprefix\n");
-    printf(".global main\n");
-
-    for (int i = 0; code[i]; i++) {
-        gen_func(code[i]);
-    }
-    */
+  // Run testing codes.
+  if (strcmp(argv[1],"-test") == 0){
+    //runtest();
     return 0;
+  }
+
+  // Tokenize and parse.
+  user_input = argv[1];
+  token = tokenize(user_input);
+  Function *prog = program();
+
+  // Assign offsets to local variables.
+  for (Function *fn = prog; fn; fn = fn->next) {
+    int offset = 0;
+    for (VarList *vl = fn->locals; vl; vl = vl->next) {
+	offset += 8;
+	vl->var->offset = offset;
+    }
+    fn->stack_size = offset;
+  }
+
+  // Traverse the AST to emit assembly.
+  codegen(prog);
+  
+  return 0;
 }
