@@ -18,6 +18,7 @@ typedef enum {
     TK_NUM, // Integer literals
     TK_IDENT, // Identifiers
     TK_EOF, // End-of-file markers
+    TK_SIZEOF, // sizeof
 } TokenKind;
 
 typedef struct Token Token;
