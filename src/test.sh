@@ -104,6 +104,12 @@ try 3 "int main(){int x=3; int *y=&x; int **z=&y; return **z;}"
 try 5 "int main(){int x=3; int y=5; return *(&x+1);}"
 try 5 "int main(){int x=3; int y=5; return *(1+&x);}"
 try 3 "int main(){int x=3; int y=5; return *(&y-1);}"
-try 10 "int main(){int a; int b; a = 10; b = &a; return *b;}"
+try 2 "int main(){int x=3; return (&x+2)-&x;}"
+try 5 "int main(){int x=3; int y=5; int *z=&x; return *(z+1);}"
+try 3 "int main(){int x=3; int y=5; int *z=&y; return *(z-1);}"
+try 5 "int main(){int x=3; int *y=&x; *y=5; return x;}"
+try 7 "int main(){int x=3; int y=5; *(&x+1)=7; return y;}"
+try 7 "int main(){int x=3; int y=5; *(&y-1)=7; return x;}"
+try 8 "int main(){int x=3; int y=5; return foo(&x,y);} int foo(int *x, int y){ return *x + y;}"
 
 echo OK
