@@ -349,6 +349,7 @@ static Node *mul() {
 //       | primary
 static Node *unary() {
   Token *tok;
+  
   if (consume("+")) {
     return unary();
   }
@@ -380,7 +381,7 @@ static Node *func_args() {
   return head;
 }
 
-// primary = "(" expr ")" | ident func-args? | num
+// primary =  "(" expr ")" | "sizeof" unary | ident func-args? | num
 static Node *primary() {
   if (consume("(")) {
     Node *node = expr();
@@ -389,6 +390,16 @@ static Node *primary() {
   }
 
   Token *tok;
+  if (tok = consume("sizeof")){
+    Node *node = unary();
+    add_type(node);
+    if(node->ty->kind == TY_INT) {
+      return new_num(4,tok);
+    } else if (node->ty->kind == TY_PTR) {
+      return new_num(8,tok);
+    }
+  }
+  
   if (tok = consume_ident()) {
     // Function call
     if (consume("(")) {
