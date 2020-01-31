@@ -169,11 +169,12 @@ char *strndup(char *p,int len);
 void error(char *fmt, ...);
 void error_tok(Token *tok, char *fmt, ...);
 
-typedef enum { TY_INT, TY_PTR } TypeKind;
+typedef enum { TY_INT, TY_PTR, TY_ARRAY } TypeKind;
 
 struct Type {
   TypeKind kind;
   Type *base;
+  size_t array_size;
 };
 
 extern Type *int_type;
