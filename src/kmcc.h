@@ -173,8 +173,9 @@ typedef enum { TY_INT, TY_PTR, TY_ARRAY } TypeKind;
 
 struct Type {
   TypeKind kind;
+  int size; // sizeof() value
   Type *base;
-  size_t array_size;
+  int array_len;
 };
 
 extern Type *int_type;
