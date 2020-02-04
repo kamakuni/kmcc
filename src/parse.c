@@ -92,9 +92,13 @@ Function *program() {
 }
 
 static VarList *read_func_param() {
-  VarList *vl = calloc(1 , sizeof(VarList));
   Type *ty = basetype();
-  vl->var = new_lvar(expect_ident(),ty);
+  
+  char *name = expect_ident();
+  ty = read_type_suffix(ty);
+  
+  VarList *vl = calloc(1, sizeof(VarList));
+  vl->var = new_lvar(name, ty);
   return vl;
 }
 
