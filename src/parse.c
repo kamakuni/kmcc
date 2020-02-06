@@ -154,8 +154,10 @@ static Function *function() {
 static Node *declaration(){
   Token *tok = token;
   Type *ty = basetype();
-  Var *var = new_lvar(expect_ident(), ty);
-
+  char *name = expect_ident();
+  ty = read_type_suffix(ty);
+  Var *var = new_lvar(name, ty);
+  
   if (consume(";"))
     return new_node(ND_NULL, tok);
 
