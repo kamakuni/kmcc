@@ -20,7 +20,13 @@ void gen_lval(Node *node) {
 
     error("not a left value");
 }
-
+/*
+static void gen_lval(Node *node) {
+  if (node->ty->kind == TY_ARRAY)
+    error_tok(node->tok, "not an lvalue");
+  gen_addr(node);
+}
+*/
 static void gen_addr(Node *node) {
   switch(node->kind) {
   case ND_VAR:
