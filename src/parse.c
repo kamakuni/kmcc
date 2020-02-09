@@ -91,6 +91,14 @@ Function *program() {
   return head.next;
 }
 
+static Type *read_type_suffix(Type *base) {
+  if (!consume("["))
+    return base;
+  int sz = expect_number();
+  expect("]");
+  return array_of(base, sz);
+}
+
 static VarList *read_func_param() {
   Type *ty = basetype();
   
@@ -116,14 +124,6 @@ static VarList *read_func_params() {
   }
 
   return head;
-}
-
-static Type *read_type_suffix(Type *base) {
-  if (!consume("["))
-    return base;
-  int sz = expect_number();
-  expect("]");
-  return array_of(base, sz);
 }
 
 // function = ident "(" params? ")" "{" stmt* "}"
