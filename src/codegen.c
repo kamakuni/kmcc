@@ -113,10 +113,13 @@ static void gen(Node *node) {
   }
     
   if (node->kind == ND_VAR) {
-    gen_lval(node);
+    gen_addr(node);
+    if (node->ty->kind != TY_ARRAY)
+      load();
+    /*gen_lval(node);
     printf("  pop rax\n");
     printf("  mov rax, [rax]\n");
-    printf("  push rax\n");
+    printf("  push rax\n");*/
     return;
   }
     
