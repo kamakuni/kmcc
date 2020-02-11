@@ -6,27 +6,6 @@ static void gen(Node *node);
 
 char* argreg[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
-void gen_lval(Node *node) {
-    switch (node->kind) {
-    case ND_VAR: {
-      printf("  lea rax, [rbp-%d]\n", node->var->offset);
-      printf("  push rax\n");
-      return;
-    }
-    case ND_DEREF:
-        gen(node->lhs);
-        return;
-    }
-
-    error("not a left value");
-}
-/*
-static void gen_lval(Node *node) {
-  if (node->ty->kind == TY_ARRAY)
-    error_tok(node->tok, "not an lvalue");
-  gen_addr(node);
-}
-*/
 static void gen_addr(Node *node) {
   switch(node->kind) {
   case ND_VAR:
@@ -39,6 +18,12 @@ static void gen_addr(Node *node) {
   }
 
   error_tok(node->tok, "not an lvalue");
+}
+
+static void gen_lval(Node *node) {
+  if (node->ty->kind == TY_ARRAY)
+    error_tok(node->tok, "not an lvalue");
+  gen_addr(node);
 }
 
 static void load() {
