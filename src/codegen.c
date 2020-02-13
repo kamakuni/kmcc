@@ -188,7 +188,8 @@ static void gen(Node *node) {
 
   if (node->kind == ND_DEREF) {
     gen(node->lhs);
-    load();
+    if (node->ty->kind != TY_ARRAY)
+      load();
     return;
   }
 
