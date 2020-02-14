@@ -204,7 +204,7 @@ static void gen(Node *node) {
     printf("  add rax, rdi\n");
     break;
   case ND_PTR_ADD:
-    printf("  imul rdi, 8\n");
+    printf("  imul rdi, %d\n", node->ty->base->size);
     printf("  add rax, rdi\n");
     break;
   case ND_SUB:
