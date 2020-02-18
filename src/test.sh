@@ -116,6 +116,10 @@ try 4 "int main(){int x=3; return sizeof(x);}"
 try 4 "int main(){int x=3; return sizeof x;}"
 try 8 "int main(){int x=3; return sizeof(&x);}"
 
-try 3 'int main(){ int x[2]; int *y=&x; *y=3; return *x;}'
+try 3 "int main(){ int x[2]; int *y=&x; *y=3; return *x;}"
+
+try 3 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *x; }"
+try 4 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+1); }"
+try 5 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+2); }"
 
 echo OK
