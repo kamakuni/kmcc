@@ -217,7 +217,7 @@ static void gen(Node *node) {
   case ND_PTR_DIFF:
     printf("  sub rax, rdi\n");
     printf("  cqo\n");
-    printf("  mov rdi, %d\n", node->ty->base->size);
+    printf("  mov rdi, %d\n", node->lhs->ty->base->size);
     printf("  idiv rdi\n");
     break;
   case ND_MUL:
