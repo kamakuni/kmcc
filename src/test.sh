@@ -49,7 +49,7 @@ try 30 "int main(){int a;a=30; return a;}"
 try 24 "int main(){int a;a=9+15; return a;}"
 try 2 "int main(){1; return 2;3;}"
 try 3 "int main(){int a;int b;a=1;b=2; return a+b;}"
-try 4 "int main(){int a;int b;int c;a=b=2;c=a+b; return c;}"
+try 4 "int main(){int a;int b;int c;a=2;b=2;c=a+b; return c;}"
 
 try 5 "int main(){return 5;}"
 try 7 "int main(){int a; a=4+3; return a ;}"
