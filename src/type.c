@@ -1,6 +1,6 @@
 #include "kmcc.h"
 
-Type *int_type = &(Type){ TY_INT, 4 };
+Type *int_type = &(Type){ TY_INT, 8 };
 
 bool is_integer(Type *ty){
   return ty->kind == TY_INT;
