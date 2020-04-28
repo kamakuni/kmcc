@@ -72,6 +72,7 @@ try 0 "int main(){int i; i=0;while(i<10)if(i==0) return i; return 11;}"
 try 5 "int main(){int i; i=0;while(i<10)if(i<5) i=i+1; else return i; return 11;}"
 try 10 "int main(){int i; i=0;while(i<10){i=i+1;} return i;}"
 
+try 55 "int main() { int i=0; int j=0; for (i=0; i<=10; i=i+1) j=i+j; return j; }"
 try 20 "int main(){int i;int a; a=10;for(i=0;i<10;i=i+1)a=a+1; return a;}"
 try 11 "int main(){int i; i=0;for(;i<=10;)i=i+1;return i;}"
 try 0 "int main(){int i; i=0;for(;i<=10;)if(i==0) return i; return 11;}"
@@ -115,5 +116,11 @@ try 8 "int main(){int x=3; int y=5; return foo(&x,y);} int foo(int *x, int y){ r
 try 4 "int main(){int x=3; return sizeof(x);}"
 try 4 "int main(){int x=3; return sizeof x;}"
 try 8 "int main(){int x=3; return sizeof(&x);}"
+
+try 3 "int main(){ int x[2]; int *y=&x; *y=3; return *x;}"
+
+try 3 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *x; }"
+try 4 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+1); }"
+try 5 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+2); }"
 
 echo OK
