@@ -118,6 +118,7 @@ try 4 "int main(){int x=3; return sizeof x;}"
 try 8 "int main(){int x=3; return sizeof(&x);}"
 
 try 3 "int main(){ int x[2]; int *y=&x; *y=3; return *x;}"
+try 3 "int main(){ int a[2]; *a = 1; *(a + 1) = 2; int *p; p = a; return *p + *(p + 1);}"
 
 try 3 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *x; }"
 try 4 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+1); }"
