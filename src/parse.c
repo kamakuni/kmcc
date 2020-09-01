@@ -290,16 +290,16 @@ static Node *relational() {
     Token *tok;
     
     for (;;) {
-        if (tok = consume("<"))
-	  node = new_binary(ND_LT, node, add(), tok);
-        else if (tok = consume("<="))
-	  node = new_binary(ND_LE, node, add(), tok);
-        else if (tok = consume(">"))
-	  node = new_binary(ND_LT, add(), node, tok);
-        else if (tok = consume(">="))
-	  node = new_binary(ND_LE, add(), node, tok);
-        else
-            return node;
+      if (tok = consume("<"))
+        node = new_binary(ND_LT, node, add(), tok);
+      else if (tok = consume("<="))
+        node = new_binary(ND_LE, node, add(), tok);
+      else if (tok = consume(">"))
+        node = new_binary(ND_LT, add(), node, tok);
+      else if (tok = consume(">="))
+        node = new_binary(ND_LE, add(), node, tok);
+      else
+        return node;
     }
 }
 
@@ -335,12 +335,12 @@ static Node *add() {
     Node *node = mul();
     Token *tok;
     for (;;) {
-        if (tok = consume("+"))
-	  node = new_add(node, mul(), tok);
-        else if (tok = consume("-"))
-	  node = new_sub(node, mul(), tok);
-        else
-            return node;
+      if (tok = consume("+"))
+    	  node = new_add(node, mul(), tok);
+      else if (tok = consume("-"))
+    	  node = new_sub(node, mul(), tok);
+      else
+        return node;
     }
 }
 
@@ -349,12 +349,12 @@ static Node *mul() {
     Node *node = unary();
     Token *tok;
     for (;;) {
-        if (tok = consume("*"))
-	  node = new_binary(ND_MUL, node, unary(), tok);
-        else if (tok = consume("/"))
-	  node = new_binary(ND_DIV, node, unary(), tok);
-        else
-            return node;
+      if (tok = consume("*"))
+    	  node = new_binary(ND_MUL, node, unary(), tok);
+      else if (tok = consume("/"))
+	      node = new_binary(ND_DIV, node, unary(), tok);
+      else
+        return node;
         
     }
 }
