@@ -124,8 +124,8 @@ try 3 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *x; }"
 try 4 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+1); }"
 try 5 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+2); }"
 
-#try 3 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return x[0]; }"
-#try 4 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return x[1]; }"
-#try 5 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return x[2]; }"
+try 3 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *x; }"
+try 4 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *(x+1); }"
+try 5 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return x(x+2); }"
 
 echo OK
