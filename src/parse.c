@@ -274,12 +274,12 @@ static Node *equality() {
     Token *tok;
     
     for (;;) {
-        if (tok = consume("=="))
-	  node = new_binary(ND_EQ, node, relational(), tok);
-        else if (tok = consume("!="))
-	  node = new_binary(ND_NE, node, relational(), tok);
-        else
-          return node;
+      if (tok = consume("=="))
+	      node = new_binary(ND_EQ, node, relational(), tok);
+      else if (tok = consume("!="))
+	      node = new_binary(ND_NE, node, relational(), tok);
+      else
+        return node;
     }
 }
 
