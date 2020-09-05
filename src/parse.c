@@ -366,8 +366,10 @@ static Node *postfix() {
 
   while (tok = consume("[")) {
     // x[y] is short for *(x+y)
+    // x+y
     Node *exp = new_add(node, expr(), tok);
     expect("]");
+    // *(x+y)
     node = new_unary(ND_DEREF, exp, tok);
   }
   return node;
@@ -391,7 +393,7 @@ static Node *unary() {
   if (tok = consume("*")) {
     return new_unary(ND_DEREF, unary(), tok);
   }
-  return primary();
+  return postfix();
 }
 
 // func-args = "(" (assign ("," assign)*)? ")"
