@@ -43,11 +43,12 @@ struct Map {
 };
 
 typedef struct Type Type;
-
+// Variable
 typedef struct Var Var;
 struct Var {
   char *name; // Variable name
   Type *ty; // Type
+  bool is_local; // Local or global
   int offset; // Offset from RBP
 };
 
