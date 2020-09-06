@@ -13,3 +13,6 @@ test: kmcc
 
 clean:
 		rm -f kmcc *.o *~ tmp*
+
+debug: $(OBJS)
+			$(CC) -g3 -O0 -o kmcc $(OBJS)

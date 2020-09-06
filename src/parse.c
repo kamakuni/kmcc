@@ -274,12 +274,12 @@ static Node *equality() {
     Token *tok;
     
     for (;;) {
-        if (tok = consume("=="))
-	  node = new_binary(ND_EQ, node, relational(), tok);
-        else if (tok = consume("!="))
-	  node = new_binary(ND_NE, node, relational(), tok);
-        else
-          return node;
+      if (tok = consume("=="))
+	      node = new_binary(ND_EQ, node, relational(), tok);
+      else if (tok = consume("!="))
+	      node = new_binary(ND_NE, node, relational(), tok);
+      else
+        return node;
     }
 }
 
@@ -290,16 +290,16 @@ static Node *relational() {
     Token *tok;
     
     for (;;) {
-        if (tok = consume("<"))
-	  node = new_binary(ND_LT, node, add(), tok);
-        else if (tok = consume("<="))
-	  node = new_binary(ND_LE, node, add(), tok);
-        else if (tok = consume(">"))
-	  node = new_binary(ND_LT, add(), node, tok);
-        else if (tok = consume(">="))
-	  node = new_binary(ND_LE, add(), node, tok);
-        else
-            return node;
+      if (tok = consume("<"))
+        node = new_binary(ND_LT, node, add(), tok);
+      else if (tok = consume("<="))
+        node = new_binary(ND_LE, node, add(), tok);
+      else if (tok = consume(">"))
+        node = new_binary(ND_LT, add(), node, tok);
+      else if (tok = consume(">="))
+        node = new_binary(ND_LE, add(), node, tok);
+      else
+        return node;
     }
 }
 
@@ -335,12 +335,12 @@ static Node *add() {
     Node *node = mul();
     Token *tok;
     for (;;) {
-        if (tok = consume("+"))
-	  node = new_add(node, mul(), tok);
-        else if (tok = consume("-"))
-	  node = new_sub(node, mul(), tok);
-        else
-            return node;
+      if (tok = consume("+"))
+    	  node = new_add(node, mul(), tok);
+      else if (tok = consume("-"))
+    	  node = new_sub(node, mul(), tok);
+      else
+        return node;
     }
 }
 
@@ -349,18 +349,34 @@ static Node *mul() {
     Node *node = unary();
     Token *tok;
     for (;;) {
-        if (tok = consume("*"))
-	  node = new_binary(ND_MUL, node, unary(), tok);
-        else if (tok = consume("/"))
-	  node = new_binary(ND_DIV, node, unary(), tok);
-        else
-            return node;
+      if (tok = consume("*"))
+    	  node = new_binary(ND_MUL, node, unary(), tok);
+      else if (tok = consume("/"))
+	      node = new_binary(ND_DIV, node, unary(), tok);
+      else
+        return node;
         
     }
 }
 
+// postfix = primary ("[" expr "]")*
+static Node *postfix() {
+  Node * node = primary();
+  Token *tok;
+
+  while (tok = consume("[")) {
+    // x[y] is short for *(x+y)
+    // x+y
+    Node *exp = new_add(node, expr(), tok);
+    expect("]");
+    // *(x+y)
+    node = new_unary(ND_DEREF, exp, tok);
+  }
+  return node;
+}
+
 // unary = ("+" | "-" | "*" | "&")? unary
-//       | primary
+//       | postfix
 static Node *unary() {
   Token *tok;
   
@@ -377,7 +393,7 @@ static Node *unary() {
   if (tok = consume("*")) {
     return new_unary(ND_DEREF, unary(), tok);
   }
-  return primary();
+  return postfix();
 }
 
 // func-args = "(" (assign ("," assign)*)? ")"
