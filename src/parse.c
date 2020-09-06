@@ -431,8 +431,10 @@ static Node *primary() {
   }
   
   if (tok = consume_ident()) {
-    // Function call
+    
     if (consume("(")) {
+      // Function call
+      // ident(x,y)
       Node *node = new_node(ND_FUNCALL, tok);
       node->funcname = strndup(tok->str, tok->len);
       node->args = func_args();
@@ -440,6 +442,7 @@ static Node *primary() {
     }
 
     // Variable
+    // indent without (
     Var *var = find_var(tok);
     if(!var)
       error_tok(tok, "undefined variable");
