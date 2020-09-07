@@ -52,6 +52,7 @@ static Var *new_lvar(char *name, Type *ty){
   Var *var = calloc(1,sizeof(Var));
   var->name = name;
   var->ty = ty;
+  var->is_local = true;
   
   VarList *vl = calloc(1,sizeof(VarList));
   vl->var = var;

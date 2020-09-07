@@ -8,10 +8,16 @@ char* argreg[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 static void gen_addr(Node *node) {
   switch(node->kind) {
-  case ND_VAR:
-    printf("  lea rax, [rbp-%d]\n", node->var->offset);
-    printf("  push rax\n");
+  case ND_VAR: {
+    Var *var = node->var;
+    if (var->is_local) {
+      printf("  lea rax, [rbp-%d]\n", node->var->offset);
+      printf("  push rax\n");
+    } else {
+      printf("  push offset %s\n", var->name);
+    }
     return;
+  }
   case ND_DEREF:
     gen(node->lhs);
     return;
