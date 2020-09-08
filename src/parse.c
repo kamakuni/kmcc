@@ -48,12 +48,16 @@ static Node *new_var_node(Var *var, Token *tok) {
   return node;
 }
 
-static Var *new_lvar(char *name, Type *ty){
+static Var *new_var(char *name, Type *ty, bool is_local) {
   Var *var = calloc(1,sizeof(Var));
   var->name = name;
   var->ty = ty;
-  var->is_local = true;
-  
+  var->is_local = is_local;
+  return var;
+}
+
+static Var *new_lvar(char *name, Type *ty){
+  Var *var = new_var(name,ty,true);
   VarList *vl = calloc(1,sizeof(VarList));
   vl->var = var;
   vl->next = locals;
