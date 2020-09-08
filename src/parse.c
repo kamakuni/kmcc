@@ -3,6 +3,8 @@
 // All local variable instances created during parsing are
 // accumulated to this list.
 static VarList *locals;
+// All global variable instances
+static VarList *globals;
 
 static Type *basetype(void) {
   expect("int");
@@ -57,11 +59,20 @@ static Var *new_var(char *name, Type *ty, bool is_local) {
 }
 
 static Var *new_lvar(char *name, Type *ty){
-  Var *var = new_var(name,ty,true);
+  Var *var = new_var(name, ty, true);
   VarList *vl = calloc(1,sizeof(VarList));
   vl->var = var;
   vl->next = locals;
   locals = vl;
+  return var;
+}
+
+static Var *new_gvar(char *name, Type *ty) {
+  Var *var = new_var(name, ty, false);
+  VarList *vl = calloc(1,sizeof(VarList));
+  vl->var = var;
+  vl->next = globals;
+  globals = vl;
   return var;
 }
 
