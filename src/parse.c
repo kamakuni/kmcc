@@ -14,9 +14,16 @@ static Type *basetype(void) {
   return ty;
 }
 
-// Find a local variable by name
+// Find a variable by name
 static Var *find_var(Token *tok) {
+  // First look up a variable instance in locals
   for (VarList *vl = locals; vl; vl = vl->next) {
+    Var *var = vl->var;
+    if (strlen(var->name) == tok->len && !strncmp(tok->str, var->name, tok->len))
+      return var;
+  }
+  // and then look up a variable instance in globals
+  for (VarList *vl = globals; vl; vl = vl->next) {
     Var *var = vl->var;
     if (strlen(var->name) == tok->len && !strncmp(tok->str, var->name, tok->len))
       return var;
