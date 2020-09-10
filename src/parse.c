@@ -102,6 +102,14 @@ static Node *primary();
 static Node *mul();
 static Node *unary();      
 
+static is_function() {
+  Token *tok = token;
+  basetype();
+  bool is_func = consume_ident() && consume("(");
+  token = tok; // args of ) token
+  return is_func;
+}
+
 // program = function*
 Function *program() {
   Function head = {};
