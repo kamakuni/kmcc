@@ -116,8 +116,10 @@ Function *program() {
   Function *cur = &head;
 
   while (!at_eof()) {
-    cur->next = function();
-    cur = cur->next;
+    if(is_function()) {
+      cur->next = function();
+      cur = cur->next;
+    }
   }
   return head.next;
 }
