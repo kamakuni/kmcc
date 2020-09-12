@@ -101,6 +101,7 @@ static Node *relational();
 static Node *primary();
 static Node *mul();
 static Node *unary();      
+static void global_var();
 
 static is_function() {
   Token *tok = token;
@@ -119,6 +120,8 @@ Function *program() {
     if(is_function()) {
       cur->next = function();
       cur = cur->next;
+    } else {
+      global_var();
     }
   }
   return head.next;
@@ -181,6 +184,14 @@ static Function *function() {
   fn->node = head.next;
   fn->locals = locals;
   return fn;
+}
+
+static void global_var() {
+  Type *ty = basetype();
+  char *name = expect_ident();
+  ty = read_type_suffix(ty);
+  expect(";");
+  new_gvar(name, ty);
 }
 
 // declaration = basetype ident ("=" expr) ";"
