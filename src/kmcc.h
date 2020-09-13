@@ -125,7 +125,12 @@ struct Function {
   int stack_size;
 };
 
-Function *program(void);
+typedef struct {
+  VarList *globals;
+  Function *fns;
+} Program;
+
+Program *program(void);
 
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
@@ -194,7 +199,7 @@ void add_type(Node *node);
 //Node *primary();
 //Node *mul();
 //Node *unary();
-void codegen(Function *prog);
+void codegen(Program *prog);
 //void gen();
 
 extern char *filename;
