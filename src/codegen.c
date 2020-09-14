@@ -259,6 +259,16 @@ static void gen(Node *node) {
   printf("  push rax\n");
 }
 
+static void emit_data(Program *prog) {
+  printf(".data\n");
+
+  for(VarList *vl = prog->globals; vl; vl = vl->next){
+    Var *var = vl->var;
+    printf("%s:\n", var->name);
+    printf("  .zero %d\n", var->ty->size);
+  }
+}
+
 void codegen(Program *prog){
   printf(".intel_syntax noprefix\n");
   for (Function *fn = prog->fns; fn; fn = fn->next){
