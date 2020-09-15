@@ -104,6 +104,7 @@ static Node *unary();
 static void global_var();
 
 static is_function() {
+  // To keep current token
   Token *tok = token;
   basetype();
   bool is_func = consume_ident() && consume("(");
@@ -111,10 +112,11 @@ static is_function() {
   return is_func;
 }
 
-// program = function*
-Function *program() {
+// program = (grobal var | function)*
+Program *program() {
   Function head = {};
   Function *cur = &head;
+  globals = NULL;
 
   while (!at_eof()) {
     if(is_function()) {
@@ -124,7 +126,11 @@ Function *program() {
       global_var();
     }
   }
-  return head.next;
+
+  Program *prog = calloc(1, sizeof(Program));
+  prog->globals = globals;
+  prog->fns = head.next;
+  return prog;
 }
 
 static Type *read_type_suffix(Type *base) {

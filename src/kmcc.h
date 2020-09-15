@@ -152,7 +152,6 @@ Node *new_num(long val, Token *tok);
 Node *new_node_ident(Type *ty, char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *els);
 
-Var *new_var();
 Var *var_get(Var *var,char *name);
 void var_insert_first(Var **var, Type *ty, char *name, int offset);
 int var_get_offset(Var *var, char *name);
