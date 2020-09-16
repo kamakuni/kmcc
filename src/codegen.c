@@ -301,30 +301,6 @@ static void emit_text(Program *prog) {
 
 void codegen(Program *prog){
   printf(".intel_syntax noprefix\n");
-  for (Function *fn = prog->fns; fn; fn = fn->next){
-    printf(".global %s\n",fn->name);
-    printf("%s:\n",fn->name);
-    funcname = fn->name;
-    // Prologue
-    printf("  push rbp\n");
-    printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %d\n",fn->stack_size);
-
-    // Push arguments to the stack
-    int i = 0;
-    for (VarList *vl = fn->params; vl; vl = vl->next) {
-      Var *var = vl->var;
-      printf("  mov [rbp-%d], %s\n", var->offset, argreg[i++]);
-    }
-
-    // Emit
-    for (Node *node = fn->node; node; node = node->next)
-      gen(node);
-    // Epilogue
-    printf(".L.return.%s:\n",funcname);
-    printf("  mov rsp, rbp\n");
-    printf("  pop rbp\n");
-    printf("  ret\n");
-  }
-
+  emit_data(prog);
+  emit_text(prog);
 }
