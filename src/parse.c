@@ -473,11 +473,12 @@ static Node *primary() {
   if (tok = consume("sizeof")){
     Node *node = unary();
     add_type(node);
-    if(node->ty->kind == TY_INT) {
-      return new_num(4,tok);
-    } else if (node->ty->kind == TY_PTR) {
-      return new_num(8,tok);
-    }
+    return new_num(node->ty->size,tok);
+    //if(node->ty->kind == TY_INT) {
+    //  return new_num(4,tok);
+    //} else if (node->ty->kind == TY_PTR) {
+    //  return new_num(8,tok);
+    //}
   }
   
   if (tok = consume_ident()) {
