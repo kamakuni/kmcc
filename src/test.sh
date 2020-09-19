@@ -4,7 +4,7 @@ try() {
     input="$2"
 
     ./kmcc "$input" > tmp.s
-    gcc -o tmp tmp.s
+    gcc -no-pie -o tmp tmp.s
     ./tmp
     actual="$?"
 
@@ -113,8 +113,8 @@ try 7 "int main(){int x=3; int y=5; *(&x+1)=7; return y;}"
 try 7 "int main(){int x=3; int y=5; *(&y-1)=7; return x;}"
 try 8 "int main(){int x=3; int y=5; return foo(&x,y);} int foo(int *x, int y){ return *x + y;}"
 
-try 4 "int main(){int x=3; return sizeof(x);}"
-try 4 "int main(){int x=3; return sizeof x;}"
+try 8 "int main(){int x=3; return sizeof(x);}"
+try 8 "int main(){int x=3; return sizeof x;}"
 try 8 "int main(){int x=3; return sizeof(&x);}"
 
 try 3 "int main(){ int x[2]; int *y=&x; *y=3; return *x;}"
@@ -127,5 +127,16 @@ try 5 "int main(){ int x[3]; *x=3; *(x+1)=4; *(x+2)=5; return *(x+2); }"
 try 3 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *x; }"
 try 4 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *(x+1); }"
 try 5 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *(x+2); }"
+
+try 0 "int x; int main() { return x; }"
+try 3 "int x; int main() { x=3; return x; }"
+
+try 0 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[0]; }"
+try 1 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[1]; }"
+try 2 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[2]; }"
+try 3 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[3]; }"
+
+try 8 "int x; int main() { return sizeof(x); }"
+try 32 "int x[4]; int main() { return sizeof(x); }"
 
 echo OK

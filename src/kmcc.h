@@ -43,11 +43,12 @@ struct Map {
 };
 
 typedef struct Type Type;
-
+// Variable
 typedef struct Var Var;
 struct Var {
   char *name; // Variable name
   Type *ty; // Type
+  bool is_local; // Local or global
   int offset; // Offset from RBP
 };
 
@@ -124,7 +125,12 @@ struct Function {
   int stack_size;
 };
 
-Function *program(void);
+typedef struct {
+  VarList *globals;
+  Function *fns;
+} Program;
+
+Program *program(void);
 
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
@@ -146,7 +152,6 @@ Node *new_num(long val, Token *tok);
 Node *new_node_ident(Type *ty, char *name);
 Node *new_node_if(Node *ifCond, Node *ifBody, Node *els);
 
-Var *new_var();
 Var *var_get(Var *var,char *name);
 void var_insert_first(Var **var, Type *ty, char *name, int offset);
 int var_get_offset(Var *var, char *name);
@@ -193,7 +198,7 @@ void add_type(Node *node);
 //Node *primary();
 //Node *mul();
 //Node *unary();
-void codegen(Function *prog);
+void codegen(Program *prog);
 //void gen();
 
 extern char *filename;
