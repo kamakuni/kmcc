@@ -3,7 +3,7 @@ SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
 kmcc: $(OBJS)
-			$(CC) -o kmcc $(OBJS) $(LDFLAGS)
+			$(CC) -no-pie -o kmcc $(OBJS) $(LDFLAGS)
 
 $(OBJS): kmcc.h
 

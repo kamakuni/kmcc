@@ -4,7 +4,7 @@ try() {
     input="$2"
 
     ./kmcc "$input" > tmp.s
-    gcc -o tmp tmp.s
+    gcc -no-pie -o tmp tmp.s
     ./tmp
     actual="$?"
 
