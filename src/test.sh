@@ -139,4 +139,6 @@ try 3 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[3]; }"
 try 8 "int x; int main() { return sizeof(x); }"
 try 32 "int x[4]; int main() { return sizeof(x); }"
 
+try 3 "int main() { char x[3]; x[0] = -1; x[1] = 2; int y; y = 4; return x[0] + y;}"
+
 echo OK
