@@ -139,4 +139,12 @@ try 3 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[3]; }"
 try 8 "int x; int main() { return sizeof(x); }"
 try 32 "int x[4]; int main() { return sizeof(x); }"
 
+try 1 "int main() { char x=1; return x; }"
+try 1 "int main() { char x=1; char y=2; return x; }"
+try 2 "int main() { char x=1; char y=2; return y; }"
+
+try 1 "int main() { char x; return sizeof(x); }"
+try 10 "int main() { char x[10]; return sizeof(x); }"
+try 1 "int main() { return sub_char(7, 3, 3); } int sub_char(char a, char b, char c) { return a-b-c; }"
+
 echo OK

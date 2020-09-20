@@ -4,7 +4,8 @@ static int label_count = 1;
 static char *funcname;
 static void gen(Node *node);
 
-char* argreg[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+char *argreg1[] = {"dil", "sil", "dl", "cl", "r8b", "r9b"};
+char *argreg8[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 static void gen_addr(Node *node) {
   switch(node->kind) {
@@ -32,16 +33,22 @@ static void gen_lval(Node *node) {
   gen_addr(node);
 }
 
-static void load() {
-  printf("  pop rax\n");
-  printf("  mov rax, [rax]\n");
-  printf("  push rax\n");
+static void load(Type *ty) {
+  printf("  pop rax\n"); // pop the address for a variable from the stack to rax
+  if (ty->size == 1)
+    printf("  movsx rax, byte ptr [rax]\n");
+  else
+    printf("  mov rax, [rax]\n"); // add a value from the address to rax
+  printf("  push rax\n"); // push a value to the stack
 }
 
-static void store() {
+static void store(Type *ty) {
   printf("  pop rdi\n");
   printf("  pop rax\n");
-  printf("  mov [rax], rdi\n");
+  if (ty->size == 1)
+    printf("  mov [rax], dil\n");
+  else
+    printf("  mov [rax], rdi\n");
   printf("  push rdi\n");
 }
 
@@ -76,7 +83,7 @@ static void gen(Node *node) {
     }
 
     for (int i = nargs - 1; i >= 0; i--)
-      printf("  pop %s\n", argreg[i]);
+      printf("  pop %s\n", argreg8[i]);
     // We need to align RSP to a 16 byte boundary before
     // calling a function because it is an ABI requirement.
     // RAX is set to 0 for variadic function
@@ -106,7 +113,7 @@ static void gen(Node *node) {
   if (node->kind == ND_VAR) {
     gen_addr(node);
     if (node->ty->kind != TY_ARRAY)
-      load();
+      load(node->ty);
     /*gen_lval(node);
     printf("  pop rax\n");
     printf("  mov rax, [rax]\n");
@@ -179,7 +186,7 @@ static void gen(Node *node) {
   if (node->kind == ND_ASSIGN) {
     gen_lval(node->lhs);    
     gen(node->rhs);
-    store();
+    store(node->ty);
     /*printf("  pop rdi\n");
     printf("  pop rax\n");
     printf("  mov [rax], rdi\n");
@@ -195,7 +202,7 @@ static void gen(Node *node) {
   if (node->kind == ND_DEREF) {
     gen(node->lhs);
     if (node->ty->kind != TY_ARRAY)
-      load();
+      load(node->ty);
     return;
   }
 
@@ -269,6 +276,16 @@ static void emit_data(Program *prog) {
   }
 }
 
+static void load_arg(Var *var, int idx) {
+  int sz = var->ty->size;
+  if (sz == 1) {
+    // move a value from the register to address
+    printf("  mov [rbp-%d], %s\n", var->offset, argreg1[idx]);
+  } else {
+    printf("  mov [rbp-%d], %s\n", var->offset, argreg8[idx]);
+  }
+}
+
 static void emit_text(Program *prog) {
   printf(".text\n");
   
@@ -283,10 +300,8 @@ static void emit_text(Program *prog) {
 
     // Push arguments to the stack
     int i = 0;
-    for (VarList *vl = fn->params; vl; vl = vl->next) {
-      Var *var = vl->var;
-      printf("  mov [rbp-%d], %s\n", var->offset, argreg[i++]);
-    }
+    for (VarList *vl = fn->params; vl; vl = vl->next)
+      load_arg(vl->var, i++);
 
     // Emit
     for (Node *node = fn->node; node; node = node->next)
