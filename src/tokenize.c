@@ -187,52 +187,67 @@ Token *new_token_ident(Token *cur, char *str, int len) {
 }
 
 Token *tokenize(char *p) {
-    Token head = {};
-    Token *cur = &head;
+  Token head = {};
+  Token *cur = &head;
     
-    while (*p) {
-      // Skip whitespace characters
-      if (isspace(*p)) {
-        p++;
-        continue;
-      }
-        
-      // Keywords or Multi-letter punctuators
-      char *kw = starts_with_reserved(p);
-      if (kw) {
-	int len = strlen(kw);
-	cur = new_token(TK_RESERVED, cur, p, len);
-	p += len;
-	continue;
-      }
-
-      // Identifier
-      if (is_alpha(*p)) {
-        char *q = p++;
-        while(is_alnum(*p))
-          p++;
-        cur = new_token(TK_IDENT, cur, q, p - q);
-        continue;
-      }
-
-      // Single-letter punctuators
-      if (ispunct(*p)) {
-        cur = new_token(TK_RESERVED, cur, p++, 1);
-        continue;
-      }
-        
-      // Integer literal
-      if (isdigit(*p)) {
-	cur = new_token(TK_NUM, cur, p ,0);
-	char *q = p;
-	cur->val = strtol(p, &p, 10);
-	cur->len = p - q;
-	continue;
-      }
-        
-      error_at(p, "invalid token");
+  while (*p) {
+    // Skip whitespace characters
+    if (isspace(*p)) {
+      p++;
+      continue;
     }
-    
-    new_token(TK_EOF ,cur ,p ,0 );
-    return head.next;
+
+    // String literal
+    if (*p == '"') {
+      char *q = p++;
+      while (*p && *p != '"')
+        p++;
+      if (!*p)
+        error_at(q, "unclosed string literal");
+      p++;
+      
+      cur = new_token(TK_STR, cur, q, p - q);
+      cur->contents = strndup(q + 1, p - q - 2);
+      cur->cont_len = p - q - 1;
+      continue;
+    }
+          
+    // Keywords or Multi-letter punctuators
+    char *kw = starts_with_reserved(p);
+    if (kw) {
+      int len = strlen(kw);
+      cur = new_token(TK_RESERVED, cur, p, len);
+      p += len;
+      continue;
+    }
+
+    // Identifier
+    if (is_alpha(*p)) {
+      char *q = p++;
+      while(is_alnum(*p))
+        p++;
+      cur = new_token(TK_IDENT, cur, q, p - q);
+      continue;
+    }
+
+    // Single-letter punctuators
+    if (ispunct(*p)) {
+      cur = new_token(TK_RESERVED, cur, p++, 1);
+      continue;
+    }
+      
+    // Integer literal
+    if (isdigit(*p)) {
+      cur = new_token(TK_NUM, cur, p ,0);
+      char *q = p;
+      cur->val = strtol(p, &p, 10);
+      cur->len = p - q;
+      continue;
+    }
+      
+    error_at(p, "invalid token");
+  }
+  
+  new_token(TK_EOF ,cur ,p ,0 );
+  return head.next;
 }
