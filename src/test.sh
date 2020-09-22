@@ -147,4 +147,10 @@ try 1 "int main() { char x; return sizeof(x); }"
 try 10 "int main() { char x[10]; return sizeof(x); }"
 try 1 "int main() { return sub_char(7, 3, 3); } int sub_char(char a, char b, char c) { return a-b-c; }"
 
+try 97 'int main() { return "abc"[0]; }'
+try 98 'int main() { return "abc"[1]; }'
+try 99 'int main() { return "abc"[2]; }'
+try 0 'int main() { return "abc"[3]; }'
+try 4 'int main() { return sizeof("abc"); }'
+
 echo OK
