@@ -153,6 +153,30 @@ bool at_eof() {
     return token->kind == TK_EOF;
 }
 
+static char get_escape_char(char c) {
+  if (c == 'a') {
+    return '\a';
+  } else if (c == 'b') {
+    return '\b';
+  } else if (c == 't') {
+    return '\t';
+  } else if (c == 'n') {
+    return '\n';
+  } else if (c == 'v') {
+    return '\v';
+  } else if (c == 'f') {
+    return '\f';
+  } else if (c == 'r') {
+    return '\r';
+  } else if (c == 'e') {
+    return 27;
+  } else if (c == '0') {
+    return 0;
+  } else {
+    return c;
+  }
+}
+
 char *strndup(char *p,int len) {
     char *buf = malloc(len + 1);
     strncpy(buf, p , len);
