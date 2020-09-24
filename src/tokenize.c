@@ -177,6 +177,35 @@ static char get_escape_char(char c) {
   }
 }
 
+static Token *read_string_literal(Token *cur, char *start) {
+  char *p = start + 1;
+  char *buf[1024];
+  int len = 0;
+
+  for (;;) {
+    if (len == sizeof(buf))
+      error_at(start, "string literal too large");
+    if (*p == '\0')
+      error_at(start, "unclosed string literal");
+    if (*p == '"')
+      break;
+
+    if (*p == '\\') {
+      p++;
+      buf[len++] = get_escape_char(*p++);
+    } else {
+      buf[len++] = *p++;
+    }
+  }
+
+  Token *tok = new_token(TK_STR, cur, start, p - start + 1);
+  tok->contents = malloc(len + 1);
+  memcpy(tok->contents, buf, len);
+  tok->contents[len] = '\0';
+  tok->cont_len = len + 1;
+  return tok;
+}
+
 char *strndup(char *p,int len) {
     char *buf = malloc(len + 1);
     strncpy(buf, p , len);
