@@ -162,6 +162,8 @@ try 12 'int main() { return "\f"[0]; }'
 try 13 'int main() { return "\r"[0]; }'
 try 27 'int main() { return "\e"[0]; }'
 try 0 'int main() { return "\0"[0]; }'
-
+try 2 'int main() { /* return 1; */ return 2;}'
+try 2 'int main() { // return 1;
+return 2; }'
 
 echo OK
