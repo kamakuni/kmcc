@@ -5,6 +5,26 @@ Token *token;
 char *filename;
 char *user_input;
 
+// Return the contents of a given file.
+static char *read_file(char *path) {
+  // Open and read file.
+  FILE *fp = fopen(path, "r");
+  if (!fp)
+    error("cannot open %s: %s", path, strerror(errno));
+  
+  int filemax = 10 * 1024 * 1024;
+  char *buf = malloc(filemax);
+  int size = fread(buf, 1, filemax - 2, fp);
+  if (!feof(fp))
+    error("file too large");
+  
+  // Make sure that the string ends with "\n\0".
+  if (size == 0 | buf[size - 1] != '\n')
+    buf[size++] = '\n';
+  buf[size] = '\0';
+  return buf;
+}
+
 int align_to(int n, int align) {
   return (n + align - 1) & ~(align - 1);
 }
@@ -21,7 +41,8 @@ int main(int argc, char **argv) {
   }
 
   // Tokenize and parse.
-  user_input = argv[1];
+  filename = argv[1];
+  user_input = read_file(argv[1]);
   token = tokenize(user_input);
   Program *prog = program();
 
