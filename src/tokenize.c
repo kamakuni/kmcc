@@ -244,9 +244,26 @@ Token *tokenize(char *p) {
   Token *cur = &head;
     
   while (*p) {
-    // Skip whitespace characters
+    // Skip whitespace characters.
     if (isspace(*p)) {
       p++;
+      continue;
+    }
+
+    // Skip line comments.
+    if (startswith(p, "//")) {
+      p += 2;
+      while(*p != '\n')
+        p++;
+      continue;
+    }
+
+    // Skip block comments.
+    if (startswith(p, "/*")) {
+      char *q = strstr(p + 2, "*/");
+      if (!q)
+        error_at(p, "unclosed block comments");
+      p = q + 2;
       continue;
     }
 
