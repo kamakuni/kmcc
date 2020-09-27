@@ -3,7 +3,7 @@ try() {
     expected="$1"
     input="$2"
 
-    ./kmcc "$input" > tmp.s
+    ./kmcc <(echo "$input") > tmp.s
     gcc -no-pie -o tmp tmp.s
     ./tmp
     actual="$?"

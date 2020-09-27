@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdbool.h>
