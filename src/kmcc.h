@@ -47,6 +47,8 @@ struct Map {
 };
 
 typedef struct Type Type;
+typedef struct Member Member;
+
 // Variable
 typedef struct Var Var;
 struct Var {
@@ -85,6 +87,8 @@ struct Node {
   Node *els; // for ND_IF
   Node *init; // for ND_FOR
   Node *inc; // for ND_FOR
+  // Struct member access
+  Member *member;
   // Function call
   char *funcname;
   Node *args; // for ND_CALL
@@ -97,6 +101,7 @@ struct Node {
 typedef enum {
     ND_ADD,
     ND_ASSIGN,
+    ND_MEMBER,
     ND_EXPR_STMT,
     ND_SUB,
     ND_MUL,
@@ -185,7 +190,8 @@ typedef enum {
   TY_CHAR,
   TY_INT,
   TY_PTR,
-  TY_ARRAY
+  TY_ARRAY,
+  TY_STRUCT,
 } TypeKind;
 
 struct Type {
@@ -193,6 +199,15 @@ struct Type {
   int size; // sizeof() value
   Type *base;
   int array_len;
+  Member *members;
+};
+
+// Struct Member
+struct Member {
+  Member *next;
+  Type *ty;
+  char *name;
+  int offset;
 };
 
 extern Type *char_type;
