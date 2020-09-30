@@ -116,6 +116,9 @@ static Node *primary();
 static Node *mul();
 static Node *unary();      
 static void global_var();
+static Type *struct_decl();
+static Member *struct_member();
+static bool is_typename();
 
 static is_function() {
   // To keep current token
@@ -153,6 +156,16 @@ static Type *read_type_suffix(Type *base) {
   int sz = expect_number();
   expect("]");
   return array_of(base, sz);
+}
+
+// struct-member = basetype ident ("[" num "]")* ";"
+static Member *struct_member() {
+  Member *mem = calloc(1, sizeof(Member));
+  mem->ty = basetype();
+  mem->name = expect_ident();
+  mem->ty = read_type_suffix(mem->ty);
+  expect(";");
+  return mem;
 }
 
 static VarList *read_func_param() {
