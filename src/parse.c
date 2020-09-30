@@ -252,7 +252,7 @@ static Node *read_expr_stmt(){
 }
 
 static bool is_typename(void) {
-  return peek("char") || peek("int");
+  return peek("char") || peek("int") || peek("struct");
 }
 
 static Node *assign() {
