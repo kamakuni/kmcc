@@ -255,6 +255,13 @@ static bool is_typename(void) {
   return peek("char") || peek("int") || peek("struct");
 }
 
+static Member *find_member(Type *ty, char *name) {
+  for (Member *mem = ty->members; mem; mem = mem->next)
+    if(!strcmp(mem->name, name))
+      return mem;
+    return NULL;
+}
+
 static Node *assign() {
     Node *node = equality();
     Token *tok;
