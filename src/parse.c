@@ -261,6 +261,20 @@ static Member *find_member(Type *ty, char *name) {
       return mem;
     return NULL;
 }
+static Node *struct_ref(Node *lhs) {
+  add_type(lhs);
+  if (lhs->ty->kind != TY_STRUCT)
+    error_tok(lhs->tok, "not a struct");
+
+  Token *tok = token;
+  Member *mem = find_member(lhs->ty, expect_ident());
+  if (!mem)
+    error_tok(tok, "no such member");
+  
+  Node *node = new_unary(ND_MEMBER, lhs, tok);
+  node->member = mem;
+  return node;
+}
 
 static Node *assign() {
     Node *node = equality();
