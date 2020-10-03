@@ -461,20 +461,30 @@ static Node *mul() {
     }
 }
 
-// postfix = primary ("[" expr "]")*
+// postfix = primary ("[" expr "]" | "." ident)*
 static Node *postfix() {
   Node * node = primary();
   Token *tok;
 
-  while (tok = consume("[")) {
-    // x[y] is short for *(x+y)
-    // x+y
-    Node *exp = new_add(node, expr(), tok);
-    expect("]");
-    // *(x+y)
-    node = new_unary(ND_DEREF, exp, tok);
+  for (;;) {
+    if (tok = onsume("[")) {
+      // x[y] is short for *(x + y)
+      // x+y
+      Node *exp = new_add(node, expr(), tok);
+      expect("]");
+      // *(x+y)
+      node = new_unary(ND_DEREF, exp, tok);
+      continue;
+    }
+
+    if (tok = consume(".")) {
+      node = struct_ref(node);
+      continue;
+    }
+
+    return node;
   }
-  return node;
+
 }
 
 // unary = ("+" | "-" | "*" | "&")? unary
