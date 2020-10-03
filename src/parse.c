@@ -255,12 +255,42 @@ static bool is_typename(void) {
   return peek("char") || peek("int") || peek("struct");
 }
 
+// struct-decl = "struct" "{" struct-member "}"
+static Type *struct_decl() {
+  // Read struct members.
+  expect("struct");
+  expect("{");
+
+  Member head = {};
+  Member *cur = &head;
+
+  while (!consume("}")) {
+    cur->next = struct_member();
+    cur = cur->next;
+  }
+
+  Type *ty = calloc(1, sizeof(Type));
+  ty->kind = TY_STRUCT;
+  ty->members = head.next;
+
+  // Assign offsets within the struc to members.
+  int offset = 0;
+  for (Member *mem = ty->members; mem; mem = mem->next) {
+    mem->offset = offset;
+    offset += mem->ty->size;
+  }
+  ty->size = offset;
+
+  return ty;
+}
+
 static Member *find_member(Type *ty, char *name) {
   for (Member *mem = ty->members; mem; mem = mem->next)
     if(!strcmp(mem->name, name))
       return mem;
     return NULL;
 }
+
 static Node *struct_ref(Node *lhs) {
   add_type(lhs);
   if (lhs->ty->kind != TY_STRUCT)
