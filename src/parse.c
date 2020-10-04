@@ -6,15 +6,17 @@ static VarList *locals;
 // All global variable instances
 static VarList *globals;
 
-// basetype = ("char" | "int" ) "*"*
+// basetype = ("char" | "int" | struct-decl) "*"*
 static Type *basetype(void) {
+  if (!is_typename())
+    error_tok(token, "typename expected");
   Type *ty;
-  if (consume("char")) {
+  if (consume("char"))
     ty = char_type;
-  } else {
-    expect("int");
+  else if (consume("int"))
     ty = int_type;
-  }
+  else
+    ty = struct_decl();
 
   while (consume("*"))
     ty = pointer_to(ty);
