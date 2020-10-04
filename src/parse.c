@@ -6,23 +6,6 @@ static VarList *locals;
 // All global variable instances
 static VarList *globals;
 
-// basetype = ("char" | "int" | struct-decl) "*"*
-static Type *basetype(void) {
-  if (!is_typename())
-    error_tok(token, "typename expected");
-  Type *ty;
-  if (consume("char"))
-    ty = char_type;
-  else if (consume("int"))
-    ty = int_type;
-  else
-    ty = struct_decl();
-
-  while (consume("*"))
-    ty = pointer_to(ty);
-  return ty;
-}
-
 // Find a variable by name
 static Var *find_var(Token *tok) {
   // First look up a variable instance in locals
@@ -121,6 +104,23 @@ static void global_var();
 static Type *struct_decl();
 static Member *struct_member();
 static bool is_typename();
+
+// basetype = ("char" | "int" | struct-decl) "*"*
+static Type *basetype(void) {
+  if (!is_typename())
+    error_tok(token, "typename expected");
+  Type *ty;
+  if (consume("char"))
+    ty = char_type;
+  else if (consume("int"))
+    ty = int_type;
+  else
+    ty = struct_decl();
+
+  while (consume("*"))
+    ty = pointer_to(ty);
+  return ty;
+}
 
 static is_function() {
   // To keep current token
@@ -499,7 +499,7 @@ static Node *postfix() {
   Token *tok;
 
   for (;;) {
-    if (tok = onsume("[")) {
+    if (tok = consume("[")) {
       // x[y] is short for *(x + y)
       // x+y
       Node *exp = new_add(node, expr(), tok);

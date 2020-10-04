@@ -166,4 +166,7 @@ try 2 'int main() { /* return 1; */ return 2;}'
 try 2 'int main() { // return 1;
 return 2; }'
 
+try 1 'int main() { struct {int a; int b;} x; x.a=1; x.b=2; return x.a; }'
+try 2 'int main() { struct {int a; int b;} x; x.a=1; x.b=2; return x.b; }'
+
 echo OK

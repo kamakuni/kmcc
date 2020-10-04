@@ -116,7 +116,8 @@ static void gen(Node *node) {
     return;
   }
     
-  if (node->kind == ND_VAR) {
+  if (node->kind == ND_VAR 
+  || node->kind == ND_MEMBER) {
     gen_addr(node);
     if (node->ty->kind != TY_ARRAY)
       load(node->ty);
