@@ -172,4 +172,9 @@ try 1 'int main() { struct {int a; int b;} x; x.a=1; x.b=2; return x.a; }'
 try 2 'int main() { struct {int a; int b;} x; x.a=1; x.b=2; return x.b; }'
 try 3 'int main() { struct {int a; int b; int c;} x; x.a=1; x.b=2; x.c=3; return x.c; }'
 
+try 0 'int main() { struct {int a; int b;} x[3]; int *p=x; p[0]=0; return x[0].a; }'
+try 1 'int main() { struct {int a; int b;} x[3]; int *p=x; p[1]=1; return x[0].b; }'
+try 2 'int main() { struct {int a; int b;} x[3]; int *p=x; p[2]=2; return x[1].a; }'
+try 3 'int main() { struct {int a; int b;} x[3]; int *p=x; p[3]=3; return x[1].b; }'
+
 echo OK
