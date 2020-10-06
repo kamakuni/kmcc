@@ -177,4 +177,7 @@ try 1 'int main() { struct {int a; int b;} x[3]; int *p=x; p[1]=1; return x[0].b
 try 2 'int main() { struct {int a; int b;} x[3]; int *p=x; p[2]=2; return x[1].a; }'
 try 3 'int main() { struct {int a; int b;} x[3]; int *p=x; p[3]=3; return x[1].b; }'
 
+try 6 'int main() { struct {int a[3]; int b[5];} x; int *p=&x; x.a[0]=6; return p[0]; }'
+try 7 'int main() { struct {int a[3]; int b[5];} x; int *p=&x; x.b[0]=7; return p[3]; }'
+
 echo OK
