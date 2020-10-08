@@ -183,5 +183,6 @@ try 7 'int main() { struct {int a[3]; int b[5];} x; int *p=&x; x.b[0]=7; return 
 try 6 'int main() { struct { struct { int b; } a; } x; x.a.b=6; return x.a.b; }'
 
 try 8 'int main() { struct {int a;} x; return sizeof(x); }'
+try 16 'int main() { struct {int a; int b;} x; return sizeof(x); }'
 
 echo OK
