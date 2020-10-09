@@ -184,5 +184,8 @@ try 6 'int main() { struct { struct { int b; } a; } x; x.a.b=6; return x.a.b; }'
 
 try 8 'int main() { struct {int a;} x; return sizeof(x); }'
 try 16 'int main() { struct {int a; int b;} x; return sizeof(x); }'
+try 24 'int main() { struct {int a[3];} x; return sizeof(x); }'
+try 32 'int main() { struct {int a;} x[4]; return sizeof(x); }'
+try 48 'int main() { struct {int a[3];} x[2]; return sizeof(x); }'
 
 echo OK
