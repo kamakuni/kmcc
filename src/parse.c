@@ -286,6 +286,18 @@ static Type *struct_decl() {
   return ty;
 }
 
+static bool peek_end(void) {
+  Token *tok = token;
+  bool ret = consume("}") || (consume(",") && consume("}"));
+  token = tok;
+  return ret;
+}
+
+static void expect_end(void) {
+  if (!consume_end())
+    expect("}");
+}
+
 static Member *find_member(Type *ty, char *name) {
   for (Member *mem = ty->members; mem; mem = mem->next)
     if(!strcmp(mem->name, name))
