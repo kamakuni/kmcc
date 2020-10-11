@@ -229,6 +229,12 @@ static void global_var() {
   new_gvar(name, ty);
 }
 
+typedef struct Designator Designator;
+struct Designator {
+   Designator *next;
+   int idx;
+};
+
 // declaration = basetype ident ("=" expr) ";"
 static Node *declaration(){
   Token *tok = token;
