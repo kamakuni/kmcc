@@ -235,6 +235,15 @@ struct Designator {
    int idx;
 };
 
+static Node *new_desg_node2(Var *var, Designator *desg, Token *tok) {
+  if (!desg)
+    return new_var_node(var, tok);
+
+  Node *node = new_desg_node2(var, desg->next, tok);
+  node = new_add(node, new_num(desg->idx, tok), tok);
+  return new_unary(ND_DEREF, node, tok);
+}
+
 // declaration = basetype ident ("=" expr) ";"
 static Node *declaration(){
   Token *tok = token;
