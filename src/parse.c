@@ -244,6 +244,12 @@ static Node *new_desg_node2(Var *var, Designator *desg, Token *tok) {
   return new_unary(ND_DEREF, node, tok);
 }
 
+static Node *new_desg_node(Var *var, Designator *desg, Node *rhs) {
+    Node *lhs = new_desg_node2(var, desg, rhs->tok);
+    Node *node = new_binary(ND_ASSIGN, lhs, rhs, rhs->tok);
+    return new_unary(ND_EXPR_STMT, node, rhs->tok);
+}
+
 // declaration = basetype ident ("=" expr) ";"
 static Node *declaration(){
   Token *tok = token;
