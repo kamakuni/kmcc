@@ -235,6 +235,9 @@ struct Designator {
    int idx;
 };
 
+// Create a node for an array access. For example, if var represents
+// a varible x and desg represents indices 3 and 4, this function
+// returns a node representing x[3][4]
 static Node *new_desg_node2(Var *var, Designator *desg, Token *tok) {
   if (!desg)
     return new_var_node(var, tok);
