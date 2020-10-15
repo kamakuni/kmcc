@@ -253,6 +253,22 @@ static Node *new_desg_node(Var *var, Designator *desg, Node *rhs) {
     return new_unary(ND_EXPR_STMT, node, rhs->tok);
 }
 
+static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) {
+  if (ty->kind == TY_ARRAY) {
+    except("{");
+    int i = 0;
+
+    do {
+      Designator desg2 = {desg, i++};
+      cur = lvar_initializer2(cur, var, ty->base, &desg2);
+    } while (!peek_end() && consume(","));
+
+    expect_end();
+    return cur;
+  }
+}
+
+
 // declaration = basetype ident ("=" expr) ";"
 static Node *declaration(){
   Token *tok = token;
