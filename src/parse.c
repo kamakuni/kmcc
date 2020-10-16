@@ -268,6 +268,14 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
   }
 }
 
+static Node *lvar_initializer(Var *var, Token *tok) {
+  Node head = {};
+  lvar_initializer2(&head, var, var->ty, NULL);
+
+  Node *node = new_node(ND_NULL,tok);
+  node->body = head.next;
+  return node;
+}
 
 // declaration = basetype ident ("=" expr) ";"
 static Node *declaration(){
