@@ -253,6 +253,19 @@ static Node *new_desg_node(Var *var, Designator *desg, Node *rhs) {
     return new_unary(ND_EXPR_STMT, node, rhs->tok);
 }
 
+// lvar-initializer2 = assign
+//                   | "{" lvar-initializer2 ("," lvar-initializer2)* ","? "}"
+//
+// An initializer for a local variable is expanded to multiple
+// assignments. For example, this function creates the following
+// nodes for x[2][3] = {{1,2,3},{4,5,6}}.
+//
+//   x[0][0]=1;
+//   x[0][1]=2;
+//   x[0][2]=3;
+//   x[1][0]=4;
+//   x[1][1]=5;
+//   x[1][2]=6;
 static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) {
   if (ty->kind == TY_ARRAY) {
     except("{");
