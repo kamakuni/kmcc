@@ -96,6 +96,7 @@ static Node *stmt2();
 static Node *expr();
 static Node *new_add(Node *lhs, Node *rhs, Token *tok);
 static Node *add();
+static Node *assign();
 static Node *equality();
 static Node *relational();
 static Node *primary();
@@ -235,9 +236,10 @@ static void global_var() {
 // like we are at the end of such list.
 static bool consume_end(void) {
   Token *tok = token;
-  bool ret = consume("}") || (consume("'") && consume("}"));
+  if (consume("}") || (consume(",") && consume("}")))
+    return true;
   token = tok;
-  return ret;
+  return false;
 }
 
 static bool peek_end(void) {
