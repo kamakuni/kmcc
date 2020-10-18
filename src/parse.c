@@ -290,7 +290,8 @@ static Node *lvar_initializer(Var *var, Token *tok) {
   return node;
 }
 
-// declaration = basetype ident ("=" expr) ";"
+// declaration = basetype declarator type-suffix ("=" lvar-initializer)? ";"
+//             | basetype ;
 static Node *declaration(){
   Token *tok = token;
   Type *ty = basetype();
@@ -302,11 +303,9 @@ static Node *declaration(){
     return new_node(ND_NULL, tok);
 
   expect("=");
-  Node *lhs = new_var_node(var, tok);
-  Node *rhs = expr();
+  Node *node = lvar_initializer(var, tok);
   expect(";");
-  Node *node = new_binary(ND_ASSIGN, lhs, rhs, tok);
-  return new_unary(ND_EXPR_STMT, node, tok);
+  return node;
 }
 
 static Node *read_expr_stmt(){
