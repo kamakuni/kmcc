@@ -94,7 +94,9 @@ static Function *function();
 static Node *stmt();
 static Node *stmt2();
 static Node *expr();
+static Node *new_add(Node *lhs, Node *rhs, Token *tok);
 static Node *add();
+static Node *assign();
 static Node *equality();
 static Node *relational();
 static Node *primary();
@@ -229,7 +231,95 @@ static void global_var() {
   new_gvar(name, ty);
 }
 
-// declaration = basetype ident ("=" expr) ";"
+// Some types of list can end with an optional "," followed by "}"
+// to allow a trailing comma. This function returns true if it looks
+// like we are at the end of such list.
+static bool consume_end(void) {
+  Token *tok = token;
+  if (consume("}") || (consume(",") && consume("}")))
+    return true;
+  token = tok;
+  return false;
+}
+
+static bool peek_end(void) {
+  Token *tok = token;
+  bool ret = consume("}") || (consume(",") && consume("}"));
+  token = tok;
+  return ret;
+}
+
+static void expect_end(void) {
+  if (!consume_end())
+    expect("}");
+}
+
+typedef struct Designator Designator;
+struct Designator {
+   Designator *next;
+   int idx;
+};
+
+// Create a node for an array access. For example, if var represents
+// a varible x and desg represents indices 3 and 4, this function
+// returns a node representing x[3][4]
+static Node *new_desg_node2(Var *var, Designator *desg, Token *tok) {
+  if (!desg)
+    return new_var_node(var, tok);
+
+  Node *node = new_desg_node2(var, desg->next, tok);
+  node = new_add(node, new_num(desg->idx, tok), tok);
+  return new_unary(ND_DEREF, node, tok);
+}
+
+static Node *new_desg_node(Var *var, Designator *desg, Node *rhs) {
+    Node *lhs = new_desg_node2(var, desg, rhs->tok);
+    Node *node = new_binary(ND_ASSIGN, lhs, rhs, rhs->tok);
+    return new_unary(ND_EXPR_STMT, node, rhs->tok);
+}
+
+// lvar-initializer2 = assign
+//                   | "{" lvar-initializer2 ("," lvar-initializer2)* ","? "}"
+//
+// An initializer for a local variable is expanded to multiple
+// assignments. For example, this function creates the following
+// nodes for x[2][3] = {{1,2,3},{4,5,6}}.
+//
+//   x[0][0]=1;
+//   x[0][1]=2;
+//   x[0][2]=3;
+//   x[1][0]=4;
+//   x[1][1]=5;
+//   x[1][2]=6;
+static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) {
+  if (ty->kind == TY_ARRAY) {
+    expect("{");
+    int i = 0;
+
+    do {
+      Designator desg2 = {desg, i++};
+      cur = lvar_initializer2(cur, var, ty->base, &desg2);
+    } while (!peek_end() && consume(","));
+
+    expect_end();
+    return cur;
+  }
+
+  cur->next = new_desg_node(var, desg, assign());
+  return cur->next;
+}
+
+static Node *lvar_initializer(Var *var, Token *tok) {
+  Node head = {};
+  lvar_initializer2(&head, var, var->ty, NULL);
+
+  Node *node = new_node(ND_BLOCK,tok);
+  node->body = head.next;
+  return node;
+}
+
+// declaration = basetype declarator type-suffix ("=" lvar-initializer)? ";"
+//             | basetype ;
 static Node *declaration(){
   Token *tok = token;
   Type *ty = basetype();
@@ -241,11 +331,9 @@ static Node *declaration(){
     return new_node(ND_NULL, tok);
 
   expect("=");
-  Node *lhs = new_var_node(var, tok);
-  Node *rhs = expr();
+  Node *node = lvar_initializer(var, tok);
   expect(";");
-  Node *node = new_binary(ND_ASSIGN, lhs, rhs, tok);
-  return new_unary(ND_EXPR_STMT, node, tok);
+  return node;
 }
 
 static Node *read_expr_stmt(){
