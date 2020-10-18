@@ -235,7 +235,7 @@ static void global_var() {
 // like we are at the end of such list.
 static bool consume_end(void) {
   Token *tok = token;
-  bool ret = consume("}") || (consume("'") && cunsume("}"));
+  bool ret = consume("}") || (consume("'") && consume("}"));
   token = tok;
   return ret;
 }
@@ -291,7 +291,7 @@ static Node *new_desg_node(Var *var, Designator *desg, Node *rhs) {
 //   x[1][2]=6;
 static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) {
   if (ty->kind == TY_ARRAY) {
-    except("{");
+    expect("{");
     int i = 0;
 
     do {

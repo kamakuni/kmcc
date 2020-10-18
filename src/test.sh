@@ -190,4 +190,13 @@ try 48 'int main() { struct {int a[3];} x[2]; return sizeof(x); }'
 try 2 'int main() { struct {char a; char b;} x; return sizeof(x); }'
 try 9 'int main() { struct {char a; int b;} x; return sizeof(x); }'
 
+try 1 'int main() {int x[3]={1,2,3}; return x[0];}'
+try 2 'int main() {int x[3]={1,2,3}; return x[1];}'
+try 3 'int main() {int x[3]={1,2,3}; return x[2];}'
+try 3 'int main() {int x[3]={1,2,3,}; return x[2];}'
+
+try 2 'int main() {int x[2][3]={{1,2,3},{4,5,6}}; return x[0][1];}'
+try 4 'int main() {int x[2][3]={{1,2,3},{4,5,6}}; return x[1][0];}'
+try 6 'int main() {int x[2][3]={{1,2,3},{4,5,6}}; return x[1][2];}'
+
 echo OK
