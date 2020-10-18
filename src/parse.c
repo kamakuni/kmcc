@@ -94,6 +94,7 @@ static Function *function();
 static Node *stmt();
 static Node *stmt2();
 static Node *expr();
+static Node *new_add(Node *lhs, Node *rhs, Token *tok);
 static Node *add();
 static Node *equality();
 static Node *relational();
@@ -229,6 +230,28 @@ static void global_var() {
   new_gvar(name, ty);
 }
 
+// Some types of list can end with an optional "," followed by "}"
+// to allow a trailing comma. This function returns true if it looks
+// like we are at the end of such list.
+static bool consume_end(void) {
+  Token *tok = token;
+  bool ret = consume("}") || (consume("'") && cunsume("}"));
+  token = tok;
+  return ret;
+}
+
+static bool peek_end(void) {
+  Token *tok = token;
+  bool ret = consume("}") || (consume(",") && consume("}"));
+  token = tok;
+  return ret;
+}
+
+static void expect_end(void) {
+  if (!consume_end())
+    expect("}");
+}
+
 typedef struct Designator Designator;
 struct Designator {
    Designator *next;
@@ -344,18 +367,6 @@ static Type *struct_decl() {
   ty->size = offset;
 
   return ty;
-}
-
-static bool peek_end(void) {
-  Token *tok = token;
-  bool ret = consume("}") || (consume(",") && consume("}"));
-  token = tok;
-  return ret;
-}
-
-static void expect_end(void) {
-  if (!consume_end())
-    expect("}");
 }
 
 static Member *find_member(Type *ty, char *name) {
