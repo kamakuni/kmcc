@@ -302,6 +302,9 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     expect_end();
     return cur;
   }
+
+  cur->next = new_desg_node(var, desg, assign());
+  return cur->next;
 }
 
 static Node *lvar_initializer(Var *var, Token *tok) {
