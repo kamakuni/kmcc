@@ -308,7 +308,7 @@ static Node *lvar_initializer(Var *var, Token *tok) {
   Node head = {};
   lvar_initializer2(&head, var, var->ty, NULL);
 
-  Node *node = new_node(ND_NULL,tok);
+  Node *node = new_node(ND_BLOCK,tok);
   node->body = head.next;
   return node;
 }
