@@ -310,12 +310,19 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     expect("{");
     int i = 0;
 
-    do {
-      Designator desg2 = {desg, i++};
-      cur = lvar_initializer2(cur, var, ty->base, &desg2);
-    } while (!peek_end() && consume(","));
-
+    if (!peek("}")) {
+      do {
+        Designator desg2 = {desg, i++};
+        cur = lvar_initializer2(cur, var, ty->base, &desg2);
+      } while (!peek_end() && consume(","));
+    }
     expect_end();
+    
+    // Set excess array elements to zero.
+    while (i < ty->array_len) {
+      Designator *desg2 = {desg, i++};
+      cur = lvar_init_zero(cur, var, ty->base, &desg2);
+    }
     return cur;
   }
 
