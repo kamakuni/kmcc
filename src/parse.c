@@ -305,6 +305,9 @@ static Node *lvar_init_zero(Node *cur, Var *var, Type *ty, Designator *desg) {
 //   x[1][0]=4;
 //   x[1][1]=5;
 //   x[1][2]=6;
+//
+// If an initializer list is shorter than an array, excess array 
+// elements are initialized with 0.
 static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) {
   if (ty->kind == TY_ARRAY) {
     expect("{");
