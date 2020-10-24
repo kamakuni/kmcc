@@ -203,4 +203,8 @@ try 0 'int main() {int x[3]={}; x[0];}'
 try 0 'int main() {int x[3]={}; x[1];}'
 try 0 'int main() {int x[3]={}; x[2];}'
 
+try 2 "int main() {int x[2][3]={{1,2}}; x[0][1]; }"
+try 0 "int main() {int x[2][3]={{1,2}}; x[1][0]; }"
+try 0 "int main() {int x[2][3]={{1,2}}; x[1][2]; }"
+
 echo OK
