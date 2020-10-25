@@ -289,7 +289,7 @@ static Node *lvar_init_zero(Node *cur, Var *var, Type *ty, Designator *desg) {
   }
 
   cur->next = new_desg_node(var,desg, new_num(0, token));
-  return cur;
+  return cur->next;
 }
 
 // lvar-initializer2 = assign
