@@ -323,7 +323,7 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     
     // Set excess array elements to zero.
     while (i < ty->array_len) {
-      Designator *desg2 = {desg, i++};
+      Designator desg2 = {desg, i++};
       cur = lvar_init_zero(cur, var, ty->base, &desg2);
     }
     return cur;
