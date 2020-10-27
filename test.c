@@ -1,1 +1,1 @@
-int main() {int x[3]={}; x[0];}
+int main() {int x[3]={}; return x[0];}
