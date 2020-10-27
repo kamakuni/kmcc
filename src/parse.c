@@ -280,7 +280,7 @@ static Node *new_desg_node(Var *var, Designator *desg, Node *rhs) {
 }
 
 static Node *lvar_init_zero(Node *cur, Var *var, Type *ty, Designator *desg) {
-  if (ty->kind = TY_ARRAY) {
+  if (ty->kind == TY_ARRAY) {
     for (int i = 0; i < ty->array_len; i++) {
       Designator desg2 = {desg, i++};
       cur = lvar_init_zero(cur,var,ty,&desg2);
