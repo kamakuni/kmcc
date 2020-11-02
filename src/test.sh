@@ -207,4 +207,6 @@ try 2 "int main() {int x[2][3]={{1,2}}; return x[0][1]; }"
 try 0 "int main() {int x[2][3]={{1,2}}; return x[1][0]; }"
 try 0 "int main() {int x[2][3]={{1,2}}; return x[1][2]; }"
 
+try 1 "int main() {char x[4]=\"abc\"; return x[0]; }"
+
 echo OK
