@@ -314,7 +314,7 @@ static Node *lvar_init_zero(Node *cur, Var *var, Type *ty, Designator *desg) {
 // '\0'}`.
 static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) {
   if (ty->kind == TY_ARRAY && ty->base->kind == TY_CHAR &&
-    ty->kind == TK_STR) {
+    token->kind == TK_STR) {
     // Initialize a char array with a string literal.
     Token *tok = token;
     token = token->next;
@@ -335,6 +335,7 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     }
     return cur;
   }
+  
   if (ty->kind == TY_ARRAY) {
     expect("{");
     int i = 0;
