@@ -197,6 +197,7 @@ typedef enum {
 struct Type {
   TypeKind kind;
   int size; // sizeof() value
+  bool is_complete;
   Type *base; // pointer or array
   int array_len; // array
   Member *members; // struct

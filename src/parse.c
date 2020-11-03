@@ -227,8 +227,12 @@ static Function *function() {
 static void global_var() {
   Type *ty = basetype();
   char *name = expect_ident();
+  Token *tok = token;
   ty = read_type_suffix(ty);
   expect(";");
+
+  if (ty->is_complete)
+    error_tok(tok, "incomplete type");
   new_gvar(name, ty);
 }
 
@@ -319,6 +323,12 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     Token *tok = token;
     token = token->next;
 
+    if (ty->is_complete) {
+      ty->size = tok->cont_len;
+      ty->array_len = tok->cont_len;
+      ty->is_complete = false;
+    }
+
     int len = (ty->array_len < tok->cont_len)
       ? ty->array_len : tok->cont_len;
 
@@ -352,6 +362,12 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     while (i < ty->array_len) {
       Designator desg2 = {desg, i++};
       cur = lvar_init_zero(cur, var, ty->base, &desg2);
+    }
+
+    if (ty->is_complete) {
+      ty->size = ty->base->size * i;
+      ty->array_len = i;
+      ty->is_complete = false;
     }
     return cur;
   }
