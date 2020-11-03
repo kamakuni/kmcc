@@ -211,4 +211,9 @@ try 97 'int main() {char x[4]="abc"; return x[0]; }'
 try 99 'int main() {char x[4]="abc"; return x[2]; }'
 try 0 'int main() {char x[4]="abc"; return x[3]; }'
 
+try 97 'int main() {char x[2][4]={"abc","def"}; return x[0][0]; }'
+try 0 'int main() {char x[2][4]={"abc","def"}; return x[0][3]; }'
+try 100 'int main() {char x[2][4]={"abc","def"}; return x[1][0]; }'
+try 102 'int main() {char x[2][4]={"abc","def"}; return x[1][2]; }'
+
 echo OK
