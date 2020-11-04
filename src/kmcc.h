@@ -217,6 +217,7 @@ extern Type *int_type;
 bool is_integer(Type *ty);
 Type *pointer_to(Type *base);
 Type *array_of(Type *base, int size);
+Type *struct_type(void);
 void add_type(Node *node);
 
 //Node *function();

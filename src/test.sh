@@ -216,4 +216,8 @@ try 0 'int main() {char x[2][4]={"abc","def"}; return x[0][3]; }'
 try 100 'int main() {char x[2][4]={"abc","def"}; return x[1][0]; }'
 try 102 'int main() {char x[2][4]={"abc","def"}; return x[1][2]; }'
 
+try 4 'int main() { int x[]={1,2,3,4}; return x[3];}'
+try 16 'int main() { int x[]={1,2,3,4}; return sizeof(x);}'
+try 4 'int main() { char x[]="foo"; return sizeof(x);}'
+
 echo OK
