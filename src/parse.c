@@ -401,8 +401,11 @@ static Node *declaration(){
   ty = read_type_suffix(ty);
   Var *var = new_lvar(name, ty);
   
-  if (consume(";"))
-    return new_node(ND_NULL, tok);
+  if (consume(";")) {
+    if (ty->is_complete)
+      error_tok(tok, "incomplete type");
+    return new_node(ND_NULL,tok);
+  }
 
   expect("=");
   Node *node = lvar_initializer(var, tok);
