@@ -310,12 +310,19 @@ static Node *lvar_init_zero(Node *cur, Var *var, Type *ty, Designator *desg) {
 //   x[1][1]=5;
 //   x[1][2]=6;
 //
-// If an initializer list is shorter than an array, excess array 
-// elements are initialized with 0.
+//  There are a few pecial rules for ambiguas initializers are
+//  shorthand notations:
 //
-// A char array can be initialized by a string literal. For example,
-// `char x[4] = "foo"` is equivalent to `char x[4] = {'f','o','o',
-// '\0'}`.
+//  - If an initializer list is shorter than an array, excess array 
+//    elements are initialized with 0.
+//
+//  - A char array can be initialized by a string literal. For example,
+//    `char x[4] = "foo"` is equivalent to `char x[4] = {'f','o','o',
+//    '\0'}`.
+//
+//  - If lhs is an imcomplete array. its size is set to the number of
+//    items on the rhs. For example, `x` in `int x[]={1, 2, 3}` will have
+//    type `int[3]` because the rhs initializer has three items.
 static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) {
   if (ty->kind == TY_ARRAY && ty->base->kind == TY_CHAR &&
     token->kind == TK_STR) {
