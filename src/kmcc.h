@@ -197,16 +197,19 @@ typedef enum {
 struct Type {
   TypeKind kind;
   int size; // sizeof() value
-  bool is_complete;
+  int align; // alignment
+  bool is_complete; // imcomplete type
   Type *base; // pointer or array
   int array_len; // array
   Member *members; // struct
+  Type *return_ty; // function
 };
 
 // Struct Member
 struct Member {
   Member *next;
   Type *ty;
+  Token *tok; // for rror message
   char *name;
   int offset;
 };
