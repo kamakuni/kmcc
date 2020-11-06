@@ -154,13 +154,24 @@ Program *program() {
   return prog;
 }
 
-static Type *read_type_suffix(Type *base) {
+static Type *read_type_suffix(Type *ty) {
   if (!consume("["))
-    return base;
-  int sz = expect_number();
-  expect("]");
-  base = read_type_suffix(base);
-  return array_of(base, sz);
+    return ty;
+  int sz = 0;
+  bool is_incomplete = true;
+  if (!consume("]")) {
+    sz = expect_number();
+    is_incomplete = false;
+    expect("]");
+  }
+  Token *tok = token;
+  ty = read_type_suffix(ty);
+  if (ty->is_incomplete)
+    error_tok(tok, "incomplete lement type");
+
+  ty = array_of(ty, sz);
+  ty->is_incomplete = is_incomplete;
+  return ty;
 }
 
 // struct-member = basetype ident ("[" num "]")* ";"
