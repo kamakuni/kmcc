@@ -176,10 +176,12 @@ static Type *read_type_suffix(Type *ty) {
 
 // struct-member = basetype ident ("[" num "]")* ";"
 static Member *struct_member() {
+  Token *tok = token;
   Member *mem = calloc(1, sizeof(Member));
   mem->ty = basetype();
   mem->name = expect_ident();
   mem->ty = read_type_suffix(mem->ty);
+  mem->tok = tok;
   expect(";");
   return mem;
 }
