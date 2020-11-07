@@ -242,7 +242,7 @@ static void global_var() {
   ty = read_type_suffix(ty);
   expect(";");
 
-  if (ty->is_complete)
+  if (ty->is_incomplete)
     error_tok(tok, "incomplete type");
   new_gvar(name, ty);
 }
@@ -341,10 +341,10 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     Token *tok = token;
     token = token->next;
 
-    if (ty->is_complete) {
+    if (ty->is_incomplete) {
       ty->size = tok->cont_len;
       ty->array_len = tok->cont_len;
-      ty->is_complete = false;
+      ty->is_incomplete = false;
     }
 
     int len = (ty->array_len < tok->cont_len)
@@ -382,10 +382,10 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
       cur = lvar_init_zero(cur, var, ty->base, &desg2);
     }
 
-    if (ty->is_complete) {
+    if (ty->is_incomplete) {
       ty->size = ty->base->size * i;
       ty->array_len = i;
-      ty->is_complete = false;
+      ty->is_incomplete = false;
     }
     return cur;
   }
@@ -413,7 +413,7 @@ static Node *declaration(){
   Var *var = new_lvar(name, ty);
   
   if (consume(";")) {
-    if (ty->is_complete)
+    if (ty->is_incomplete)
       error_tok(tok, "incomplete type");
     return new_node(ND_NULL,tok);
   }
@@ -456,7 +456,7 @@ static Type *struct_decl() {
   for (Member *mem = ty->members; mem; mem = mem->next) {
     if (mem->ty->is_incomplete)
       error_tok(mem->tok, "incomplete struct member");
-      
+
     mem->offset = offset;
     offset += mem->ty->size;
   }
