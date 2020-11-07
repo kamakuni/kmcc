@@ -454,6 +454,9 @@ static Type *struct_decl() {
   // Assign offsets within the struc to members.
   int offset = 0;
   for (Member *mem = ty->members; mem; mem = mem->next) {
+    if (mem->ty->is_incomplete)
+      error_tok(mem->tok, "incomplete struct member");
+      
     mem->offset = offset;
     offset += mem->ty->size;
   }
