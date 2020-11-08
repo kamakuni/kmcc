@@ -749,6 +749,8 @@ static Node *primary() {
   if (tok = consume("sizeof")){
     Node *node = unary();
     add_type(node);
+    if (node->ty->is_incomplete)
+      error_tok(node->tok, "incomplete type");
     return new_num(node->ty->size,tok);
     //if(node->ty->kind == TY_INT) {
     //  return new_num(4,tok);
