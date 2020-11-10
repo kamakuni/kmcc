@@ -220,4 +220,8 @@ try 4 'int main() { int x[]={1,2,3,4}; return x[3];}'
 try 32 'int main() { int x[]={1,2,3,4}; return sizeof(x);}'
 try 4 'int main() { char x[]="foo"; return sizeof(x);}'
 
+try 1 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.a;}'
+try 2 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.b;}'
+try 3 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.c;}'
+
 echo OK
