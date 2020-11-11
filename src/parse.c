@@ -275,7 +275,8 @@ static void expect_end(void) {
 typedef struct Designator Designator;
 struct Designator {
    Designator *next;
-   int idx;
+   int idx; // array
+   Member *mem; // struct
 };
 
 // Create a node for an array access. For example, if var represents
