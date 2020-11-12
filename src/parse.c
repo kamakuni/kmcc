@@ -287,6 +287,12 @@ static Node *new_desg_node2(Var *var, Designator *desg, Token *tok) {
     return new_var_node(var, tok);
 
   Node *node = new_desg_node2(var, desg->next, tok);
+  if (desg->mem){
+    node = new_unary(ND_MEMBER, node, desg->mem->tok);
+    node->member = desg->mem;
+    return node;
+  }
+  
   node = new_add(node, new_num(desg->idx, tok), tok);
   return new_unary(ND_DEREF, node, tok);
 }
