@@ -330,6 +330,9 @@ static Node *lvar_init_zero(Node *cur, Var *var, Type *ty, Designator *desg) {
 //   x[1][1]=5;
 //   x[1][2]=6;
 //
+//  Struct members are initialized in declaration order. For example,
+//  `struct { int a; int b; } x = {1 , 2}` sets x.a to 1 and x.b to 2.
+//
 //  There are a few pecial rules for ambiguas initializers are
 //  shorthand notations:
 //
