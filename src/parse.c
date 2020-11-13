@@ -401,7 +401,26 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
     }
     return cur;
   }
+  if (ty->kind == TY_STRUCT) {
+    expect("{");
+    Member *mem = ty->members;
 
+    if (!peek("}")) {
+      do {
+        Designator desg2 = {desg, 0, mem};
+        cur = lvar_initializer2(cur, var, mem->ty, &desg2);
+        mem = mem->next;
+      } while(!peek_end() && consume(","));
+    }
+    expect_end();
+
+    // Set excess struct elements to zero.
+    for (; mem; mem = mem->next) {
+      Designator desg2 ={desg, 0, mem};
+      cur = lvar_init_zero(cur ,var, mem->ty, &desg2);
+    }
+    return cur;
+  }
   cur->next = new_desg_node(var, desg, assign());
   return cur->next;
 }
