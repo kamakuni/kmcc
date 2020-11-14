@@ -224,4 +224,8 @@ try 1 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.a;}'
 try 2 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.b;}'
 try 3 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.c;}'
 
+try 1 'int main() { struct {int a; int b; int c;} x={1}; return x.a;}'
+try 0 'int main() { struct {int a; int b; int c;} x={1}; return x.b;}'
+try 0 'int main() { struct {int a; int b; int c;} x={1}; return x.c;}'
+
 echo OK
