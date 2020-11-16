@@ -233,4 +233,9 @@ try 2 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[0].b;}'
 try 3 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[1].a;}'
 try 4 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[1].b;}'
 
+try 0 'int main() { struct {int a; int b;} x[2]={{1,2}}; return x[1].b;}'
+
+try 0 'int main() { struct {int a; int b;} x={}; return x[0].a;}'
+try 0 'int main() { struct {int a; int b;} x={}; return x[0].b;}'
+
 echo OK
