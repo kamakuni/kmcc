@@ -48,6 +48,7 @@ struct Map {
 
 typedef struct Type Type;
 typedef struct Member Member;
+typedef struct Initializer Initializer;
 
 // Variable
 typedef struct Var Var;
@@ -57,8 +58,7 @@ struct Var {
   bool is_local; // Local or global
   int offset; // Offset from RBP
   // Global variable
-  char *contents;
-  int cont_len;
+  Initializer *Initializer;
 };
 
 typedef struct LVar LVar;
@@ -96,6 +96,20 @@ struct Node {
   Token *tok;
   int val;
   Var *var;
+};
+
+// Global variable initializer. Global variables can be initialized
+// either by a constant expression or a pointer to another global
+// variable.
+struct Initializer {
+  Initializer *next;
+
+  // Constant expression
+  int sz;
+  int val;
+
+  // Reference to another global variable
+  char *label;
 };
 
 typedef enum {
