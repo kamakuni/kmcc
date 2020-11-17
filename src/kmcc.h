@@ -58,7 +58,7 @@ struct Var {
   bool is_local; // Local or global
   int offset; // Offset from RBP
   // Global variable
-  Initializer *Initializer;
+  Initializer *initializer;
 };
 
 typedef struct LVar LVar;
