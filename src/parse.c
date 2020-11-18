@@ -237,6 +237,23 @@ static Function *function() {
   return fn;
 }
 
+// gvar-initializer2 = assign
+static Initializer *new_init_val(Initializer *cur, int sz, int val) {
+  Initializer *init = calloc(1, sizeof(Initializer));
+  init->sz = sz;
+  init->val = val;
+  cur->next = init;
+  return init;
+}
+
+static Initializer *new_init_label(Initializer *cur, char *label) {
+  Initializer *init = calloc(1, sizeof(Initializer));
+  init->label = label;
+  cur->next= init;
+  return init;
+}
+
+// global-var = basetype declarator type-suffix ("=" gvar-initializer)? ";"
 static void global_var() {
   Type *ty = basetype();
   char *name = expect_ident();
