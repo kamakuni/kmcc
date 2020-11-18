@@ -253,6 +253,14 @@ static Initializer *new_init_label(Initializer *cur, char *label) {
   return init;
 }
 
+static Initializer *gvar_init_string(char *p, int len) {
+  Initializer head = {};
+  Initializer *cur = &head;
+  for (int i = 0; i < len; i++)
+    cur = new_init_val(cur, 1, p[i]);
+  return head.next;
+}
+
 // global-var = basetype declarator type-suffix ("=" gvar-initializer)? ";"
 static void global_var() {
   Type *ty = basetype();
