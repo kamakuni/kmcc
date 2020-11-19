@@ -261,6 +261,24 @@ static Initializer *gvar_init_string(char *p, int len) {
   return head.next;
 }
 
+// gvar-initializer2 = assign
+static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
+  Token *tok = token;
+  Node *expr = assign();
+
+  if (expr->kind == ND_ADDR) {
+    if (expr->lhs->kind != ND_VAR)
+      error_tok(tok, "invalid initializer");
+    return new_init_label(cur, expr->lhs->var->name);
+  }
+
+  if (expr->kind == ND_VAR && expr->var->ty->kind == TY_ARRAY)
+    return new_init_label(cur ,expr->var->name);
+
+  return new_init_val(cur, ty->size, eval(expr));
+}
+
+
 // global-var = basetype declarator type-suffix ("=" gvar-initializer)? ";"
 static void global_var() {
   Type *ty = basetype();
