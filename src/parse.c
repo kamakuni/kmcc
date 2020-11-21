@@ -278,6 +278,11 @@ static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   return new_init_val(cur, ty->size, eval(expr));
 }
 
+static Initializer *gvar_initializer(Type *ty) {
+  Initializer head = {};
+  gvar_initializer2(&head, ty);
+  return head.next;
+}
 
 // global-var = basetype declarator type-suffix ("=" gvar-initializer)? ";"
 static void global_var() {
