@@ -201,6 +201,20 @@ static void gen(Node *node) {
     return;
   }
 
+  if (node->kind == ND_TERNARY) {
+    int seq = label_count++;
+    gen(node->cond);
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je  .L.else.%d\n", seq);
+    gen(node->then);
+    printf("  jmp .L.end.%d\n", seq);
+    printf(".L.else.%d:\n", seq);
+    gen(node->els);
+    printf(".L.end.%d:\n", seq);
+    return;
+  }
+
   if (node->kind == ND_ADDR) {
     gen_addr(node->lhs);
     return;
@@ -242,6 +256,15 @@ static void gen(Node *node) {
     break;
   case ND_MUL:
     printf("  mul rdi\n");
+    break;
+  case ND_BITAND:
+    printf("  and rax, rdi\n");
+    break;
+  case ND_BITOR:
+    printf("  or rax, rdi\n");
+    break;
+  case ND_BITXOR:
+    printf("  xor rax, rdi\n");
     break;
   case ND_NULL:
     break;

@@ -106,7 +106,7 @@ struct Initializer {
 
   // Constant expression
   int sz;
-  int val;
+  long val;
 
   // Reference to another global variable
   char *label;
@@ -115,11 +115,19 @@ struct Initializer {
 typedef enum {
     ND_ADD,
     ND_ASSIGN,
+    ND_BITAND,
+    ND_BITOR,
+    ND_BITXOR,
+    ND_BITNOT,
+    ND_COMMA,
+    ND_SHL,
+    ND_SHR,
     ND_MEMBER,
     ND_EXPR_STMT,
     ND_SUB,
     ND_MUL,
     ND_DIV,
+    ND_NOT,
     ND_NUM,
     ND_NULL,
     ND_BLOCK,
@@ -132,6 +140,9 @@ typedef enum {
     ND_NE,
     ND_LT,
     ND_LE,
+    ND_LOGAND,
+    ND_LOGOR,
+    ND_TERNARY,
     ND_ADDR,
     ND_DEREF,
     ND_VAR,

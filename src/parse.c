@@ -94,9 +94,15 @@ static Function *function();
 static Node *stmt();
 static Node *stmt2();
 static Node *expr();
+static long eval(Node *node);
+static long const_expr();
 static Node *new_add(Node *lhs, Node *rhs, Token *tok);
 static Node *add();
 static Node *assign();
+static Node *bitand();
+static Node *bitor();
+static Node *bitxor();
+static Node *conditional();
 static Node *equality();
 static Node *relational();
 static Node *primary();
@@ -154,18 +160,19 @@ Program *program() {
   return prog;
 }
 
-static Type *read_type_suffix(Type *ty) {
+// type-suffix = ("[" const_expr? "]" type_suffix)?
+static Type *type_suffix(Type *ty) {
   if (!consume("["))
     return ty;
   int sz = 0;
   bool is_incomplete = true;
   if (!consume("]")) {
-    sz = expect_number();
+    sz = const_expr();
     is_incomplete = false;
     expect("]");
   }
   Token *tok = token;
-  ty = read_type_suffix(ty);
+  ty = type_suffix(ty);
   if (ty->is_incomplete)
     error_tok(tok, "incomplete lement type");
 
@@ -180,7 +187,7 @@ static Member *struct_member() {
   Member *mem = calloc(1, sizeof(Member));
   mem->ty = basetype();
   mem->name = expect_ident();
-  mem->ty = read_type_suffix(mem->ty);
+  mem->ty = type_suffix(mem->ty);
   mem->tok = tok;
   expect(";");
   return mem;
@@ -190,7 +197,7 @@ static VarList *read_func_param() {
   Type *ty = basetype();
   
   char *name = expect_ident();
-  ty = read_type_suffix(ty);
+  ty = type_suffix(ty);
   
   VarList *vl = calloc(1, sizeof(VarList));
   vl->var = new_lvar(name, ty);
@@ -289,12 +296,19 @@ static void global_var() {
   Type *ty = basetype();
   char *name = expect_ident();
   Token *tok = token;
-  ty = read_type_suffix(ty);
-  expect(";");
+  ty = type_suffix(ty);
 
-  if (ty->is_incomplete)
-    error_tok(tok, "incomplete type");
-  new_gvar(name, ty);
+  Var *var = new_gvar(name, ty);
+
+  if (!consume("=")) {
+    if (ty->is_incomplete)
+      error_tok(tok, "incomplete type");
+    expect(";");
+    return;
+  }
+
+  var->initializer = gvar_initializer(ty);
+  expect(";");
 }
 
 // Some types of list can end with an optional "," followed by "}"
@@ -488,7 +502,7 @@ static Node *declaration(){
   Token *tok = token;
   Type *ty = basetype();
   char *name = expect_ident();
-  ty = read_type_suffix(ty);
+  ty = type_suffix(ty);
   Var *var = new_lvar(name, ty);
   
   if (consume(";")) {
@@ -572,6 +586,15 @@ static Node *assign() {
     if (tok = consume("="))
       node = new_binary(ND_ASSIGN, node, assign(), tok);
     return node;
+}
+
+// bitor = bitxor ("|" bitxor)*
+static Node *bitor() {
+  Node *node = bitxor();
+  Token *tok;
+  while (tok = consume("|"))
+    node = new_binary(ND_BITOR, node, bitxor(), tok);
+  return node;
 }
 
 // expr = assign
@@ -693,6 +716,20 @@ static Node *relational() {
       else
         return node;
     }
+}
+
+static Node *conditional() {
+  Node *node = equality();
+  Token *tok = consume("?");
+  if (!tok)
+    return node;
+
+  Node *ternary = new_node(ND_TERNARY, tok);
+  ternary->cond = node;
+  ternary->then = expr();
+  expr(":");
+  ternary->els = conditional();
+  return ternary;
 }
 
 static Node *new_add(Node *lhs, Node *rhs, Token *tok) {
@@ -869,4 +906,54 @@ static Node *primary() {
   if (tok->kind != TK_NUM)
     error_tok(tok, "expected expression");
   return new_num(expect_number(), tok);
+}
+
+// Evaluate a given node as a content expression.
+static long eval(Node *node) {
+  switch (node->kind){
+  case ND_ADD:
+    return eval(node->lhs) + eval(node->rhs);
+  case ND_SUB:
+    return eval(node->lhs) - eval(node->rhs);
+  case ND_MUL:
+    return eval(node->lhs) * eval(node->rhs);
+  case ND_DIV:
+    return eval(node->lhs) / eval(node->rhs);
+  case ND_BITAND:
+    return eval(node->lhs) & eval(node->rhs);
+  case ND_BITOR:
+    return eval(node->lhs) | eval(node->rhs);
+  case ND_BITXOR:
+    return eval(node->lhs) | eval(node->rhs);
+  case ND_SHL:
+    return eval(node->lhs) << eval(node->rhs);
+  case ND_SHR:
+    return eval(node->lhs) >> eval(node->rhs);
+  case ND_EQ:
+    return eval(node->lhs) == eval(node->rhs);
+  case ND_NE:
+    return eval(node->lhs) != eval(node->rhs);
+  case ND_LT:
+    return eval(node->lhs) < eval(node->rhs);
+  case ND_LE:
+    return eval(node->lhs) <= eval(node->rhs);
+  case ND_TERNARY:
+    return eval(node->cond) ? eval(node->then) : eval(node->els);
+  case ND_COMMA:
+    return eval(node->lhs);
+  case ND_NOT:
+    return !eval(node->lhs);
+  case ND_LOGAND:
+    return eval(node->lhs) && eval(node->rhs);
+  case ND_LOGOR:
+    return eval(node->lhs) || eval(node->rhs);
+  case ND_NUM:
+    return node->val;
+  }
+
+  error_tok(node->tok, "not a constant expression");
+}
+
+static long const_expr() {
+  return eval(conditional());
 }
