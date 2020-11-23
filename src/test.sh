@@ -246,7 +246,14 @@ try 4 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[1].b;}'
 
 try 0 'int main() { struct {int a; int b;} x[2]={{1,2}}; return x[1].b;}'
 
-try 0 'int main() { struct {int a; int b;} x={}; return x[0].a;}'
-try 0 'int main() { struct {int a; int b;} x={}; return x[0].b;}'
+try 0 'int main() { struct {int a; int b;} x={}; return x.a;}'
+try 0 'int main() { struct {int a; int b;} x={}; return x.b;}'
+
+try 3 'char g3 = 3; int main() { return g3;}'
+# try 4 'short g4 = 4; int main() { return g5;}'
+try 5 'int g5 = 5; int main() { return g5;}'
+# try 6 'long g6 = 6; int main() { return g6;}'
+try 5 'int g5 = 5; int *g7 = &g5; int main() { return *g7;}'
+# try 6 'char *g8 = "abc"; int main() { return g8;}'
 
 echo OK
