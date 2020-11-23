@@ -76,6 +76,7 @@ try 3 "int main(){if(11<10) {return 2;} else {return 3;}}"
 
 try 2 "int main(){return 0?1:2;}"
 try 1 "int main(){return 1?1:2;}"
+try 3 "int main(){return 1,2,3;}"
 
 try 10 "int main(){int i; i=0;while(i<10)i=i+1; return i;}"
 try 0 "int main(){int i; i=0;while(i<10)if(i==0) return i; return 11;}"

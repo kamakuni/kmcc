@@ -220,6 +220,12 @@ static void gen(Node *node) {
     return;
   }
 
+  if (node->kind == ND_COMMA) {
+    gen(node->lhs);
+    gen(node->rhs);
+    return;
+  }
+
   if (node->kind == ND_DEREF) {
     gen(node->lhs);
     if (node->ty->kind != TY_ARRAY)
