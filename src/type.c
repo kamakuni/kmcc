@@ -1,7 +1,8 @@
 #include "kmcc.h"
 
-Type *char_type = &(Type){ TY_CHAR, 1 };
-Type *int_type = &(Type){ TY_INT, 8 };
+Type *void_type = &(Type){ TY_VOID, 1, 1 };
+Type *char_type = &(Type){ TY_CHAR, 1, 1 };
+Type *int_type = &(Type){ TY_INT, 8, 8 };
 
 bool is_integer(Type *ty){
   return ty->kind == TY_CHAR || ty->kind == TY_INT;
@@ -82,6 +83,8 @@ void add_type(Node *node) {
     if (!node->lhs->ty->base)
       error_tok(node->tok, "invalid pointer dereference");
     node->ty = node->lhs->ty->base;
+    if (node->ty->kind == TY_VOID)
+      error_tok(node->tok, "dereferencing a void pointer");
     return;
   }
 }

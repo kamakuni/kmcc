@@ -212,6 +212,7 @@ void error(char *fmt, ...);
 void error_tok(Token *tok, char *fmt, ...);
 
 typedef enum { 
+  TY_VOID,
   TY_CHAR,
   TY_INT,
   TY_PTR,
@@ -239,6 +240,7 @@ struct Member {
   int offset;
 };
 
+extern Type *void_type;
 extern Type *char_type;
 extern Type *int_type;
 

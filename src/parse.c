@@ -113,12 +113,14 @@ static Type *struct_decl();
 static Member *struct_member();
 static bool is_typename();
 
-// basetype = ("char" | "int" | struct-decl) "*"*
+// basetype = ("void" | "char" | "int" | struct-decl) "*"*
 static Type *basetype(void) {
   if (!is_typename())
     error_tok(token, "typename expected");
   Type *ty;
-  if (consume("char"))
+  if (consume("void"))
+    ty = void_type;
+  else if (consume("char"))
     ty = char_type;
   else if (consume("int"))
     ty = int_type;
@@ -503,8 +505,11 @@ static Node *declaration(){
   Type *ty = basetype();
   char *name = expect_ident();
   ty = type_suffix(ty);
+
+  if (ty->kind == TY_VOID)
+    error_tok(tok, "variable declared void");
+
   Var *var = new_lvar(name, ty);
-  
   if (consume(";")) {
     if (ty->is_incomplete)
       error_tok(tok, "incomplete type");
@@ -523,7 +528,7 @@ static Node *read_expr_stmt(){
 }
 
 static bool is_typename(void) {
-  return peek("char") || peek("int") || peek("struct");
+  return peek("void") || peek("char") || peek("int") || peek("struct");
 }
 
 // struct-decl = "struct" "{" struct-member "}"
