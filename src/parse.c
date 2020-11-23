@@ -581,7 +581,7 @@ static Node *struct_ref(Node *lhs) {
 }
 
 static Node *assign() {
-    Node *node = equality();
+    Node *node = bitor();
     Token *tok;
     if (tok = consume("="))
       node = new_binary(ND_ASSIGN, node, assign(), tok);
@@ -594,6 +594,24 @@ static Node *bitor() {
   Token *tok;
   while (tok = consume("|"))
     node = new_binary(ND_BITOR, node, bitxor(), tok);
+  return node;
+}
+
+// bitxor = bitand ("^" bitand)*
+static Node *bitxor() {
+  Node *node = bitand();
+  Token *tok;
+  while (tok = consume("^"))
+    node = new_binary(ND_BITXOR, node, bitand(), tok);
+  return node;
+}
+
+// bitxor = equality ("&" equality)*
+static Node *bitand() {
+  Node *node = equality();
+  Token *tok;
+  while (tok = consume("&"))
+    node = new_binary(ND_BITAND, node, equality(), tok);
   return node;
 }
 

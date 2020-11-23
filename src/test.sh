@@ -17,6 +17,13 @@ try() {
 
 }
 
+try 0 "int main(){ return 0&1;}"
+try 1 "int main(){ return 3&1;}"
+try 3 "int main(){ return 7&3;}"
+try 10 "int main(){ return -1&10;}"
+try 1 "int main(){ return 0|1;}"
+try 0 "int main(){ return 0^0;}"
+
 try 21 "int main(){ return 5+20-4;}"
 try 41 "int main(){ return  12 + 34 - 5 ;}"
 try 47 "int main(){ return 5+6*7;}"
