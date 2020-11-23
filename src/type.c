@@ -65,6 +65,7 @@ void add_type(Node *node) {
     return;
   case ND_TERNARY:
     node->ty = node->then->ty;
+    return;
   case ND_MEMBER:
     node->ty = node->member->ty;
     return;

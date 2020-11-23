@@ -581,7 +581,7 @@ static Node *struct_ref(Node *lhs) {
 }
 
 static Node *assign() {
-    Node *node = bitor();
+    Node *node = conditional();
     Token *tok;
     if (tok = consume("="))
       node = new_binary(ND_ASSIGN, node, assign(), tok);
@@ -737,7 +737,7 @@ static Node *relational() {
 }
 
 static Node *conditional() {
-  Node *node = equality();
+  Node *node = bitor();
   Token *tok = consume("?");
   if (!tok)
     return node;
@@ -745,7 +745,7 @@ static Node *conditional() {
   Node *ternary = new_node(ND_TERNARY, tok);
   ternary->cond = node;
   ternary->then = expr();
-  expr(":");
+  expect(":");
   ternary->els = conditional();
   return ternary;
 }
