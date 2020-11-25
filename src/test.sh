@@ -249,8 +249,8 @@ try 0 'int main() { struct {int a; int b;} x[2]={{1,2}}; return x[1].b;}'
 try 0 'int main() { struct {int a; int b;} x={}; return x.a;}'
 try 0 'int main() { struct {int a; int b;} x={}; return x.b;}'
 
-try 3 'int main() { struct t {char a;} x; struct t *y = &x; x.a=3; y->a; }'
-try 3 'int main() { struct t {char a;} x; struct t *y = &x; y->a=3; x.a; }'
+try 3 'int main() { struct {char a;} x; *y = &x; x.a=3; return y->a; }'
+try 3 'int main() { struct {char a;} x; *y = &x; y->a=3; return x.a; }'
 
 try 3 'char g3 = 3; int main() { return g3;}'
 # try 4 'short g4 = 4; int main() { return g5;}'

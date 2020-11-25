@@ -1,5 +1,18 @@
 #include "kmcc.h"
 
+// Scope for struct tags
+typedef struct TagScope TagScope;
+struct TagScope {
+  TagScope *next;
+  char *name;
+  Type *ty;
+};
+
+typedef struct {
+  VarList *var_scope;
+  TagScope *tag_scope;
+} Scope;
+
 // All local variable instances created during parsing are
 // accumulated to this list.
 static VarList *locals;
