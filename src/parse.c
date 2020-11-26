@@ -16,8 +16,13 @@ typedef struct {
 // All local variable instances created during parsing are
 // accumulated to this list.
 static VarList *locals;
-// All global variable instances
+// Likewise, global variables are accumulated to this list.
 static VarList *globals;
+
+// C has two block scopes; one is or variables nd the other is
+// for struct tags.
+VarList *var_scope;
+static TagScope *tag_scope;
 
 // Find a variable by name
 static Var *find_var(Token *tok) {
