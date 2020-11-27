@@ -40,18 +40,18 @@ static void leave_scope(Scope *sc){
 
 // Find a variable by name
 static Var *find_var(Token *tok) {
-  // First look up a variable instance in locals
-  for (VarList *vl = locals; vl; vl = vl->next) {
+  for (VarList *vl = var_scope; vl; vl = vl->next) {
     Var *var = vl->var;
     if (strlen(var->name) == tok->len && !strncmp(tok->str, var->name, tok->len))
       return var;
   }
-  // and then look up a variable instance in globals
-  for (VarList *vl = globals; vl; vl = vl->next) {
-    Var *var = vl->var;
-    if (strlen(var->name) == tok->len && !strncmp(tok->str, var->name, tok->len))
-      return var;
-  }
+  return NULL;
+}
+
+static TagScope *find_tag(Token *tok) {
+  for (TagScope *sc = tag_scope; sc; sc = sc->next)
+    if (strlen(sc->name) == tok->len && !strncmp(tok->str, sc->name, tok->len))
+      return sc;
   return NULL;
 }
 
