@@ -24,6 +24,20 @@ static VarList *globals;
 VarList *var_scope;
 static TagScope *tag_scope;
 
+// Begin a block scope
+static Scope *enter_scope(){
+  Scope *sc = calloc(1, sizeof(Scope));
+  sc->var_scope = var_scope;
+  sc->tag_scope = tag_scope;
+  return sc;
+}
+
+// End a block scope
+static void leave_scope(Scope *sc){
+  var_scope = sc->var_scope;
+  tag_scope = sc->tag_scope;
+}
+
 // Find a variable by name
 static Var *find_var(Token *tok) {
   // First look up a variable instance in locals
