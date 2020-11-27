@@ -86,6 +86,11 @@ static Var *new_var(char *name, Type *ty, bool is_local) {
   var->name = name;
   var->ty = ty;
   var->is_local = is_local;
+
+  VarList *sc = calloc(1, sizeof(VarList));
+  sc->var = var;
+  sc->next = var_scope;
+  var_scope = sc;
   return var;
 }
 
