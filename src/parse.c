@@ -220,6 +220,14 @@ static Type *type_suffix(Type *ty) {
   return ty;
 }
 
+static void push_tag_scope(Token *tok, Type *ty) {
+  TagScope *sc = calloc(1, sizeof(TagScope));
+  sc->next = tag_scope;
+  sc->name = strndup(tok->str, tok->len);
+  sc->ty = ty;
+  tag_scope = sc;
+}
+
 // struct-member = basetype ident ("[" num "]")* ";"
 static Member *struct_member() {
   Token *tok = token;
