@@ -576,10 +576,22 @@ static bool is_typename(void) {
   return peek("void") || peek("char") || peek("int") || peek("struct");
 }
 
-// struct-decl = "struct" "{" struct-member "}"
+// struct-decl = "struct" ident
+//             | "struct" ident? "{" struct-member "}"
 static Type *struct_decl() {
   // Read struct members.
   expect("struct");
+
+  // Read a struct tag.
+  Token *tag = consume_dent();
+  if (tag && !peek("{")) {
+    TagScope *sc = find_tag(tag);
+    if(!sc)
+      error_tok(tag, "unknown struct type");
+    return sc->ty;
+  }
+
+
   expect("{");
 
   Member head = {};
@@ -604,7 +616,10 @@ static Type *struct_decl() {
     offset += mem->ty->size;
   }
   ty->size = offset;
-
+  
+  // Register the struct type if a name was given.
+  if (tag)
+    push_tag_scope(tag, ty);
   return ty;
 }
 
