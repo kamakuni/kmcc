@@ -276,6 +276,7 @@ static Function *function() {
   basetype();
   fn->name = expect_ident();
   expect("(");
+  Scope *sc = enter_scope();
   fn->params = read_func_params();
   expect("{");
   
@@ -285,7 +286,8 @@ static Function *function() {
     cur->next = stmt();
     cur = cur->next;
   }
-
+  leave_scope(sc);
+  
   fn->node = head.next;
   fn->locals = locals;
   return fn;
