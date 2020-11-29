@@ -548,6 +548,9 @@ static Node *lvar_initializer(Var *var, Token *tok) {
 static Node *declaration(){
   Token *tok = token;
   Type *ty = basetype();
+  if (consume(";"))
+    return new_node(ND_NULL, tok);
+
   char *name = expect_ident();
   ty = type_suffix(ty);
 
@@ -591,9 +594,9 @@ static Type *struct_decl() {
     return sc->ty;
   }
 
-
   expect("{");
 
+  // Read struct members.
   Member head = {};
   Member *cur = &head;
 
