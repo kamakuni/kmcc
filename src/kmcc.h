@@ -245,6 +245,7 @@ extern Type *char_type;
 extern Type *int_type;
 
 bool is_integer(Type *ty);
+int align_to(int n, int align);
 Type *pointer_to(Type *base);
 Type *array_of(Type *base, int size);
 Type *struct_type(void);

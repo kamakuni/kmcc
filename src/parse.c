@@ -616,11 +616,13 @@ static Type *struct_decl() {
   for (Member *mem = ty->members; mem; mem = mem->next) {
     if (mem->ty->is_incomplete)
       error_tok(mem->tok, "incomplete struct member");
-
+    offset =  align_to(offset, mem->ty->align);
     mem->offset = offset;
     offset += mem->ty->size;
+    if (ty->align < mem->ty->align)
+      ty->align = mem->ty->align;
   }
-  ty->size = offset;
+  ty->size = align_to(offset, ty->align);
   
   // Register the struct type if a name was given.
   if (tag)
