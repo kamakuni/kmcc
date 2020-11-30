@@ -249,6 +249,11 @@ try 0 'int main() { struct {int a; int b;} x[2]={{1,2}}; return x[1].b;}'
 try 0 'int main() { struct {int a; int b;} x={}; return x.a;}'
 try 0 'int main() { struct {int a; int b;} x={}; return x.b;}'
 
+try 16 'int main() { struct t {int a; int b;} x; struct t y; return sizeof(y); }'
+try 16 'int main() { struct t {int a; int b;}; struct t y; return sizeof(y); }'
+try 2 'int main() { struct t {char a[2];}; { struct t {char a[4];}; } struct t y; return sizeof(y); }'
+try 3 'int main() { struct t {int x;}; int t=1; struct t y; y.x=2; return t+y.x; }'
+
 try 3 'int main() { struct {char a;} x; *y = &x; x.a=3; return y->a; }'
 try 3 'int main() { struct {char a;} x; *y = &x; y->a=3; return x.a; }'
 

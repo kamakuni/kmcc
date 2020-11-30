@@ -588,7 +588,7 @@ static Type *struct_decl() {
   expect("struct");
 
   // Read a struct tag.
-  Token *tag = consume_dent();
+  Token *tag = consume_ident();
   if (tag && !peek("{")) {
     TagScope *sc = find_tag(tag);
     if(!sc)
@@ -759,10 +759,12 @@ static Node *stmt2() {
     Node head = {};
     Node *cur = &head;
 
+    Scope *sc = enter_scope();
     while(!consume("}")){
       cur->next = stmt();
       cur = cur->next;
     }
+    leave_scope(sc);
 
     Node *node = new_node(ND_BLOCK, tok);
     node->body = head.next;
