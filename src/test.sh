@@ -139,6 +139,9 @@ try 3 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *x; }"
 try 4 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *(x+1); }"
 try 5 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *(x+2); }"
 
+try 15 "int main(){ int x; char y; int a=&x; int b=&y; return b-a; }"
+try 1 "int main(){ char x; int y; int a=&x; int b=&y; return b-a; }"
+
 try 0 "int x; int main() { return x; }"
 try 3 "int x; int main() { x=3; return x; }"
 
