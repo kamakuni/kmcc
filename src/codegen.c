@@ -5,6 +5,7 @@ static char *funcname;
 static void gen(Node *node);
 
 char *argreg1[] = {"dil", "sil", "dl", "cl", "r8b", "r9b"};
+char *argreg4[] = {"edi", "esi", "edx", "ecx", "r8d", "r9d"};
 char *argreg8[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
 static void gen_addr(Node *node) {
@@ -41,20 +42,26 @@ static void gen_lval(Node *node) {
 
 static void load(Type *ty) {
   printf("  pop rax\n"); // pop the address for a variable from the stack to rax
-  if (ty->size == 1)
+  if (ty->size == 1) {
     printf("  movsx rax, byte ptr [rax]\n");
-  else
+  } else if (ty->size == 4) {
+    printf("  movsxd rax, dword ptr [rax]\n");
+  } else {
     printf("  mov rax, [rax]\n"); // add a value from the address to rax
+  }
   printf("  push rax\n"); // push a value to the stack
 }
 
 static void store(Type *ty) {
   printf("  pop rdi\n");
   printf("  pop rax\n");
-  if (ty->size == 1)
+  if (ty->size == 1) {
     printf("  mov [rax], dil\n");
-  else
+  } else if (ty->size == 4) {
+    printf("  mov [rax], edi\n");
+  } else {
     printf("  mov [rax], rdi\n");
+  }
   printf("  push rdi\n");
 }
 
@@ -330,6 +337,9 @@ static void load_arg(Var *var, int idx) {
   if (sz == 1) {
     // move a value from the register to address
     printf("  mov [rbp-%d], %s\n", var->offset, argreg1[idx]);
+  } else if (sz == 4) {
+    // move a value from the register to address
+    printf("  mov [rbp-%d], %s\n", var->offset, argreg4[idx]);
   } else {
     printf("  mov [rbp-%d], %s\n", var->offset, argreg8[idx]);
   }

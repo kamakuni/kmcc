@@ -124,9 +124,9 @@ try 7 "int main(){int x=3; int y=5; *(&x+1)=7; return y;}"
 try 7 "int main(){int x=3; int y=5; *(&y-1)=7; return x;}"
 try 8 "int main(){int x=3; int y=5; return foo(&x,y);} int foo(int *x, int y){ return *x + y;}"
 
-try 8 "int main(){int x=3; return sizeof(x);}"
-try 8 "int main(){int x=3; return sizeof x;}"
-try 8 "int main(){int x=3; return sizeof(&x);}"
+try 4 "int main(){int x=3; return sizeof(x);}"
+try 4 "int main(){int x=3; return sizeof x;}"
+try 4 "int main(){int x=3; return sizeof(&x);}"
 
 try 3 "int main(){ int x[2]; int *y=&x; *y=3; return *x;}"
 try 3 "int main(){ int a[2]; *a = 1; *(a + 1) = 2; int *p; p = a; return *p + *(p + 1);}"
@@ -150,7 +150,7 @@ try 1 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[1]; }"
 try 2 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[2]; }"
 try 3 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[3]; }"
 
-try 8 "int x; int main() { return sizeof(x); }"
+try 4 "int x; int main() { return sizeof(x); }"
 try 32 "int x[4]; int main() { return sizeof(x); }"
 
 try 1 "int main() { char x=1; return x; }"
@@ -196,14 +196,14 @@ try 7 'int main() { struct {int a[3]; int b[5];} x; int *p=&x; x.b[0]=7; return 
 
 try 6 'int main() { struct { struct { int b; } a; } x; x.a.b=6; return x.a.b; }'
 
-try 8 'int main() { struct {int a;} x; return sizeof(x); }'
-try 16 'int main() { struct {int a; int b;} x; return sizeof(x); }'
-try 24 'int main() { struct {int a[3];} x; return sizeof(x); }'
-try 32 'int main() { struct {int a;} x[4]; return sizeof(x); }'
-try 48 'int main() { struct {int a[3];} x[2]; return sizeof(x); }'
+try 4 'int main() { struct {int a;} x; return sizeof(x); }'
+try 8 'int main() { struct {int a; int b;} x; return sizeof(x); }'
+try 12 'int main() { struct {int a[3];} x; return sizeof(x); }'
+try 16 'int main() { struct {int a;} x[4]; return sizeof(x); }'
+try 24 'int main() { struct {int a[3];} x[2]; return sizeof(x); }'
 try 2 'int main() { struct {char a; char b;} x; return sizeof(x); }'
-try 16 'int main() { struct {char a; int b;} x; return sizeof(x);}'
-try 16 'int main() { struct {int a; char b;} x; return sizeof(x);}'
+try 8 'int main() { struct {char a; int b;} x; return sizeof(x);}'
+try 8 'int main() { struct {int a; char b;} x; return sizeof(x);}'
 
 try 1 'int main() {int x[3]={1,2,3}; return x[0];}'
 try 2 'int main() {int x[3]={1,2,3}; return x[1];}'
@@ -232,7 +232,7 @@ try 100 'int main() {char x[2][4]={"abc","def"}; return x[1][0]; }'
 try 102 'int main() {char x[2][4]={"abc","def"}; return x[1][2]; }'
 
 try 4 'int main() { int x[]={1,2,3,4}; return x[3];}'
-try 32 'int main() { int x[]={1,2,3,4}; return sizeof(x);}'
+try 16 'int main() { int x[]={1,2,3,4}; return sizeof(x);}'
 try 4 'int main() { char x[]="foo"; return sizeof(x);}'
 
 try 1 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.a;}'
@@ -253,8 +253,8 @@ try 0 'int main() { struct {int a; int b;} x[2]={{1,2}}; return x[1].b;}'
 try 0 'int main() { struct {int a; int b;} x={}; return x.a;}'
 try 0 'int main() { struct {int a; int b;} x={}; return x.b;}'
 
-try 16 'int main() { struct t {int a; int b;} x; struct t y; return sizeof(y); }'
-try 16 'int main() { struct t {int a; int b;}; struct t y; return sizeof(y); }'
+try 8 'int main() { struct t {int a; int b;} x; struct t y; return sizeof(y); }'
+try 8 'int main() { struct t {int a; int b;}; struct t y; return sizeof(y); }'
 try 2 'int main() { struct t {char a[2];}; { struct t {char a[4];}; } struct t y; return sizeof(y); }'
 try 3 'int main() { struct t {int x;}; int t=1; struct t y; y.x=2; return t+y.x; }'
 

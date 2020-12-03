@@ -1,1 +1,1 @@
-int main() { struct {int a; int b;} x; x.a=1; x.b=2; return x.a; }
+int main(){int a;int b;int c;a=b=2;c=a+b; return c;}
