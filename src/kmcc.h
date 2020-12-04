@@ -214,7 +214,9 @@ void error_tok(Token *tok, char *fmt, ...);
 typedef enum { 
   TY_VOID,
   TY_CHAR,
+  TY_SHORT,
   TY_INT,
+  TY_LONG,
   TY_PTR,
   TY_ARRAY,
   TY_STRUCT,
