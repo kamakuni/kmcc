@@ -242,7 +242,9 @@ struct Member {
 
 extern Type *void_type;
 extern Type *char_type;
+extern Type *short_type;
 extern Type *int_type;
+extern Type *long_type;
 
 bool is_integer(Type *ty);
 int align_to(int n, int align);
