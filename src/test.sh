@@ -271,4 +271,7 @@ try 5 'int g5 = 5; int *g7 = &g5; int main() { return *g7;}'
 try 2 'int main(){short x; return sizeof(x);}'
 try 8 'int main(){long x; return sizeof(x);}'
 
+try 1 'short sub_short(short a, short b, short c) { return a-b-c;} int main(){ return sub_short(7,3,3);}'
+try 1 'long sub_long(long a, long b, long c) { return a-b-c;} int main(){ return sub_long(7,3,3);}'
+
 echo OK
