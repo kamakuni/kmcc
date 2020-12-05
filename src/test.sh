@@ -268,4 +268,7 @@ try 5 'int g5 = 5; int main() { return g5;}'
 try 5 'int g5 = 5; int *g7 = &g5; int main() { return *g7;}'
 # try 6 'char *g8 = "abc"; int main() { return g8;}'
 
+try 2 'int main(){short x; return sizeof(x);}'
+try 8 'int main(){long x; return sizeof(x);}'
+
 echo OK
