@@ -210,6 +210,7 @@ bool is_alpha(char c);
 char *strndup(char *p,int len);
 void error(char *fmt, ...);
 void error_tok(Token *tok, char *fmt, ...);
+void warn_tok(Token *tok, char *fmt, ...);
 
 typedef enum { 
   TY_VOID,
@@ -220,6 +221,7 @@ typedef enum {
   TY_PTR,
   TY_ARRAY,
   TY_STRUCT,
+  TY_FUNC,
 } TypeKind;
 
 struct Type {
@@ -253,6 +255,7 @@ int align_to(int n, int align);
 Type *pointer_to(Type *base);
 Type *array_of(Type *base, int size);
 Type *struct_type(void);
+Type *func_type(Type *return_ty);
 void add_type(Node *node);
 
 //Node *function();
