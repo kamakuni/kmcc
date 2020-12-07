@@ -222,17 +222,38 @@ Program *program() {
 
   while (!at_eof()) {
     if(is_function()) {
-      cur->next = function();
+      Function *fn = function();
+      if (!fn)
+        continue;
+      cur->next = fn;
       cur = cur->next;
     } else {
-      global_var();
+      continue;
     }
+
+    global_var();
   }
 
   Program *prog = calloc(1, sizeof(Program));
   prog->globals = globals;
   prog->fns = head.next;
   return prog;
+}
+// declarator = "*"* ("(" declarator ")" | ident) type-suffix
+static Type *declarator(Type *ty, char **name) {
+  while (consume("*"))
+    ty = pointer_to(ty);
+  
+  if (consume("(")) {
+    Type *placeholder = calloc(1, sizeof(Type));
+    Type *new_ty = declarator(placeholder, name);
+    expect(")");
+    memcpy(placeholder, type_suffix(ty), sizeof(Type));
+    return new_ty;
+  }
+
+  *name = expect_ident();
+  return type_suffix(ty);
 }
 
 // type-suffix = ("[" const_expr? "]" type_suffix)?
@@ -303,7 +324,7 @@ static VarList *read_func_params() {
   return head;
 }
 
-// function = ident "(" params? ")" "{" stmt* "}"
+// function = ident "(" params? ")" ("{" stmt* "}" | ";")
 // params = ident ("," ident)*
 static Function *function() {
   locals = NULL;
@@ -320,10 +341,14 @@ static Function *function() {
   expect("(");
   Scope *sc = enter_scope();
   fn->params = read_func_params();
-  expect("{");
+  if (consume(";")){
+    leave_scope(sc);
+    return NULL;
+  }
   
   Node head = {};
   Node *cur = &head;
+  expect("{");
   while(!consume("}")){
     cur->next = stmt();
     cur = cur->next;
