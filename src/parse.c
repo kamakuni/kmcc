@@ -178,6 +178,8 @@ static Node *unary();
 static void global_var();
 static Type *struct_decl();
 static Member *struct_member();
+static Type *declarator(Type *ty, char **name);
+static Type *type_suffix(Type *ty);
 static bool is_typename();
 
 // basetype = ("void" | "char" | "int" | struct-decl | typedef-name) "*"*
@@ -205,11 +207,16 @@ static Type *basetype(void) {
   return ty;
 }
 
-static is_function() {
+// Determine whether the next top-level item is a function
+// or a global variables by looking ahead input tokens.
+static bool is_function() {
   // To keep current token
   Token *tok = token;
-  basetype();
-  bool is_func = consume_ident() && consume("(");
+  Type *ty = basetype();
+  char *name = NULL;
+  declarator(ty, &name);
+  bool is_func = name && consume("(");
+
   token = tok; // args of ) token
   return is_func;
 }
@@ -227,7 +234,6 @@ Program *program() {
         continue;
       cur->next = fn;
       cur = cur->next;
-    } else {
       continue;
     }
 
@@ -287,20 +293,22 @@ static void push_tag_scope(Token *tok, Type *ty) {
 
 // struct-member = basetype ident ("[" num "]")* ";"
 static Member *struct_member() {
-  Token *tok = token;
-  Member *mem = calloc(1, sizeof(Member));
-  mem->ty = basetype();
-  mem->name = expect_ident();
-  mem->ty = type_suffix(mem->ty);
-  mem->tok = tok;
+  Type *ty = basetype();
+  char *name = NULL;
+  ty = declarator(ty, &name);
+  ty = type_suffix(ty);
   expect(";");
+
+  Member *mem = calloc(1, sizeof(Member));
+  mem->name = name;
+  mem->ty = ty;
   return mem;
 }
 
 static VarList *read_func_param() {
   Type *ty = basetype();
-  
-  char *name = expect_ident();
+  char *name = NULL;
+  ty = declarator(ty, &name);
   ty = type_suffix(ty);
   
   VarList *vl = calloc(1, sizeof(VarList));
@@ -324,13 +332,15 @@ static VarList *read_func_params() {
   return head;
 }
 
-// function = ident "(" params? ")" ("{" stmt* "}" | ";")
-// params = ident ("," ident)*
+// function = basetype declarator "(" params? ")" ("{" stmt* "}" | ";")
+// params   = ident ("," param)*
+// param    = basetype declarator type-suffix
 static Function *function() {
   locals = NULL;
 
   Type *ty = basetype();
-  char *name = expect_ident();
+  char *name = NULL;
+  ty = declarator(ty, &name);
   
   // Add a function type to scope
   new_gvar(name, func_type(ty), false);
@@ -341,6 +351,7 @@ static Function *function() {
   expect("(");
   Scope *sc = enter_scope();
   fn->params = read_func_params();
+
   if (consume(";")){
     leave_scope(sc);
     return NULL;
@@ -409,9 +420,10 @@ static Initializer *gvar_initializer(Type *ty) {
 
 // global-var = basetype declarator type-suffix ("=" gvar-initializer)? ";"
 static void global_var() {
-  Type *ty = basetype();
-  char *name = expect_ident();
   Token *tok = token;
+  Type *ty = basetype();
+  char *name = NULL;
+  ty = declarator(ty, &name);
   ty = type_suffix(ty);
 
   Var *var = new_gvar(name, ty, true);
@@ -613,14 +625,15 @@ static Node *lvar_initializer(Var *var, Token *tok) {
 }
 
 // declaration = basetype declarator type-suffix ("=" lvar-initializer)? ";"
-//             | basetype ;
+//             | basetype ";"
 static Node *declaration(){
   Token *tok = token;
   Type *ty = basetype();
   if (consume(";"))
     return new_node(ND_NULL, tok);
 
-  char *name = expect_ident();
+  char *name = NULL;
+  ty = declarator(ty, &name);
   ty = type_suffix(ty);
 
   if (ty->kind == TY_VOID)
@@ -773,7 +786,8 @@ static Node *stmt() {
 //       | "while" "(" expr ")" stmt
 //       | "for" "(" expr? ";" expr? ";" expr? ")" stmt  
 //       | "{" stmt* "}"
-//       | "typedef" basetype ident ("[" num "]")* ";"
+//       | "typedef" basetype declarator type-suffix ";"
+//       | declaration
 //       | expr ";"
 static Node *stmt2() {
   Token *tok;
@@ -840,9 +854,11 @@ static Node *stmt2() {
 
   if (tok = consume("typedef")) {
     Type *ty = basetype();
-    char *name = expect_ident();
+    char *name = NULL;
+    ty = declarator(ty, &name);
     ty = type_suffix(ty);
     expect(";");
+
     push_scope(name)->type_def = ty;
     return new_node(ND_NULL, tok);
   }
