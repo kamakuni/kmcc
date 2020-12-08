@@ -1,26 +1,44 @@
 #include "kmcc.h"
 
-Type *char_type = &(Type){ TY_CHAR, 1 };
-Type *int_type = &(Type){ TY_INT, 8 };
+Type *void_type = &(Type){ TY_VOID, 1, 1 };
+Type *bool_type = &(Type){ TY_BOOL, 1, 1 };
+Type *char_type = &(Type){ TY_CHAR, 1, 1 };
+Type *short_type = &(Type){ TY_SHORT, 2, 2 };
+Type *int_type = &(Type){ TY_INT, 4, 4 };
+Type *long_type = &(Type){ TY_LONG, 8, 8 };
 
 bool is_integer(Type *ty){
-  return ty->kind == TY_CHAR || ty->kind == TY_INT;
+  return ty->kind == TY_BOOL || ty->kind == TY_CHAR || ty->kind == TY_SHORT || ty->kind == TY_INT || ty->kind == TY_LONG;
+}
+
+int align_to(int n, int align) {
+  return (n + align - 1) & ~(align - 1);
+}
+
+static Type *new_type(TypeKind kind, int size, int align) {
+  Type *ty = calloc(1, sizeof(Type));
+  ty->kind = kind;
+  ty->size = size;
+  ty->align = align;
+  return ty;
 }
 
 Type *pointer_to(Type *base) {
-  Type *ty = calloc(1, sizeof(Type));
-  ty->kind = TY_PTR;
+  Type *ty = new_type(TY_PTR, 8, 8);
   ty->base = base;
-  ty->size = 8;
   return ty;
 }
 
 Type *array_of(Type *base, int len) {
-  Type *ty = calloc(1, sizeof(Type));
-  ty->kind = TY_ARRAY;
-  ty->size = base->size * len;
+  Type *ty = new_type(TY_ARRAY, base->size * len, base->align);
   ty->base = base;
   ty->array_len = len;
+  return ty;
+}
+
+Type *func_type(Type *return_ty) {
+  Type *ty =  new_type(TY_FUNC, 1, 1);
+  ty->return_ty = return_ty;
   return ty;
 }
 
@@ -51,9 +69,8 @@ void add_type(Node *node) {
   case ND_NE:
   case ND_LT:
   case ND_LE:
-  case ND_FUNCALL:
   case ND_NUM:
-    node->ty = int_type;
+    node->ty = long_type;
     return;
   case ND_PTR_ADD:
   case ND_PTR_SUB:
@@ -62,6 +79,12 @@ void add_type(Node *node) {
     return;
   case ND_VAR:
     node->ty = node->var->ty;
+    return;
+  case ND_COMMA:
+    node->ty = node->rhs->ty;
+    return;
+  case ND_TERNARY:
+    node->ty = node->then->ty;
     return;
   case ND_MEMBER:
     node->ty = node->member->ty;
@@ -76,6 +99,8 @@ void add_type(Node *node) {
     if (!node->lhs->ty->base)
       error_tok(node->tok, "invalid pointer dereference");
     node->ty = node->lhs->ty->base;
+    if (node->ty->kind == TY_VOID)
+      error_tok(node->tok, "dereferencing a void pointer");
     return;
   }
 }

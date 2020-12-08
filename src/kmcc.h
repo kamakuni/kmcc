@@ -48,6 +48,7 @@ struct Map {
 
 typedef struct Type Type;
 typedef struct Member Member;
+typedef struct Initializer Initializer;
 
 // Variable
 typedef struct Var Var;
@@ -57,8 +58,7 @@ struct Var {
   bool is_local; // Local or global
   int offset; // Offset from RBP
   // Global variable
-  char *contents;
-  int cont_len;
+  Initializer *initializer;
 };
 
 typedef struct LVar LVar;
@@ -98,14 +98,36 @@ struct Node {
   Var *var;
 };
 
+// Global variable initializer. Global variables can be initialized
+// either by a constant expression or a pointer to another global
+// variable.
+struct Initializer {
+  Initializer *next;
+
+  // Constant expression
+  int sz;
+  long val;
+
+  // Reference to another global variable
+  char *label;
+};
+
 typedef enum {
     ND_ADD,
     ND_ASSIGN,
+    ND_BITAND,
+    ND_BITOR,
+    ND_BITXOR,
+    ND_BITNOT,
+    ND_COMMA,
+    ND_SHL,
+    ND_SHR,
     ND_MEMBER,
     ND_EXPR_STMT,
     ND_SUB,
     ND_MUL,
     ND_DIV,
+    ND_NOT,
     ND_NUM,
     ND_NULL,
     ND_BLOCK,
@@ -118,6 +140,9 @@ typedef enum {
     ND_NE,
     ND_LT,
     ND_LE,
+    ND_LOGAND,
+    ND_LOGOR,
+    ND_TERNARY,
     ND_ADDR,
     ND_DEREF,
     ND_VAR,
@@ -185,37 +210,54 @@ bool is_alpha(char c);
 char *strndup(char *p,int len);
 void error(char *fmt, ...);
 void error_tok(Token *tok, char *fmt, ...);
+void warn_tok(Token *tok, char *fmt, ...);
 
 typedef enum { 
+  TY_VOID,
+  TY_BOOL,
   TY_CHAR,
+  TY_SHORT,
   TY_INT,
+  TY_LONG,
   TY_PTR,
   TY_ARRAY,
   TY_STRUCT,
+  TY_FUNC,
 } TypeKind;
 
 struct Type {
   TypeKind kind;
   int size; // sizeof() value
+  int align; // alignment
+  bool is_incomplete; // incomplete type
   Type *base; // pointer or array
   int array_len; // array
   Member *members; // struct
+  Type *return_ty; // function
 };
 
 // Struct Member
 struct Member {
   Member *next;
   Type *ty;
+  Token *tok; // for rror message
   char *name;
   int offset;
 };
 
+extern Type *void_type;
+extern Type *bool_type;
 extern Type *char_type;
+extern Type *short_type;
 extern Type *int_type;
+extern Type *long_type;
 
 bool is_integer(Type *ty);
+int align_to(int n, int align);
 Type *pointer_to(Type *base);
 Type *array_of(Type *base, int size);
+Type *struct_type(void);
+Type *func_type(Type *return_ty);
 void add_type(Node *node);
 
 //Node *function();

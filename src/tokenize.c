@@ -12,7 +12,7 @@ void error(char *fmt, ...) {
     exit(1);
 }
 
-// Report an error message in the following format and exit.
+// Report an error message in the following format.
 //
 // foo.c:10: x = y + 1;
 //               ^ <error message here>
@@ -42,9 +42,9 @@ void verror_at(char *loc, char *fmt, va_list ap) {
   fprintf(stderr, "^ ");
   fprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
-  exit(1);
 }
 
+// Reports an error location and exit.
 void error_at(char *loc, char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
@@ -66,6 +66,12 @@ void error_tok(Token *tok, char *fmt, ...) {
   exit(1);
 }
 
+void warn_tok(Token *tok, char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  verror_at(tok->str, fmt, ap);
+}
+
 bool is_alpha(char c) {
   return  ('a' <= c && c <= 'z') ||
     ('A' <= c && c <= 'Z') ||
@@ -83,7 +89,7 @@ bool startswith(char *p, char * q) {
 
 static char *starts_with_reserved(char *p) {
   // Keyword
-  static char *kw[] = {"return", "if", "else", "while", "for", "int", "char", "sizeof", "struct"};
+  static char *kw[] = {"return", "if", "else", "while", "for", "short", "int", "long", "char", "sizeof", "struct", "void", "typedef", "_Bool"};
 
   for (int i = 0; i < sizeof(kw) / sizeof(*kw); i++) {
     int len = strlen(kw[i]);
@@ -92,7 +98,7 @@ static char *starts_with_reserved(char *p) {
   }
 
   // Multi-letter punctuator
-  static char *ops[] = {"==", "!=", "<=", ">="};
+  static char *ops[] = {"==", "!=", "<=", ">=", "->"};
 
   for (int i = 0; i < sizeof(ops) / sizeof(*ops); i++)
     if (startswith(p, ops[i]))

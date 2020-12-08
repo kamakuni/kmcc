@@ -17,6 +17,13 @@ try() {
 
 }
 
+try 0 "int main(){ return 0&1;}"
+try 1 "int main(){ return 3&1;}"
+try 3 "int main(){ return 7&3;}"
+try 10 "int main(){ return -1&10;}"
+try 1 "int main(){ return 0|1;}"
+try 0 "int main(){ return 0^0;}"
+
 try 21 "int main(){ return 5+20-4;}"
 try 41 "int main(){ return  12 + 34 - 5 ;}"
 try 47 "int main(){ return 5+6*7;}"
@@ -67,6 +74,10 @@ try 3 "int main(){if(11<10) return 2; else return 3;}"
 try 2 "int main(){if(1<10) {return 2;} else {return 3;}}"
 try 3 "int main(){if(11<10) {return 2;} else {return 3;}}"
 
+try 2 "int main(){return 0?1:2;}"
+try 1 "int main(){return 1?1:2;}"
+try 3 "int main(){return 1,2,3;}"
+
 try 10 "int main(){int i; i=0;while(i<10)i=i+1; return i;}"
 try 0 "int main(){int i; i=0;while(i<10)if(i==0) return i; return 11;}"
 try 5 "int main(){int i; i=0;while(i<10)if(i<5) i=i+1; else return i; return 11;}"
@@ -113,8 +124,8 @@ try 7 "int main(){int x=3; int y=5; *(&x+1)=7; return y;}"
 try 7 "int main(){int x=3; int y=5; *(&y-1)=7; return x;}"
 try 8 "int main(){int x=3; int y=5; return foo(&x,y);} int foo(int *x, int y){ return *x + y;}"
 
-try 8 "int main(){int x=3; return sizeof(x);}"
-try 8 "int main(){int x=3; return sizeof x;}"
+try 4 "int main(){int x=3; return sizeof(x);}"
+try 4 "int main(){int x=3; return sizeof x;}"
 try 8 "int main(){int x=3; return sizeof(&x);}"
 
 try 3 "int main(){ int x[2]; int *y=&x; *y=3; return *x;}"
@@ -128,6 +139,9 @@ try 3 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *x; }"
 try 4 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *(x+1); }"
 try 5 "int main(){ int x[3]; x[0]=3; x[1]=4; x[2]=5; return *(x+2); }"
 
+try 7 "int main(){ int x; char y; int a=&x; int b=&y; return b-a; }"
+try 1 "int main(){ char x; int y; int a=&x; int b=&y; return b-a; }"
+
 try 0 "int x; int main() { return x; }"
 try 3 "int x; int main() { x=3; return x; }"
 
@@ -136,8 +150,8 @@ try 1 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[1]; }"
 try 2 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[2]; }"
 try 3 "int x[4]; int main() { x[0]=0; x[1]=1; x[2]=2; x[3]=3; return x[3]; }"
 
-try 8 "int x; int main() { return sizeof(x); }"
-try 32 "int x[4]; int main() { return sizeof(x); }"
+try 4 "int x; int main() { return sizeof(x); }"
+try 16 "int x[4]; int main() { return sizeof(x); }"
 
 try 1 "int main() { char x=1; return x; }"
 try 1 "int main() { char x=1; char y=2; return x; }"
@@ -182,13 +196,14 @@ try 7 'int main() { struct {int a[3]; int b[5];} x; int *p=&x; x.b[0]=7; return 
 
 try 6 'int main() { struct { struct { int b; } a; } x; x.a.b=6; return x.a.b; }'
 
-try 8 'int main() { struct {int a;} x; return sizeof(x); }'
-try 16 'int main() { struct {int a; int b;} x; return sizeof(x); }'
-try 24 'int main() { struct {int a[3];} x; return sizeof(x); }'
-try 32 'int main() { struct {int a;} x[4]; return sizeof(x); }'
-try 48 'int main() { struct {int a[3];} x[2]; return sizeof(x); }'
+try 4 'int main() { struct {int a;} x; return sizeof(x); }'
+try 8 'int main() { struct {int a; int b;} x; return sizeof(x); }'
+try 12 'int main() { struct {int a[3];} x; return sizeof(x); }'
+try 16 'int main() { struct {int a;} x[4]; return sizeof(x); }'
+try 24 'int main() { struct {int a[3];} x[2]; return sizeof(x); }'
 try 2 'int main() { struct {char a; char b;} x; return sizeof(x); }'
-try 9 'int main() { struct {char a; int b;} x; return sizeof(x); }'
+try 8 'int main() { struct {char a; int b;} x; return sizeof(x);}'
+try 8 'int main() { struct {int a; char b;} x; return sizeof(x);}'
 
 try 1 'int main() {int x[3]={1,2,3}; return x[0];}'
 try 2 'int main() {int x[3]={1,2,3}; return x[1];}'
@@ -203,8 +218,66 @@ try 0 'int main() {int x[3]={}; return x[0];}'
 try 0 'int main() {int x[3]={}; return x[1];}'
 try 0 'int main() {int x[3]={}; return x[2];}'
 
-try 2 "int main() {int x[2][3]={{1,2}}; return x[0][1]; }"
-try 0 "int main() {int x[2][3]={{1,2}}; return x[1][0]; }"
-try 0 "int main() {int x[2][3]={{1,2}}; return x[1][2]; }"
+try 2 'int main() {int x[2][3]={{1,2}}; return x[0][1]; }'
+try 0 'int main() {int x[2][3]={{1,2}}; return x[1][0]; }'
+try 0 'int main() {int x[2][3]={{1,2}}; return x[1][2]; }'
+
+try 97 'int main() {char x[4]="abc"; return x[0]; }'
+try 99 'int main() {char x[4]="abc"; return x[2]; }'
+try 0 'int main() {char x[4]="abc"; return x[3]; }'
+
+try 97 'int main() {char x[2][4]={"abc","def"}; return x[0][0]; }'
+try 0 'int main() {char x[2][4]={"abc","def"}; return x[0][3]; }'
+try 100 'int main() {char x[2][4]={"abc","def"}; return x[1][0]; }'
+try 102 'int main() {char x[2][4]={"abc","def"}; return x[1][2]; }'
+
+try 4 'int main() { int x[]={1,2,3,4}; return x[3];}'
+try 16 'int main() { int x[]={1,2,3,4}; return sizeof(x);}'
+try 4 'int main() { char x[]="foo"; return sizeof(x);}'
+
+try 1 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.a;}'
+try 2 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.b;}'
+try 3 'int main() { struct {int a; int b; int c;} x={1, 2, 3}; return x.c;}'
+
+try 1 'int main() { struct {int a; int b; int c;} x={1}; return x.a;}'
+try 0 'int main() { struct {int a; int b; int c;} x={1}; return x.b;}'
+try 0 'int main() { struct {int a; int b; int c;} x={1}; return x.c;}'
+
+try 1 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[0].a;}'
+try 2 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[0].b;}'
+try 3 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[1].a;}'
+try 4 'int main() { struct {int a; int b;} x[2]={{1,2},{3,4}}; return x[1].b;}'
+
+try 0 'int main() { struct {int a; int b;} x[2]={{1,2}}; return x[1].b;}'
+
+try 0 'int main() { struct {int a; int b;} x={}; return x.a;}'
+try 0 'int main() { struct {int a; int b;} x={}; return x.b;}'
+
+try 8 'int main() { struct t {int a; int b;} x; struct t y; return sizeof(y); }'
+try 8 'int main() { struct t {int a; int b;}; struct t y; return sizeof(y); }'
+try 2 'int main() { struct t {char a[2];}; { struct t {char a[4];}; } struct t y; return sizeof(y); }'
+try 3 'int main() { struct t {int x;}; int t=1; struct t y; y.x=2; return t+y.x; }'
+
+try 3 'int main() { struct t {char a;} x; struct t *y = &x; x.a=3; return y->a; }'
+try 3 'int main() { struct t {char a;} x; struct t *y = &x; y->a=3; return x.a; }'
+
+try 3 'char g3 = 3; int main() { return g3;}'
+# try 4 'short g4 = 4; int main() { return g5;}'
+try 5 'int g5 = 5; int main() { return g5;}'
+# try 6 'long g6 = 6; int main() { return g6;}'
+try 5 'int g5 = 5; int *g7 = &g5; int main() { return *g7;}'
+# try 6 'char *g8 = "abc"; int main() { return g8;}'
+
+try 2 'int main(){short x; return sizeof(x);}'
+try 8 'int main(){long x; return sizeof(x);}'
+
+try 1 'short sub_short(short a, short b, short c) { return a-b-c;} int main(){ return sub_short(7,3,3);}'
+try 1 'long sub_long(long a, long b, long c) { return a-b-c;} int main(){ return sub_long(7,3,3);}'
+
+#try 3 'int g1; int *g1_ptr() {return &g1;} int main() { return *g1_ptr(); }'
+
+try 0 'int main(){ _Bool x=0; return x; }'
+try 1 'int main(){ _Bool x=1; return x; }'
+try 1 'int main(){ _Bool x=2; return x; }'
 
 echo OK
