@@ -1,13 +1,14 @@
 #include "kmcc.h"
 
 Type *void_type = &(Type){ TY_VOID, 1, 1 };
+Type *bool_type = &(Type){ TY_BOOL, 1, 1 };
 Type *char_type = &(Type){ TY_CHAR, 1, 1 };
 Type *short_type = &(Type){ TY_SHORT, 2, 2 };
 Type *int_type = &(Type){ TY_INT, 4, 4 };
 Type *long_type = &(Type){ TY_LONG, 8, 8 };
 
 bool is_integer(Type *ty){
-  return ty->kind == TY_CHAR || ty->kind == TY_SHORT || ty->kind == TY_INT || ty->kind == TY_LONG;
+  return ty->kind == TY_BOOL || ty->kind == TY_CHAR || ty->kind == TY_SHORT || ty->kind == TY_INT || ty->kind == TY_LONG;
 }
 
 int align_to(int n, int align) {

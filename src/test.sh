@@ -273,6 +273,11 @@ try 8 'int main(){long x; return sizeof(x);}'
 
 try 1 'short sub_short(short a, short b, short c) { return a-b-c;} int main(){ return sub_short(7,3,3);}'
 try 1 'long sub_long(long a, long b, long c) { return a-b-c;} int main(){ return sub_long(7,3,3);}'
+
 #try 3 'int g1; int *g1_ptr() {return &g1;} int main() { return *g1_ptr(); }'
+
+try 0 'int main(){ _Bool x=0; return x; }'
+try 1 'int main(){ _Bool x=1; return x; }'
+try 1 'int main(){ _Bool x=2; return x; }'
 
 echo OK
