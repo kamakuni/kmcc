@@ -179,6 +179,8 @@ static void global_var();
 static Type *struct_decl();
 static Member *struct_member();
 static Type *declarator(Type *ty, char **name);
+static Type *abstract_declarator(Type *ty);
+static Type *type_name(void);
 static Type *type_suffix(Type *ty);
 static bool is_typename();
 
@@ -265,6 +267,21 @@ static Type *declarator(Type *ty, char **name) {
   return type_suffix(ty);
 }
 
+// abstract-declarator = "*"* ("(" abstract-declarator ")")? type-suffix
+static Type *abstract_declarator(Type *ty) {
+  while (consume("*"))
+    ty = pointer_to(ty);
+
+  if (consume("(")) {
+    Type *placeholder = calloc(1, sizeof(Type));
+    Type *new_ty = abstract_declarator(placeholder);
+    expect(")");
+    memcpy(placeholder, type_suffix(ty), sizeof(Type));
+    return new_ty;
+  }
+  return type_suffix(ty);
+}
+
 // type-suffix = ("[" const_expr? "]" type_suffix)?
 static Type *type_suffix(Type *ty) {
   if (!consume("["))
@@ -284,6 +301,13 @@ static Type *type_suffix(Type *ty) {
   ty = array_of(ty, sz);
   ty->is_incomplete = is_incomplete;
   return ty;
+}
+
+// type-name = basetype abstract-declarator type-suffix
+static Type *type_name(void) {
+  Type *ty = basetype();
+  ty = abstract_declarator(ty);
+  return type_suffix(ty);
 }
 
 static void push_tag_scope(Token *tok, Type *ty) {
