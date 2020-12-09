@@ -197,9 +197,10 @@ static Type *basetype(void) {
     ty = short_type;
   else if (consume("int"))
     ty = int_type;
-  else if (consume("long"))
+  else if (consume("long")) {
+    consume("long");
     ty = long_type;
-  else if (consume("struct"))
+  } else if (consume("struct"))
     ty = struct_decl();
   else
     ty = find_var(consume_ident())->type_def;

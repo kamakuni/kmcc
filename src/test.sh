@@ -280,4 +280,6 @@ try 0 'int main(){ _Bool x=0; return x; }'
 try 1 'int main(){ _Bool x=1; return x; }'
 try 1 'int main(){ _Bool x=2; return x; }'
 
+try 8 'int main(){ long long x; return sizeof(x); }'
+
 echo OK
