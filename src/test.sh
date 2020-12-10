@@ -282,4 +282,13 @@ try 1 'int main(){ _Bool x=2; return x; }'
 
 try 8 'int main(){ long long x; return sizeof(x); }'
 
+try 1 'int main(){ return sizeof(char);}'
+try 2 'int main(){ return sizeof(short);}'
+try 4 'int main(){ return sizeof(int);}'
+try 8 'int main(){ return sizeof(long);}'
+try 8 'int main(){ return sizeof(char *);}'
+try 8 'int main(){ return sizeof(int *);}'
+try 8 'int main(){ return sizeof(long *);}'
+try 8 'int main(){ return sizeof(int **);}'
+
 echo OK

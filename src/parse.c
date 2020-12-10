@@ -1072,7 +1072,12 @@ static Node *func_args() {
   return head;
 }
 
-// primary =  "(" expr ")" | "sizeof" unary | ident func-args? | str | num
+// primary =  "(" expr ")"
+//         | "sizeof" "(" type-name ")"
+//         | "sizeof" unary
+//         | ident func-args?
+//         | str
+//         | num
 // args = "(" ident ("," ident)* ")"
 static Node *primary() {
   if (consume("(")) {
@@ -1083,6 +1088,14 @@ static Node *primary() {
 
   Token *tok;
   if (tok = consume("sizeof")){
+    if (consume("(")) {
+      if (is_typename()) {
+        Type *ty = type_name();
+        expect(")");
+        return new_num(ty->size, tok);
+      }
+      token = token->next;
+    }
     Node *node = unary();
     add_type(node);
     if (node->ty->is_incomplete)
