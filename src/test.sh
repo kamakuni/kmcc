@@ -290,5 +290,6 @@ try 8 'int main(){ return sizeof(char *);}'
 try 8 'int main(){ return sizeof(int *);}'
 try 8 'int main(){ return sizeof(long *);}'
 try 8 'int main(){ return sizeof(int **);}'
+try 16 'int main(){ return sizeof(int[4]);}'
 
 echo OK
