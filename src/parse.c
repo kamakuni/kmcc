@@ -1094,7 +1094,7 @@ static Node *primary() {
         expect(")");
         return new_num(ty->size, tok);
       }
-      token = token->next;
+      token = tok->next;
     }
     Node *node = unary();
     add_type(node);
