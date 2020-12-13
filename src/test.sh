@@ -290,6 +290,10 @@ try 8 'int main(){ return sizeof(char *);}'
 try 8 'int main(){ return sizeof(int *);}'
 try 8 'int main(){ return sizeof(long *);}'
 try 8 'int main(){ return sizeof(int **);}'
+try 8 'int main(){ return sizeof(int(*)[4]);}'
+try 32 'int main(){ return sizeof(int*[4]);}'
 try 16 'int main(){ return sizeof(int[4]);}'
+try 48 'int main(){ return sizeof(int[3][4]);}'
+try 8  'int main(){ return sizeof(struct {int a;int b;});}'
 
 echo OK
