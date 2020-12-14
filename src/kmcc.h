@@ -123,13 +123,14 @@ typedef enum {
     ND_SHL,
     ND_SHR,
     ND_MEMBER,
-    ND_EXPR_STMT,
+    ND_EXPR_STMT, // Statement expression
     ND_SUB,
     ND_MUL,
     ND_DIV,
     ND_NOT,
-    ND_NUM,
-    ND_NULL,
+    ND_NUM, // Integer
+    ND_CAST, // Type cast
+    ND_NULL, // Empty statement
     ND_BLOCK,
     ND_FUNCALL,
     ND_IF,
