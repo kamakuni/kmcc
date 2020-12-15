@@ -296,4 +296,14 @@ try 16 'int main(){ return sizeof(int[4]);}'
 try 48 'int main(){ return sizeof(int[3][4]);}'
 try 8  'int main(){ return sizeof(struct {int a;int b;});}'
 
+try 131585 'int main() { return (long)8590066177;}'
+try 513 'int main() { return (short)8590066177;}'
+try 1 'int main() { return (char)8590066177;}'
+
+try 1 'int main() { return (_Bool)1; }'
+try 1 'int main() { return (_Bool)2; }'
+
+try 0 'int main() { return (_Bool)(char)256; }'
+try 1 'int main() { return (long)1; }'
+
 echo OK

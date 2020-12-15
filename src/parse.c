@@ -174,6 +174,7 @@ static Node *equality();
 static Node *relational();
 static Node *primary();
 static Node *mul();
+static Node *cast();
 static Node *unary();      
 static void global_var();
 static Type *struct_decl();
