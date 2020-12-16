@@ -305,5 +305,7 @@ try 1 'int main() { return (_Bool)2; }'
 
 try 0 'int main() { return (_Bool)(char)256; }'
 try 1 'int main() { return (long)1; }'
+try 0 'int main() { return (long)&*(int *)0; }'
+try 5 'int main() {  int x=5; long y=(long)&x; return *(int*)y; }'
 
 echo OK
