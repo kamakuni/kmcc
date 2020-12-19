@@ -1,1 +1,1 @@
-int main() { return (long)8590066177;}
+int main() { return (int)8590066177;}
