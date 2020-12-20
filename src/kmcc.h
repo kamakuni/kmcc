@@ -94,7 +94,7 @@ struct Node {
   Node *args; // for ND_CALL
   Type *ty;
   Token *tok;
-  int val;
+  long val; // Integer literal
   Var *var;
 };
 
