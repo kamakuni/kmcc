@@ -1,15 +1,18 @@
 #include "kmcc.h"
 
-// Scope for local variables, global variables or typedefs
+// Scope for local variables, global variables, typedefs
+// or enum constants
 typedef struct VarScope VarScope;
 struct VarScope {
   VarScope *next;
   char *name;
   Var *var;
   Type *type_def;
+  Type *enum_ty;
+  int enum_val;
 };
 
-// Scope for struct tags
+// Scope for struct tags or enum tags
 typedef struct TagScope TagScope;
 struct TagScope {
   TagScope *next;
@@ -29,7 +32,7 @@ static VarList *locals;
 static VarList *globals;
 
 // C has two block scopes; one is or variables/typedefs and
-// the other is for struct tags.
+// the other is for struct/union/enum tags.
 static VarScope *var_scope;
 static TagScope *tag_scope;
 
@@ -178,6 +181,7 @@ static Node *cast();
 static Node *unary();      
 static void global_var();
 static Type *struct_decl();
+static Type *enum_specifier(void);
 static Member *struct_member();
 static Type *declarator(Type *ty, char **name);
 static Type *abstract_declarator(Type *ty);
