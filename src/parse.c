@@ -739,6 +739,18 @@ static Type *struct_decl() {
   return ty;
 }
 
+// Some types of list can end with an optional "," followed by "}"
+// to allow a trailing comma. This function returns true if it looks
+// like we are at the end of such list.
+static bool consume_end() {
+  Token *tok = token;
+  if (consume("}") || (consume(",") && consume("}")))
+    return true;
+  token = tok;
+  return false;
+}
+
+
 static Member *find_member(Type *ty, char *name) {
   for (Member *mem = ty->members; mem; mem = mem->next)
     if(!strcmp(mem->name, name))
