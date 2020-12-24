@@ -482,6 +482,49 @@ static bool consume_end(void) {
   return false;
 }
 
+// enum-specifier = "enum" ident
+//                | "enum" ident? "{" enum-list? "}"
+//
+// enum-list = ident ("=" num)? ("," ident ("=" num)?)* ","?
+static Type *enum_specifier() {
+  expect("enum");
+  Type *ty = enum_type();
+
+  // Read an enum tag.
+  Token *tag = consume_ident();
+  if (tag && !peek("{")) {
+    TagScope *sc = find_tag(tag);
+    if (!sc)
+      error_tok(tag, "unknown enum type");
+    if (sc->ty->kind != TY_ENUM)
+      error_tok(tag, "not an enum tag");
+    return sc->ty;
+  }
+
+  expect("{");
+
+  // Read enum-list.
+  int cnt = 0;
+  for (;;) {
+    char *name = expect_ident();
+    if (consume("="))
+      cnt = expect_numbet();
+    
+    VarScope *sc = push_scope(name);
+    sc->enum_ty = ty;
+    sc->enum_val = cnt++;
+
+    if (consume_end())
+      break;
+    expect(",");
+  }
+
+  if (tag)
+    push_tag_scope(tag, ty);
+  return ty;
+}
+
+
 static bool peek_end(void) {
   Token *tok = token;
   bool ret = consume("}") || (consume(",") && consume("}"));
