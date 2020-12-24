@@ -690,7 +690,7 @@ static Node *read_expr_stmt(){
 }
 
 static bool is_typename(void) {
-  return peek("void") || peek("_Bool") || peek("char") || peek("short") || peek("int") || peek("long") || peek("struct") || find_typedef(token);
+  return peek("void") || peek("_Bool") || peek("char") || peek("short") || peek("int") || peek("long") || peek("enum") || peek("struct") || find_typedef(token);
 }
 
 // struct-decl = "struct" ident
