@@ -189,7 +189,7 @@ static Type *type_name(void);
 static Type *type_suffix(Type *ty);
 static bool is_typename();
 
-// basetype = ("void" | "char" | "int" | struct-decl | typedef-name) "*"*
+// basetype = ("void" | "char" | "int" | struct-decl | typedef-name | enum-specifier) "*"*
 static Type *basetype(void) {
   if (!is_typename())
     error_tok(token, "typename expected");
@@ -209,6 +209,8 @@ static Type *basetype(void) {
     ty = long_type;
   } else if (consume("struct"))
     ty = struct_decl();
+  else if (consume("enum"))
+    ty = enum_specifier();
   else
     ty = find_var(consume_ident())->type_def;
 
@@ -508,7 +510,7 @@ static Type *enum_specifier() {
   for (;;) {
     char *name = expect_ident();
     if (consume("="))
-      cnt = expect_numbet();
+      cnt = expect_number();
     
     VarScope *sc = push_scope(name);
     sc->enum_ty = ty;
@@ -781,18 +783,6 @@ static Type *struct_decl() {
     push_tag_scope(tag, ty);
   return ty;
 }
-
-// Some types of list can end with an optional "," followed by "}"
-// to allow a trailing comma. This function returns true if it looks
-// like we are at the end of such list.
-static bool consume_end() {
-  Token *tok = token;
-  if (consume("}") || (consume(",") && consume("}")))
-    return true;
-  token = tok;
-  return false;
-}
-
 
 static Member *find_member(Type *ty, char *name) {
   for (Member *mem = ty->members; mem; mem = mem->next)
@@ -1211,8 +1201,12 @@ static Node *primary() {
     // Variable
     // indent without (
     VarScope *sc = find_var(tok);
-    if(sc && sc->var)
-      return new_var_node(sc->var, tok);
+    if(sc) {
+      if (sc->var)
+        return new_var_node(sc->var, tok);
+      if (sc->enum_ty)
+        return new_num(sc->enum_val, tok);
+    }
     error_tok(tok, "undefined variable");
     
   }
