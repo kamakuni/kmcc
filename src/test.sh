@@ -309,5 +309,7 @@ try 0 'int main() { return (long)&*(int *)0; }'
 try 5 'int main() {  int x=5; long y=(long)&x; return *(int*)y; }'
 
 try 0 'int main() { enum { zero, one, two}; return zero; }'
+try 1 'int main() { enum { zero, one, two}; return one; }'
+try 2 'int main() { enum { zero, one, two}; return two; }'
 
 echo OK
