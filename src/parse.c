@@ -489,7 +489,6 @@ static bool consume_end(void) {
 //
 // enum-list = ident ("=" num)? ("," ident ("=" num)?)* ","?
 static Type *enum_specifier() {
-  expect("enum");
   Type *ty = enum_type();
 
   // Read an enum tag.
