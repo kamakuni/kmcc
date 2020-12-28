@@ -311,5 +311,13 @@ try 5 'int main() {  int x=5; long y=(long)&x; return *(int*)y; }'
 try 0 'int main() { enum { zero, one, two}; return zero; }'
 try 1 'int main() { enum { zero, one, two}; return one; }'
 try 2 'int main() { enum { zero, one, two}; return two; }'
+try 5 'int main() { enum { five=5, six, seven}; return five;}'
+try 6 'int main() { enum { five=5, six, seven}; return six;}'
+try 0 'int main() { enum { zero, five=5, three=3, four}; return zero;}'
+try 5 'int main() { enum { zero, five=5, three=3, four}; return five;}'
+try 3 'int main() { enum { zero, five=5, three=3, four}; return three;}'
+try 4 'int main() { enum { zero, five=5, three=3, four}; return four;}'
+try 4 'int main() { enum { zero, one, two} x; return sizeof(x); }'
+try 4 'int main() { enum t { zero, one, two}; enum t y; return sizeof(y); }'
 
 echo OK
