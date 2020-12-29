@@ -160,6 +160,11 @@ static char *new_label() {
   return strndup(buf, 20);
 }
 
+typedef enum {
+  TYPEDEF = 1 << 0,
+  STATIC = 1 << 1,
+} StorageClass;
+
 static Function *function();
 static Node *stmt();
 static Node *stmt2();

@@ -157,7 +157,7 @@ struct Function {
   Function *next;
   char *name;
   VarList *params;
-  
+  bool is_static;
   Node *node;
   Var *locals;
   int stack_size;
