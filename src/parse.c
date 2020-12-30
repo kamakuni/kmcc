@@ -104,11 +104,6 @@ static Var *new_var(char *name, Type *ty, bool is_local) {
   var->name = name;
   var->ty = ty;
   var->is_local = is_local;
-
-  VarList *sc = calloc(1, sizeof(VarList));
-  sc->var = var;
-  sc->next = var_scope;
-  var_scope = sc;
   return var;
 }
 
@@ -194,8 +189,14 @@ static Type *type_name(void);
 static Type *type_suffix(Type *ty);
 static bool is_typename();
 
-// basetype = ("void" | "char" | "int" | struct-decl | typedef-name | enum-specifier) "*"*
-static Type *basetype(void) {
+// basetype = builtin-type | struct-decl | typedef-name | enum-specifier
+//
+// builtin-type = "void" | "_Bool" | "char" | "short" | "int"
+//              | "long" | "long" "long"
+//
+// Note that "typedef" and "static" can appear anywhere in a basetype.
+// "int" can appear anywhere if type is short, long or long long.
+static Type *basetype() {
   if (!is_typename())
     error_tok(token, "typename expected");
   Type *ty;
@@ -935,11 +936,9 @@ static Node *stmt2() {
 
   if (tok = consume("typedef")) {
     Type *ty = basetype();
-    char *name = NULL;
-    ty = declarator(ty, &name);
+    char *name = expect_ident();
     ty = type_suffix(ty);
     expect(";");
-
     push_scope(name)->type_def = ty;
     return new_node(ND_NULL, tok);
   }
