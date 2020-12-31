@@ -296,6 +296,11 @@ try 16 'int main(){ return sizeof(int[4]);}'
 try 48 'int main(){ return sizeof(int[3][4]);}'
 try 8  'int main(){ return sizeof(struct {int a;int b;});}'
 
+try 24 'int main(){ int *x[3]; return sizeof(x); }'
+try 8 'int main(){ int (*x)[3]; return sizeof(x); }'
+try 3 'int main(){ int *x[3]; int y; x[0]=&y; y=3; return x[0][0]; }'
+try 4 'int main(){ int x[3]; int (*y)[3]=x; y[0][0]=4; return y[0][0]; }'
+
 #try 131585 'int main() { return (int)8590066177;}'
 #try 513 'int main() { return (short)8590066177;}'
 try 1 'int main() { return (char)8590066177;}'

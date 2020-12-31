@@ -331,7 +331,7 @@ static void push_tag_scope(Token *tok, Type *ty) {
   tag_scope = sc;
 }
 
-// struct-member = basetype ident ("[" num "]")* ";"
+// struct-member = basetype declarator type-suffix ";"
 static Member *struct_member() {
   Type *ty = basetype();
   char *name = NULL;
@@ -936,9 +936,11 @@ static Node *stmt2() {
 
   if (tok = consume("typedef")) {
     Type *ty = basetype();
-    char *name = expect_ident();
+    char *name = NULL;
+    ty = declarator(ty, &name);
     ty = type_suffix(ty);
     expect(";");
+    
     push_scope(name)->type_def = ty;
     return new_node(ND_NULL, tok);
   }
