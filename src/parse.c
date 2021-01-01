@@ -471,7 +471,7 @@ static Function *function() {
   fn->name = name;
   fn->is_static = (sclass == STATIC);
   expect("(");
-  
+
   Scope *sc = enter_scope();
   fn->params = read_func_params();
 
@@ -544,15 +544,15 @@ static Initializer *gvar_initializer(Type *ty) {
 // global-var = basetype declarator type-suffix ("=" gvar-initializer)? ";"
 static void global_var() {
   Token *tok = token;
-  bool is_typedef;
-  Type *ty = basetype(&is_typedef);
+  StorageClass sclass;
+  Type *ty = basetype(&sclass);
   char *name = NULL;
   ty = declarator(ty, &name);
   ty = type_suffix(ty);
   //expect(";");
 
   Var *var;
-  if (is_typedef)
+  if (sclass == TYPEDEF)
     push_scope(name)->type_def = ty;
   else
     var = new_gvar(name, ty, true);
@@ -800,9 +800,9 @@ static Node *lvar_initializer(Var *var, Token *tok) {
 //             | basetype ";"
 static Node *declaration(){
   Token *tok = token;
-  bool is_typedef;
+  StorageClass sclass;
   
-  Type *ty = basetype(&is_typedef);
+  Type *ty = basetype(&sclass);
   if (consume(";"))
     return new_node(ND_NULL, tok);
 
@@ -810,7 +810,7 @@ static Node *declaration(){
   ty = declarator(ty, &name);
   ty = type_suffix(ty);
 
-  if (is_typedef) {
+  if (sclass == TYPEDEF) {
     expect(";");
     push_scope(name)->type_def = ty;
     return new_node(ND_NULL, tok);
@@ -838,7 +838,7 @@ static Node *read_expr_stmt(){
 }
 
 static bool is_typename(void) {
-  return peek("void") || peek("_Bool") || peek("char") || peek("short") || peek("int") || peek("long") || peek("enum") || peek("struct") || peek("typedef") || find_typedef(token);
+  return peek("void") || peek("_Bool") || peek("char") || peek("short") || peek("int") || peek("long") || peek("enum") || peek("struct") || peek("typedef") || peek("static") || find_typedef(token);
 }
 
 // struct-decl = "struct" ident

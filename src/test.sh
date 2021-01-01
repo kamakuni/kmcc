@@ -325,4 +325,6 @@ try 4 'int main() { enum { zero, five=5, three=3, four}; return four;}'
 try 4 'int main() { enum { zero, one, two} x; return sizeof(x); }'
 try 4 'int main() { enum t { zero, one, two}; enum t y; return sizeof(y); }'
 
+try 3 'static int static_fn() {return 3;} int main() { return static_fn();}'
+
 echo OK
