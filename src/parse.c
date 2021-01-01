@@ -213,17 +213,22 @@ static Type *basetype(StorageClass *sclass) {
   Type *ty = int_type;
   int counter = 0;
 
-  if (is_typedef)
-    *is_typedef = false;
+  if (sclass)
+    *sclass = 0;
 
   while (is_typename()) {
     Token *tok = token;
 
     // Handle storage class specifiers.
-    if (consume("typedef")) {
-      if (!is_typedef)
-        error_tok(tok, "invalid storage class specifier");
-      *is_typedef = true;
+    if (peek("typedef") || peek("static")) {
+      if (!sclass)
+        error_tok(tok, "storage class specifier is not allowed");
+      if(consume("typedef"))
+        *sclass |= TYPEDEF;
+      else if (consume("static"))
+        *sclass |= STATIC;
+      if (*sclass & (*sclass - 1))
+        error_tok(tok, "typedef and static may not be used together");
       continue;
     }
 
