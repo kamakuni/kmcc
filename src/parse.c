@@ -458,7 +458,8 @@ static VarList *read_func_params() {
 static Function *function() {
   locals = NULL;
 
-  Type *ty = basetype(NULL);
+  StorageClass sclass;
+  Type *ty = basetype(&sclass);
   char *name = NULL;
   ty = declarator(ty, &name);
   
@@ -468,7 +469,9 @@ static Function *function() {
   // Construct a function object
   Function *fn = calloc(1,sizeof(Function));
   fn->name = name;
+  fn->is_static = (sclass == STATIC);
   expect("(");
+  
   Scope *sc = enter_scope();
   fn->params = read_func_params();
 
