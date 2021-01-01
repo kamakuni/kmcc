@@ -196,7 +196,7 @@ static bool is_typename();
 //
 // Note that "typedef" and "static" can appear anywhere in a basetype.
 // "int" can appear anywhere if type is short, long or long long.
-static Type *basetype(bool *is_typedef) {
+static Type *basetype(StorageClass *sclass) {
   if (!is_typename())
     error_tok(token, "typename expected");
   
@@ -304,8 +304,8 @@ static Type *basetype(bool *is_typedef) {
 static bool is_function() {
   // To keep current token
   Token *tok = token;
-  bool is_typedef;
-  Type *ty = basetype(&is_typedef);
+  StorageClass sclass;
+  Type *ty = basetype(&sclass);
   char *name = NULL;
   declarator(ty, &name);
   bool is_func = name && consume("(");
