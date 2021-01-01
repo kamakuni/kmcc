@@ -327,4 +327,7 @@ try 4 'int main() { enum t { zero, one, two}; enum t y; return sizeof(y); }'
 
 try 3 'static int static_fn() {return 3;} int main() { return static_fn();}'
 
+try 55 'int main() {int j=0; for (int i=0; i<=10; i=i+1) j=j+i; return j;}'
+try 3 'int main() {int i=3; int j=0; for (int i=0; i<=10; i=i+1) j=j+i; return i;}'
+
 echo OK
