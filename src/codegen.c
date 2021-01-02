@@ -102,6 +102,85 @@ static void truncate(Type *ty) {
   printf("  push rax\n");
 }
 
+static void gen_binary(Node *node) {
+
+  printf("  pop rdi\n");
+  printf("  pop rax\n");
+    
+  switch (node->kind) {
+  case ND_ADD:
+    printf("  add rax, rdi\n");
+    break;
+  case ND_PTR_ADD:
+    printf("  imul rdi, %d\n", node->ty->base->size);
+    printf("  add rax, rdi\n");
+    break;
+  case ND_SUB:
+    printf("  sub rax, rdi\n");
+    break;
+  case ND_PTR_SUB:
+    printf("  imul rdi, %d\n", node->ty->base->size);
+    printf("  sub rax, rdi\n");
+    break;
+  case ND_PTR_DIFF:
+    printf("  sub rax, rdi\n");
+    printf("  cqo\n");
+    printf("  mov rdi, %d\n", node->lhs->ty->base->size);
+    printf("  idiv rdi\n");
+    break;
+  case ND_MUL:
+    printf("  mul rdi\n");
+    break;
+  case ND_BITAND:
+    printf("  and rax, rdi\n");
+    break;
+  case ND_BITOR:
+    printf("  or rax, rdi\n");
+    break;
+  case ND_BITXOR:
+    printf("  xor rax, rdi\n");
+    break;
+  case ND_SHL:
+  case ND_SHL_EQ:
+    printf("  mov cl, dil\n");
+    printf("  shl rax, cl\n");
+    break;
+  case ND_SHR:
+  case ND_SHR_EQ:
+    printf("  mov cl, dil\n");
+    printf("  sar rax, cl\n");
+    break;
+  case ND_NULL:
+    break;
+  case ND_DIV:
+    printf("  mov rdx, 0\n");
+    printf("  div rdi\n");
+    break;
+  case ND_LT:
+    printf("  cmp rax, rdi\n");
+    printf("  setl al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_LE:
+    printf("  cmp rax, rdi\n");
+    printf("  setle al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_EQ:
+    printf("  cmp rax, rdi\n");
+    printf("  sete al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_NE:
+    printf("  cmp rax, rdi\n");
+    printf("  setne al\n");
+    printf("  movzb rax, al\n");
+  }
+  
+  printf("  push rax\n");
+
+}
+
 // Generatecode for given code
 static void gen(Node *node) {
 
@@ -249,6 +328,16 @@ static void gen(Node *node) {
     return;
   }
 
+  if (node->kind == ND_SHL_EQ
+  || node->kind == ND_SHR_EQ) {
+    gen_lval(node->lhs);
+    printf("  push [rsp]\n");
+    load(node->lhs->ty);
+    gen(node->rhs);
+    gen_binary(node);
+    store(node->ty);
+    return;
+  }
   if (node->kind == ND_TERNARY) {
     int seq = label_count++;
     gen(node->cond);
@@ -283,71 +372,8 @@ static void gen(Node *node) {
 
   gen(node->lhs);
   gen(node->rhs);
+  gen_binary(node);
     
-  printf("  pop rdi\n");
-  printf("  pop rax\n");
-    
-  switch (node->kind) {
-  case ND_ADD:
-    printf("  add rax, rdi\n");
-    break;
-  case ND_PTR_ADD:
-    printf("  imul rdi, %d\n", node->ty->base->size);
-    printf("  add rax, rdi\n");
-    break;
-  case ND_SUB:
-    printf("  sub rax, rdi\n");
-    break;
-  case ND_PTR_SUB:
-    printf("  imul rdi, %d\n", node->ty->base->size);
-    printf("  sub rax, rdi\n");
-    break;
-  case ND_PTR_DIFF:
-    printf("  sub rax, rdi\n");
-    printf("  cqo\n");
-    printf("  mov rdi, %d\n", node->lhs->ty->base->size);
-    printf("  idiv rdi\n");
-    break;
-  case ND_MUL:
-    printf("  mul rdi\n");
-    break;
-  case ND_BITAND:
-    printf("  and rax, rdi\n");
-    break;
-  case ND_BITOR:
-    printf("  or rax, rdi\n");
-    break;
-  case ND_BITXOR:
-    printf("  xor rax, rdi\n");
-    break;
-  case ND_NULL:
-    break;
-  case ND_DIV:
-    printf("  mov rdx, 0\n");
-    printf("  div rdi\n");
-    break;
-  case ND_LT:
-    printf("  cmp rax, rdi\n");
-    printf("  setl al\n");
-    printf("  movzb rax, al\n");
-    break;
-  case ND_LE:
-    printf("  cmp rax, rdi\n");
-    printf("  setle al\n");
-    printf("  movzb rax, al\n");
-    break;
-  case ND_EQ:
-    printf("  cmp rax, rdi\n");
-    printf("  sete al\n");
-    printf("  movzb rax, al\n");
-    break;
-  case ND_NE:
-    printf("  cmp rax, rdi\n");
-    printf("  setne al\n");
-    printf("  movzb rax, al\n");
-  }
-  
-  printf("  push rax\n");
 }
 
 static void emit_data(Program *prog) {

@@ -176,6 +176,7 @@ static Node *conditional();
 static Node *equality();
 static Node *relational();
 static Node *primary();
+static Node *shift();
 static Node *mul();
 static Node *cast();
 static Node *unary();      
@@ -916,7 +917,11 @@ static Node *assign() {
     Node *node = conditional();
     Token *tok;
     if (tok = consume("="))
-      node = new_binary(ND_ASSIGN, node, assign(), tok);
+      return new_binary(ND_ASSIGN, node, assign(), tok);
+    if (tok = consume("<<="))
+      return new_binary(ND_SHL_EQ, node, assign(), tok);
+    if (tok = consume(">>="))
+      return new_binary(ND_SHR_EQ, node, assign(), tok);
     return node;
 }
 
@@ -1065,21 +1070,21 @@ static Node *equality() {
     }
 }
 
-// relational = add ("<" add | "<=" add | ">" add | ">=" add)*
+// relational = shift ("<" shift | "<=" shift | ">" shift | ">=" shift)*
 static Node *relational() {
     // lhs
-    Node *node = add();
+    Node *node = shift();
     Token *tok;
     
     for (;;) {
       if (tok = consume("<"))
-        node = new_binary(ND_LT, node, add(), tok);
+        node = new_binary(ND_LT, node, shift(), tok);
       else if (tok = consume("<="))
-        node = new_binary(ND_LE, node, add(), tok);
+        node = new_binary(ND_LE, node, shift(), tok);
       else if (tok = consume(">"))
-        node = new_binary(ND_LT, add(), node, tok);
+        node = new_binary(ND_LT, shift(), node, tok);
       else if (tok = consume(">="))
-        node = new_binary(ND_LE, add(), node, tok);
+        node = new_binary(ND_LE, shift(), node, tok);
       else
         return node;
     }
@@ -1225,6 +1230,21 @@ static Node *unary() {
     return new_unary(ND_DEREF, cast(), tok);
   }
   return postfix();
+}
+
+// shift = add ("<<" add | ">>" add)*
+static Node *shift() {
+  Node *node = add();
+  Token *tok;
+
+  for (;;) {
+    if (tok = consume("<<"))
+      node = new_binary(ND_SHL, node, add(), tok);
+    else if (tok = consume(">>"))
+      node = new_binary(ND_SHR, node, add(), tok);
+    else
+      return node;
+  }
 }
 
 // func-args = "(" (assign ("," assign)*)? ")"

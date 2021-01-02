@@ -330,4 +330,17 @@ try 3 'static int static_fn() {return 3;} int main() { return static_fn();}'
 try 55 'int main() {int j=0; for (int i=0; i<=10; i=i+1) j=j+i; return j;}'
 try 3 'int main() {int i=3; int j=0; for (int i=0; i<=10; i=i+1) j=j+i; return i;}'
 
+try 1 'int main() {return 1<<0;}'
+try 8 'int main() {return 1<<3;}'
+try 10 'int main() {return 5<<1;}'
+try 2 'int main() {return 5>>1;}'
+try 255 'int main() {return -1>>1;}'
+try 1 'int main() {int i=1; i<<=0; return i;}'
+try 8 'int main() {int i=1; i<<=3; return i;}'
+try 10 'int main() {int i=5; i<<=1; return i;}'
+try 2 'int main() {int i=5; i>>=1; return i;}'
+try 255 'int main() {return -1;}'
+try 255 'int main() {int i=-1; return i;}'
+try 255 'int main() {int i=-1; i>>=1; return i;}'
+
 echo OK

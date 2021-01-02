@@ -120,8 +120,8 @@ typedef enum {
     ND_BITXOR,
     ND_BITNOT,
     ND_COMMA,
-    ND_SHL,
-    ND_SHR,
+    ND_SHL, // <<
+    ND_SHR, // >>
     ND_MEMBER,
     ND_EXPR_STMT, // Statement expression
     ND_SUB,
@@ -141,6 +141,8 @@ typedef enum {
     ND_NE,
     ND_LT,
     ND_LE,
+    ND_SHL_EQ, // <<=
+    ND_SHR_EQ, // >>=
     ND_LOGAND,
     ND_LOGOR,
     ND_TERNARY,
