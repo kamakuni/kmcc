@@ -119,7 +119,7 @@ typedef enum {
     ND_BITOR,
     ND_BITXOR,
     ND_BITNOT,
-    ND_COMMA,
+    ND_COMMA,// ,
     ND_SHL, // <<
     ND_SHR, // >>
     ND_MEMBER,

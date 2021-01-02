@@ -343,4 +343,6 @@ try 255 'int main() {return -1;}'
 try 255 'int main() {int i=-1; return i;}'
 try 255 'int main() {int i=-1; i>>=1; return i;}'
 
+try 3 'int main() { return (1,2,3);}'
+
 echo OK

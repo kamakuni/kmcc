@@ -328,6 +328,12 @@ static void gen(Node *node) {
     return;
   }
 
+  if (node->kind == ND_COMMA) {
+    gen(node->lhs);
+    gen(node->rhs);
+    return;
+  }
+
   if (node->kind == ND_SHL_EQ
   || node->kind == ND_SHR_EQ) {
     gen_lval(node->lhs);
