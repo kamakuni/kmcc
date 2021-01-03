@@ -1206,29 +1206,40 @@ static Node *postfix() {
       continue;
     }
 
+    if (tok = consume("++")) {
+      node = new_unary(ND_POST_INC, node, tok);
+      continue;
+    }
+
+    if (tok = consume("--")) {
+      node = new_unary(ND_POST_DEC, node, tok);
+      continue;
+    }
+
     return node;
   }
 
 }
 
 // unary = ("+" | "-" | "*" | "&")? cast
+//       | ("++" | "--") unary
 //       | postfix
 static Node *unary() {
   Token *tok;
   
-  if (consume("+")) {
+  if (consume("+"))
     return cast();
-  }
-  if (tok = consume("-")) {
+  if (tok = consume("-"))
     // -x => 0-x
     return new_binary(ND_SUB, new_num(0, tok), cast(), tok);
-  }
-  if (tok = consume("&")) {
+  if (tok = consume("&"))
     return new_unary(ND_ADDR, cast(), tok);
-  }
-  if (tok = consume("*")) {
+  if (tok = consume("*"))
     return new_unary(ND_DEREF, cast(), tok);
-  }
+  if (tok = consume("++"))
+    return new_unary(ND_PRE_INC, unary(), tok);
+  if (tok = consume("--"))
+    return new_unary(ND_PRE_DEC, unary(), tok);
   return postfix();
 }
 

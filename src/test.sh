@@ -345,4 +345,9 @@ try 255 'int main() {int i=-1; i>>=1; return i;}'
 
 try 3 'int main() { return (1,2,3);}'
 
+try 3 'int main() { int i=2; return ++i;}'
+try 1 'int main() { int i=2; return --i;}'
+try 2 'int main() { int i=2; return i++;}'
+try 2 'int main() { int i=2; return i--;}'
+
 echo OK
