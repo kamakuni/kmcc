@@ -349,5 +349,7 @@ try 3 'int main() { int i=2; return ++i;}'
 try 1 'int main() { int i=2; return --i;}'
 try 2 'int main() { int i=2; return i++;}'
 try 2 'int main() { int i=2; return i--;}'
+try 3 'int main() { int i=2; i++; return i;}'
+try 1 'int main() { int i=2; i--; return i;}'
 
 echo OK
