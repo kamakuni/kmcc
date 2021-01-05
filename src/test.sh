@@ -355,5 +355,9 @@ try 1 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; return *p++; }
 try 2 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; return ++*p; }'
 try 1 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; return *p--; }'
 try 0 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; return --*p; }'
+try 0 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; (*p++)--; return a[0]; }'
+try 0 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; (*p++)--; return a[1]; }'
+try 2 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; (*p++)--; return a[2]; }'
+try 2 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; (*p++)--; return *p; }'
 
 echo OK
