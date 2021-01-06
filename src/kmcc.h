@@ -123,6 +123,12 @@ typedef enum {
     ND_PRE_DEC, // pre --
     ND_POST_INC, // post ++
     ND_POST_DEC, // post --
+    ND_ADD_EQ, // +=
+    ND_PTR_ADD_EQ, // =+
+    ND_SUB_EQ, // -=
+    ND_PTR_ADD_EQ, // -=
+    ND_MUL_EQ, // *=
+    ND_DIV_EQ, // /=
     ND_COMMA,// ,
     ND_SHL, // <<
     ND_SHR, // >>
