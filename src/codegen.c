@@ -252,6 +252,19 @@ static void gen(Node *node) {
       store(node->ty);
       inc(node->ty);
       return;
+    case ND_ADD_EQ:
+    case ND_PTR_ADD_EQ:
+    case ND_SUB_EQ:
+    case ND_PTR_SUB_EQ:
+    case ND_MUL_EQ:
+    case ND_DIV_EQ:
+      gen_lval(node->lhs);
+      printf("  push [rsp]\n");
+      load(node->lhs->ty);
+      gen(node->rhs);
+      gen_binary(node);
+      store(node->ty);
+      return;
     case ND_TERNARY: {
       int seq = label_count++;
       gen(node->cond);
