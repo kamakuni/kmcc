@@ -126,7 +126,7 @@ typedef enum {
     ND_ADD_EQ, // +=
     ND_PTR_ADD_EQ, // =+
     ND_SUB_EQ, // -=
-    ND_PTR_ADD_EQ, // -=
+    ND_PTR_SUB_EQ, // -=
     ND_MUL_EQ, // *=
     ND_DIV_EQ, // /=
     ND_COMMA,// ,

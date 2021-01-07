@@ -916,12 +916,38 @@ static Node *struct_ref(Node *lhs) {
 static Node *assign() {
     Node *node = conditional();
     Token *tok;
+
     if (tok = consume("="))
       return new_binary(ND_ASSIGN, node, assign(), tok);
+
+    if (tok = consume("*="))
+      return new_binary(ND_MUL_EQ, node, assign(), tok);
+
+    if (tok = consume("/="))
+      return new_binary(ND_DIV_EQ, node, assign(), tok);
+
     if (tok = consume("<<="))
       return new_binary(ND_SHL_EQ, node, assign(), tok);
+
     if (tok = consume(">>="))
       return new_binary(ND_SHR_EQ, node, assign(), tok);
+
+    if (tok = consume("+=")) {
+      add_type(node);
+      if (node->ty->base)
+        return new_binary(ND_PTR_ADD_EQ, node, assign(), tok);
+      else
+        return new_binary(ND_ADD_EQ, node, assign(), tok);      
+    }
+
+    if (tok = consume("-=")) {
+      add_type(node);
+      if (node->ty->base)
+        return new_binary(ND_PTR_SUB_EQ, node, assign(), tok);
+      else
+        return new_binary(ND_SUB_EQ, node, assign(), tok);      
+    }
+
     return node;
 }
 
