@@ -360,4 +360,13 @@ try 0 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; (*p++)--; retu
 try 2 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; (*p++)--; return a[2]; }'
 try 2 'int main() { int a[3]; a[0]=0; a[1]=1; a[2]=2; int *p=a+1; (*p++)--; return *p; }'
 
+try 7 'int main() { int i=2; i+=5; return i;}'
+try 7 'int main() { int i=2; return i+=5;}'
+try 3 'int main() { int i=2; i-=5; return i;}'
+try 3 'int main() { int i=2; return i-=5;}'
+try 6 'int main() { int i=3; i*=2; return i;}'
+try 6 'int main() { int i=3; return i*=2;}'
+try 3 'int main() { int i=6; i/=2; return i;}'
+try 3 'int main() { int i=6; return i/=2;}'
+
 echo OK
