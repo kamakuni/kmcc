@@ -913,6 +913,8 @@ static Node *struct_ref(Node *lhs) {
   return node;
 }
 
+// assign    = equality (assign-op assign)?
+// assign-op = "=" | "+=" | "-=" | "*=" | "/="
 static Node *assign() {
     Node *node = conditional();
     Token *tok;
