@@ -121,16 +121,20 @@ static void gen_binary(Node *node) {
     
   switch (node->kind) {
   case ND_ADD:
+  case ND_ADD_EQ:
     printf("  add rax, rdi\n");
     break;
   case ND_PTR_ADD:
+  case ND_PTR_ADD_EQ:
     printf("  imul rdi, %d\n", node->ty->base->size);
     printf("  add rax, rdi\n");
     break;
   case ND_SUB:
+  case ND_SUB_EQ:
     printf("  sub rax, rdi\n");
     break;
   case ND_PTR_SUB:
+  case ND_PTR_SUB_EQ:
     printf("  imul rdi, %d\n", node->ty->base->size);
     printf("  sub rax, rdi\n");
     break;
@@ -141,6 +145,7 @@ static void gen_binary(Node *node) {
     printf("  idiv rdi\n");
     break;
   case ND_MUL:
+  case ND_MUL_EQ:
     printf("  mul rdi\n");
     break;
   case ND_BITAND:
@@ -165,6 +170,7 @@ static void gen_binary(Node *node) {
   case ND_NULL:
     break;
   case ND_DIV:
+  case ND_DIV_EQ:
     printf("  mov rdx, 0\n");
     printf("  div rdi\n");
     break;
