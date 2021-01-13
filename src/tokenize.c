@@ -331,10 +331,8 @@ Token *tokenize(char *p) {
       
     // Integer literal
     if (isdigit(*p)) {
-      cur = new_token(TK_NUM, cur, p ,0);
-      char *q = p;
-      cur->val = strtol(p, &p, 10);
-      cur->len = p - q;
+      cur = read_int_literal(cur, p);
+      p += cur->len;
       continue;
     }
       
