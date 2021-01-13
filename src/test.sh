@@ -369,4 +369,16 @@ try 6 'int main() { int i=3; return i*=2;}'
 try 3 'int main() { int i=6; i/=2; return i;}'
 try 3 'int main() { int i=6; return i/=2;}'
 
+try 511 'int main() { return 0777;}'
+try 0 'int main() { return 0x0;}'
+try 10 'int main() { return 0xa;}'
+try 10 'int main() { return 0xA;}'
+try 48879 'int main() { return 0xbeef;}'
+try 48879 'int main() { return 0xBEEF;}'
+try 48879 'int main() { return 0XBEEF;}'
+try 0 'int main() { return 0b0;}'
+try 1 'int main() { return 0b1;}'
+try 47 'int main() { return 0b101111;}'
+try 47 'int main() { return 0B101111;}'
+
 echo OK
