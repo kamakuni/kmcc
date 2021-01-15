@@ -1,0 +1,16 @@
+// -*- c -*-
+
+// This is a line comment.
+
+/*
+ * This is a block comment.
+ */
+
+int assert(int expected, int actual, int *code) {
+    if (expected == actual) {
+        printf("%s => %d\n", code, actual);
+    } else {
+        printf("%s => %d expected but got %d\n", code, expected, actual);
+        exit(1);
+    }
+}
