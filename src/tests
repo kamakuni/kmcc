@@ -14,3 +14,8 @@ int assert(int expected, int actual, int *code) {
         exit(1);
     }
 }
+
+int main() {
+    printf("OK\n");
+    return 0;
+}
