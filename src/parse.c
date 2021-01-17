@@ -1286,6 +1286,27 @@ static Node *shift() {
   }
 }
 
+
+// stmt-expr = "(" "{" stmt stmt* "}" ")"
+// 
+// Statement expression is a GNU C expression.
+static Node *stmt_expr(Token *tok) {
+  Node *node = new_node(ND_STMT_EXPR, tok);
+  node->body = stmt();
+  Node *cur = node->body;
+
+  while (!consume("}")) {
+    cur->next = stmt();
+    cur = cur->next;
+  }
+  expect(")");
+
+  if (cur->kind != ND_EXPR_STMT)
+    error_tok(cur->tok, "stmt expr returning void is not supported");
+  memcpy(cur, cur->lhs, sizeof(Node));
+  return node;
+}
+
 // func-args = "(" (assign ("," assign)*)? ")"
 static Node *func_args() {
   if (consume(")"))

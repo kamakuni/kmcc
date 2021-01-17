@@ -133,7 +133,8 @@ typedef enum {
     ND_SHL, // <<
     ND_SHR, // >>
     ND_MEMBER,
-    ND_EXPR_STMT, // Statement expression
+    ND_EXPR_STMT, // Expression statemnt
+    ND_STMT_EXPR, // Statement expression
     ND_SUB,
     ND_MUL,
     ND_DIV,
