@@ -1330,13 +1330,17 @@ static Node *func_args() {
 //         | num
 // args = "(" ident ("," ident)* ")"
 static Node *primary() {
-  if (consume("(")) {
+ 
+  Token *tok;
+  if (tok = consume("(")) {
+    if (consume("{"))
+      return stmt_expr(tok);
+      
     Node *node = expr();
     expect(")");
     return node;
   }
 
-  Token *tok;
   if (tok = consume("sizeof")){
     if (consume("(")) {
       if (is_typename()) {
