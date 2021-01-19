@@ -6,7 +6,7 @@
  * This is a block comment.
  */
 
-int assert(int expected, int actual, int *code) {
+int assert(int expected, int actual, char *code) {
     if (expected == actual) {
         printf("%s => %d\n", code, actual);
     } else {
@@ -16,6 +16,7 @@ int assert(int expected, int actual, int *code) {
 }
 
 int main() {
+    assert(0,({0&1;}),"{0&1;}");
     printf("OK\n");
     return 0;
 }
