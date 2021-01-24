@@ -69,6 +69,10 @@ int main() {
     assert(3,({int x = 0; if(11<10) x = 2; else x = 3; x;}),"{int x = 0; if(11<10) x = 2; else x = 3; x;}");
     assert(2,({int x = 0; if(1<10) { x = 2;} else { x = 3;} x;}),"{int x = 0; if(1<10) { x = 2;} else { x = 3;} x;}");
     assert(3,({int x = 0; if(11<10) { x = 2;} else { x = 3;} x;}),"{int x = 0; if(11<10) { x = 2;} else { x = 3;} x;}");
+
+    assert(2,({0?1:2;}),"{0?1:2;}");
+    assert(1,({1?1:2;}),"{1?1:2;}");
+    assert(3,({1,2,3;}),"{1,2,3;}");    
     
     printf("OK\n");
     return 0;
