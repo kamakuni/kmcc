@@ -62,6 +62,10 @@ int main() {
     assert(7,({int a; a=4+3; a ;}),"{int a; a=4+3; a ;}");
     assert(6,({int foo; int bar;foo=1;bar=2+3; foo + bar;}),"{int foo; int bar;foo=1;bar=2+3; foo + bar;}");
 
+    assert(2,({int x = 0; if(1<10) x = 2; x;}),"{int x = 0; if(1<10) x = 2; x;}");
+    assert(10,({int var; var=1;if(1<10) var=10; var;}),"{int var; var=1;if(1<10) var=10; var;})");
+    assert(1,({int var; var=1;if(1>10) var=10; var;}),"{int var; var=1;if(1>10) var=10; var;}");
+
     printf("OK\n");
     return 0;
 }
