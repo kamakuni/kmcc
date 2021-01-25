@@ -74,6 +74,11 @@ int main() {
     assert(1,({1?1:2;}),"{1?1:2;}");
     assert(3,({1,2,3;}),"{1,2,3;}");    
     
+    assert(10,({int i=0;while(i<10)i=i+1; i;}),"{int i=0;while(i<10)i=i+1; i;}");
+    //assert(0,({int i=0;while(i<10)if(i==0) i; 11;}),"{int i=0;while(i<10)if(i==0) i; 11;}");
+    //assert(5,({int i=0;while(i<10)if(i<5) i=i+1; else i; 11;}),"{int i=0;while(i<10)if(i<5) i=i+1; else i; 11;}");
+    assert(10,({int i=0;while(i<10){i=i+1;} i;}),"{int i=0;while(i<10){i=i+1;} i;}");
+
     printf("OK\n");
     return 0;
 }
