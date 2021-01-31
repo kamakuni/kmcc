@@ -148,6 +148,7 @@ int main() {
     assert(5,({arg1(5);}),"{arg1(5);}");
     assert(10,({arg2(0, 10);}),"{arg2(0, 10);}");
     assert(10,({arg2(10, 0);}),"{arg2(10, 0);}");
+    assert(10,({arg2(2*2,2+4);}),"{arg2(2*2,2+4);}");
 
     printf("OK\n");
     return 0;
