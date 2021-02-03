@@ -182,6 +182,10 @@ int main() {
     assert(7,({int x=3; int y=5; *(&y-1)=7; x;}),"{int x=3; int y=5; *(&y-1)=7; x;}");
     assert(8,({int x=3; int y=5; *&x + y;}),"{int x=3; int y=5; *&x + y;}");
 
+    assert(4,({int x=3; sizeof(x);}),"{int x=3; sizeof(x);}");
+    assert(4,({int x=3; sizeof x;}),"{int x=3; sizeof x;}");
+    assert(8,({int x=3; sizeof(&x);}),"{int x=3; sizeof(&x);}");
+
     printf("OK\n");
     return 0;
 }
