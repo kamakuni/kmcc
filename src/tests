@@ -186,6 +186,12 @@ int main() {
     assert(4,({int x=3; sizeof x;}),"{int x=3; sizeof x;}");
     assert(8,({int x=3; sizeof(&x);}),"{int x=3; sizeof(&x);}");
 
+    assert(3,({int x[2]; int *y=&x; *y=3; *x;}),"{int x[2]; int *y=&x; *y=3; *x;}");
+    assert(3,({int a[2]; *a = 1; *(a + 1) = 2; int *p; p = a; *p + *(p + 1);}),"{int a[2]; *a = 1; *(a + 1) = 2; int *p; p = a; *p + *(p + 1);}");
+    assert(3,({int x[3]; *x=3; *(x+1)=4; *(x+2)=5; *x;}),"{int x[3]; *x=3; *(x+1)=4; *(x+2)=5; *x;}");
+    assert(4,({int x[3]; *x=3; *(x+1)=4; *(x+2)=5; *(x+1);}),"{int x[3]; *x=3; *(x+1)=4; *(x+2)=5; *(x+1);}");
+    assert(5,({int x[3]; *x=3; *(x+1)=4; *(x+2)=5; *(x+2);}),"{int x[3]; *x=3; *(x+1)=4; *(x+2)=5; *(x+2);}");
+
     printf("OK\n");
     return 0;
 }
