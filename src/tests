@@ -215,8 +215,12 @@ int main() {
     assert(2,({g1[2];}),"{g1[2];}");
     assert(3,({g1[3];}),"{g1[3];}");
 
-    assert(4,( {sizeof(g2);}),"{sizeof(g2);}");
-    assert(16,( {sizeof(g3);}),"{sizeof(g3);}");
+    assert(4,({sizeof(g2);}),"{sizeof(g2);}");
+    assert(16,({sizeof(g3);}),"{sizeof(g3);}");
+
+    assert(1,({char x=1; x;}),"{char x=1; x;}");
+    assert(1,({char x=1; char y=2; x;}),"{char x=1; char y=2; x;}");
+    assert(2,({char x=1; char y=2; y;}),"{char x=1; char y=2; y;}");
 
     printf("OK\n");
     return 0;
