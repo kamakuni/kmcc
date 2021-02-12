@@ -95,6 +95,15 @@ int sub_char(char a, char b, char c) {
     return a-b-c;
 }
 
+int block_comment(){
+    /* return 1; */ return 2;
+}
+
+int comment(){
+    // return 1;
+    return 2;
+}
+
 int g1[4];
 int g2;
 int g3[4];
@@ -249,6 +258,9 @@ int main() {
     assert(27,({"\e"[0];}),"{\"\e\"[0];}");
     assert(0,({"\0"[0];}),"{\"\0\"[0];}");
     
+    assert(2,block_comment(),"block_comment()");
+    assert(2,comment(),"comment()");
+
     printf("OK\n");
     return 0;
 }
