@@ -267,6 +267,11 @@ int main() {
     assert(2,({ struct {int a; int b;} x; x.a=1; x.b=2; x.b; }),"{ struct {int a; int b;} x; x.a=1; x.b=2; x.b; }");
     assert(3,({ struct {int a; int b; int c;} x; x.a=1; x.b=2; x.c=3; x.c;}),"{ struct {int a; int b; int c;} x; x.a=1; x.b=2; x.c=3; x.c; }");
 
+    assert(0,({ struct {int a; int b;} x[3]; int *p=x; p[0]=0; x[0].a; }),"{ struct {int a; int b;} x[3]; int *p=x; p[0]=0; x[0].a;}");
+    assert(1,({ struct {int a; int b;} x[3]; int *p=x; p[1]=1; x[0].b; }),"{ struct {int a; int b;} x[3]; int *p=x; p[1]=1; x[0].b;}");
+    assert(2,({ struct {int a; int b;} x[3]; int *p=x; p[2]=2; x[1].a; }),"{ struct {int a; int b;} x[3]; int *p=x; p[2]=2; x[1].a;}");
+    assert(3,({ struct {int a; int b;} x[3]; int *p=x; p[3]=3; x[1].b; }),"{ struct {int a; int b;} x[3]; int *p=x; p[3]=3; x[1].b;}");
+
     printf("OK\n");
     return 0;
 }
