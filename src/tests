@@ -265,6 +265,7 @@ int main() {
     assert(2,({ struct {int a; int b;} x; x.a=1; x.b=2; x.b; }),"{ struct {int a; int b;} x; x.a=1; x.b=2; x.b; }");
     assert(1,({ struct {int a; int b;} x; x.a=1; x.b=2; x.a; }),"{ struct {int a; int b;} x; x.a=1; x.b=2; x.a; }");
     assert(2,({ struct {int a; int b;} x; x.a=1; x.b=2; x.b; }),"{ struct {int a; int b;} x; x.a=1; x.b=2; x.b; }");
+    assert(3,({ struct {int a; int b; int c;} x; x.a=1; x.b=2; x.c=3; x.c;}),"{ struct {int a; int b; int c;} x; x.a=1; x.b=2; x.c=3; x.c; }");
 
     printf("OK\n");
     return 0;
