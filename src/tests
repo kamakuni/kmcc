@@ -286,6 +286,11 @@ int main() {
     assert(99,({char x[4]="abc"; x[2];}),"{char x[4]=\"abc\"; x[2];}");
     assert(0,({char x[4]="abc"; x[3];}),"{char x[4]=\"abc\"; x[3];}");
 
+    assert(97,( {char x[2][4]={"abc","def"}; x[0][0]; })," {char x[2][4]={\"abc\",\"def\"}; x[0][0]; }");
+    assert(0,( {char x[2][4]={"abc","def"}; x[0][3]; })," {char x[2][4]={\"abc\",\"def\"}; x[0][3]; }");
+    assert(100,( {char x[2][4]={"abc","def"}; x[1][0]; })," {char x[2][4]={\"abc\",\"def\"}; x[1][0]; }");
+    assert(102,( {char x[2][4]={"abc","def"}; x[1][2]; })," {char x[2][4]={\"abc\",\"def\"}; x[1][2]; }");
+
     printf("OK\n");
     return 0;
 }
