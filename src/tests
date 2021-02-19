@@ -6,6 +6,8 @@
  * This is a block comment.
  */
 
+int strcmp(char *p, char *q);
+
 int assert(int expected, int actual, char *code) {
     if (expected == actual) {
         printf("%s => %d\n", code, actual);
@@ -106,7 +108,12 @@ int comment(){
 
 int g1[4];
 int g2;
-int g3[4];
+char g3 = 3;
+short g4 = 4;
+int g5 = 5;
+long g6 = 6;
+int *g7 = &g5;
+char *g8 = "abc";
 
 int main() {
 
@@ -229,7 +236,7 @@ int main() {
     assert(3,({g1[3];}),"{g1[3];}");
 
     assert(4,({sizeof(g2);}),"{sizeof(g2);}");
-    assert(16,({sizeof(g3);}),"{sizeof(g3);}");
+    assert(16,({sizeof(g1);}),"{sizeof(g1);}");
 
     assert(1,({char x=1; x;}),"{char x=1; x;}");
     assert(1,({char x=1; char y=2; x;}),"{char x=1; char y=2; x;}");
@@ -314,6 +321,13 @@ int main() {
     assert(3,({ struct t {int x;}; int t=1; struct t y; y.x=2; t+y.x; }),"{ struct t {int x;}; int t=1; struct t y; y.x=2; t+y.x; }");
     assert(3,({ struct t {char a;} x; struct t *y = &x; x.a=3; y->a; }),"{ struct t {char a;} x; struct t *y = &x; x.a=3; y->a; }");
     assert(3,({ struct t {char a;} x; struct t *y = &x; y->a=3; x.a; }),"{ struct t {char a;} x; struct t *y = &x; y->a=3; x.a; }");
+
+    assert(3,({g3;}),"{g3;}");
+    assert(4,({g4;}),"{g4;}");
+    assert(5,({g5;}),"{g5;}");
+    assert(6,({g6;}),"{g6;}");
+    assert(5,({*g7;}),"{*g7;}");
+    assert(0,({strcmp(g8,"abc");}),"{strcmp(g8,\"abc\");}");
 
     printf("OK\n");
     return 0;
