@@ -329,6 +329,9 @@ int main() {
     assert(5,({*g7;}),"{*g7;}");
     assert(0,({strcmp(g8,"abc");}),"{strcmp(g8,\"abc\");}");
 
+    assert(2,({short x; sizeof(x);}),"{short x; sizeof(x);}");
+    assert(8,({long x; sizeof(x);}),"{long x; sizeof(x);}");
+
     printf("OK\n");
     return 0;
 }
