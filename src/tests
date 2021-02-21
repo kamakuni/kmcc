@@ -106,6 +106,14 @@ int comment(){
     return 2;
 }
 
+short sub_short(short a, short b, short c) {
+    return a-b-c;
+} 
+
+long sub_long(long a, long b, long c) {
+    return a-b-c;
+} 
+
 int g1[4];
 int g2;
 char g3 = 3;
@@ -331,6 +339,9 @@ int main() {
 
     assert(2,({short x; sizeof(x);}),"{short x; sizeof(x);}");
     assert(8,({long x; sizeof(x);}),"{long x; sizeof(x);}");
+
+    assert(1,({sub_short(7,3,3);}),"{sub_short(7,3,3);}");
+    assert(1,({sub_long(7,3,3);}),"{sub_long(7,3,3);}");
 
     printf("OK\n");
     return 0;
