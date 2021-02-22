@@ -343,6 +343,10 @@ int main() {
     assert(1,({sub_short(7,3,3);}),"{sub_short(7,3,3);}");
     assert(1,({sub_long(7,3,3);}),"{sub_long(7,3,3);}");
 
+    assert(0,({ _Bool x=0; x; }),"{ _Bool x=0; x; }");
+    assert(1,({ _Bool x=1; x; }),"{ _Bool x=1; x; }");
+    assert(1,({ _Bool x=2; x; }),"{ _Bool x=2; x; }");
+
     printf("OK\n");
     return 0;
 }
