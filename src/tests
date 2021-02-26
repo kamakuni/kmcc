@@ -370,6 +370,10 @@ int main() {
     assert(513,({(short)8590066177;}),"{(short)8590066177;}");
     assert(1,({(char)8590066177;}),"{(char)8590066177;}");
 
+    assert(1,( { (_Bool)1; }),"{ (_Bool)1; }");
+    assert(1,( { (_Bool)2; }),"{ (_Bool)2; }");
+    assert(0,( { (_Bool)(char)256; }),"{ (_Bool)(char)256; }");
+
     printf("OK\n");
     return 0;
 }
