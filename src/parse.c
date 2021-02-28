@@ -511,6 +511,12 @@ static Initializer *new_init_label(Initializer *cur, char *label) {
   return init;
 }
 
+static Initializer *new_init_zero(Initializer *cur, int nbytes) {
+  for (int i = 0; i < nbytes; i++)
+    cur = new_init_val(cur, 1, 0);
+  return cur;
+}
+
 static Initializer *gvar_init_string(char *p, int len) {
   Initializer head = {};
   Initializer *cur = &head;
