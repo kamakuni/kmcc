@@ -42,6 +42,10 @@ Type *func_type(Type *return_ty) {
   return ty;
 }
 
+Type *enum_type() {
+  return new_type(TY_ENUM, 4, 4);
+}
+
 void add_type(Node *node) {
   if (!node || node->ty)
     return;
@@ -69,12 +73,27 @@ void add_type(Node *node) {
   case ND_NE:
   case ND_LT:
   case ND_LE:
+  case ND_FUNCALL:
   case ND_NUM:
     node->ty = long_type;
     return;
   case ND_PTR_ADD:
   case ND_PTR_SUB:
   case ND_ASSIGN:
+  case ND_PRE_INC:
+  case ND_PRE_DEC:
+  case ND_POST_INC:
+  case ND_POST_DEC:
+  case ND_ADD_EQ:
+  case ND_PTR_ADD_EQ:
+  case ND_SUB_EQ:
+  case ND_PTR_SUB_EQ:
+  case ND_MUL_EQ:
+  case ND_DIV_EQ:
+  case ND_SHL:
+  case ND_SHR:
+  case ND_SHL_EQ:
+  case ND_SHR_EQ:
     node->ty = node->lhs->ty;
     return;
   case ND_VAR:
@@ -102,5 +121,12 @@ void add_type(Node *node) {
     if (node->ty->kind == TY_VOID)
       error_tok(node->tok, "dereferencing a void pointer");
     return;
+  case ND_STMT_EXPR: {
+    Node *last = node->body;
+    while (last->next)
+      last = last->next;
+    node->ty = last->ty;
+    return;
+  }
   }
 }

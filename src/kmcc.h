@@ -94,7 +94,7 @@ struct Node {
   Node *args; // for ND_CALL
   Type *ty;
   Token *tok;
-  int val;
+  long val; // Integer literal
   Var *var;
 };
 
@@ -119,17 +119,29 @@ typedef enum {
     ND_BITOR,
     ND_BITXOR,
     ND_BITNOT,
-    ND_COMMA,
-    ND_SHL,
-    ND_SHR,
+    ND_PRE_INC, // pre ++
+    ND_PRE_DEC, // pre --
+    ND_POST_INC, // post ++
+    ND_POST_DEC, // post --
+    ND_ADD_EQ, // +=
+    ND_PTR_ADD_EQ, // =+
+    ND_SUB_EQ, // -=
+    ND_PTR_SUB_EQ, // -=
+    ND_MUL_EQ, // *=
+    ND_DIV_EQ, // /=
+    ND_COMMA,// ,
+    ND_SHL, // <<
+    ND_SHR, // >>
     ND_MEMBER,
-    ND_EXPR_STMT,
+    ND_EXPR_STMT, // Expression statemnt
+    ND_STMT_EXPR, // Statement expression
     ND_SUB,
     ND_MUL,
     ND_DIV,
     ND_NOT,
-    ND_NUM,
-    ND_NULL,
+    ND_NUM, // Integer
+    ND_CAST, // Type cast
+    ND_NULL, // Empty statement
     ND_BLOCK,
     ND_FUNCALL,
     ND_IF,
@@ -140,6 +152,8 @@ typedef enum {
     ND_NE,
     ND_LT,
     ND_LE,
+    ND_SHL_EQ, // <<=
+    ND_SHR_EQ, // >>=
     ND_LOGAND,
     ND_LOGOR,
     ND_TERNARY,
@@ -156,7 +170,7 @@ struct Function {
   Function *next;
   char *name;
   VarList *params;
-  
+  bool is_static;
   Node *node;
   Var *locals;
   int stack_size;
@@ -219,6 +233,7 @@ typedef enum {
   TY_SHORT,
   TY_INT,
   TY_LONG,
+  TY_ENUM,
   TY_PTR,
   TY_ARRAY,
   TY_STRUCT,
@@ -258,6 +273,7 @@ Type *pointer_to(Type *base);
 Type *array_of(Type *base, int size);
 Type *struct_type(void);
 Type *func_type(Type *return_ty);
+Type *enum_type();
 void add_type(Node *node);
 
 //Node *function();

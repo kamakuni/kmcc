@@ -84,192 +84,57 @@ static void store(Type *ty) {
 //    }
 //}
 
-// Generatecode for given code
-static void gen(Node *node) {
+static void truncate(Type *ty) {
+  printf("  pop rax\n");
 
-  if(node->kind == ND_NULL) {
-    return;
-  }
-  if (node->kind == ND_NUM) {
-    printf("  push %d\n", node->val);
-    return;
-  }
-
-  if(node->kind == ND_EXPR_STMT) {
-    gen(node->lhs);
-    printf("  add rsp, 8\n");
-    return;
-  }
-  if(node->kind == ND_FUNCALL) {
-    int nargs = 0;
-    for (Node *arg = node->args; arg; arg = arg->next) {
-      gen(arg);
-      nargs++;
-    }
-
-    for (int i = nargs - 1; i >= 0; i--)
-      printf("  pop %s\n", argreg8[i]);
-    // We need to align RSP to a 16 byte boundary before
-    // calling a function because it is an ABI requirement.
-    // RAX is set to 0 for variadic function
-    int seq = label_count++;
-    printf("  mov rax, rsp\n");
-    printf("  and rax, 15\n");
-    printf("  jnz .L.call.%d\n", seq);
-    printf("  mov rax, 0\n");
-    printf("  call %s\n", node->funcname);
-    printf("  jmp .L.end.%d\n", seq);
-    printf(".L.call.%d:\n", seq);
-    printf("  sub rsp, 8\n");
-    printf("  mov rax, 0\n");
-    printf("  call %s\n", node->funcname);
-    printf("  add rsp, 8\n");
-    printf(".L.end.%d:\n", seq);
-    printf("  push rax\n");
-    return;
-  }
-
-  if (node->kind == ND_BLOCK) {
-    for (Node *n = node->body; n; n = n->next)
-      gen(n);
-    return;
-  }
-    
-  if (node->kind == ND_VAR 
-  || node->kind == ND_MEMBER) {
-    gen_addr(node);
-    if (node->ty->kind != TY_ARRAY)
-      load(node->ty);
-    /*gen_lval(node);
-    printf("  pop rax\n");
-    printf("  mov rax, [rax]\n");
-    printf("  push rax\n");*/
-    return;
-  }
-    
-  if (node->kind == ND_IF) {
-    int seq = label_count++;
-    if(node->els) {
-      gen(node->cond);
-      printf("  pop rax\n");
-      printf("  cmp rax, 0\n");
-      printf("  je .L.else.%d\n", seq);
-      gen(node->then);
-      printf("  jmp .L.end.%d\n", seq);
-      printf(".L.else.%d:\n", seq);
-      gen(node->els);
-      printf(".L.end.%d:\n", seq);
-    } else {
-      gen(node->cond);
-      printf("  pop rax\n");
-      printf("  cmp rax, 0\n");
-      printf("  je .L.end.%d\n", seq);
-      gen(node->then);
-      printf(".L.end.%d:\n", seq);
-    }
-    return;
-  }
-
-  if (node->kind == ND_WHILE) {
-    int seq = label_count++;
-    printf(".L.begin.%d:\n", seq);
-    gen(node->cond);
-    printf("  pop rax\n");
+  if (ty->kind == TY_BOOL) {
     printf("  cmp rax, 0\n");
-    printf("  je  .L.end.%d\n", seq);
-    gen(node->then);
-    printf("  jmp  .L.begin.%d\n", seq);
-    printf(".L.end.%d:\n", seq);
-    return;
+    printf("  setne al\n");
   }
 
-  if (node->kind == ND_FOR) {
-    int seq = label_count++;
-    if(node->init)
-      gen(node->init);
-    printf(".L.begin.%d:\n", seq);
-    if(node->cond) {
-      gen(node->cond);
-      printf("  pop rax\n");
-      printf("  cmp rax, 0\n");
-      printf("  je  .L.end.%d\n", seq);
-    }
-    gen(node->then);
-    if(node->inc)
-      gen(node->inc);
-    printf("  jmp  .L.begin.%d\n", seq);
-    printf(".L.end.%d:\n", seq);
-    return;
+  if (ty->size == 1) {
+    printf("  movsx rax, al\n");
+  } else if (ty->size == 2) {
+    printf("  movsx rax, ax\n");
+  } else if (ty->size == 4) {
+    printf("  movsxd rax, eax\n");
   }
+  printf("  push rax\n");
+}
 
-  if (node->kind == ND_RETURN) {
-    gen(node->lhs);
-    printf("  pop rax\n");
-    printf("  jmp .L.return.%s\n", funcname);
-    return;
-  }
-    
-  if (node->kind == ND_ASSIGN) {
-    gen_lval(node->lhs);    
-    gen(node->rhs);
-    store(node->ty);
-    /*printf("  pop rdi\n");
-    printf("  pop rax\n");
-    printf("  mov [rax], rdi\n");
-    printf("  push rdi\n");*/
-    return;
-  }
+static void inc(Type *ty) {
+  printf("  pop rax\n");
+  printf("  add rax, %d\n", ty->base ? ty->base->size : 1);
+  printf("  push rax\n");
+}
 
-  if (node->kind == ND_TERNARY) {
-    int seq = label_count++;
-    gen(node->cond);
-    printf("  pop rax\n");
-    printf("  cmp rax, 0\n");
-    printf("  je  .L.else.%d\n", seq);
-    gen(node->then);
-    printf("  jmp .L.end.%d\n", seq);
-    printf(".L.else.%d:\n", seq);
-    gen(node->els);
-    printf(".L.end.%d:\n", seq);
-    return;
-  }
+static void dec(Type *ty) {
+  printf("  pop rax\n");
+  printf("  sub  rax, %d\n", ty->base ? ty->base->size : 1);
+  printf("  push rax\n");
+}
 
-  if (node->kind == ND_ADDR) {
-    gen_addr(node->lhs);
-    return;
-  }
+static void gen_binary(Node *node) {
 
-  if (node->kind == ND_COMMA) {
-    gen(node->lhs);
-    gen(node->rhs);
-    return;
-  }
-
-  if (node->kind == ND_DEREF) {
-    gen(node->lhs);
-    if (node->ty->kind != TY_ARRAY)
-      load(node->ty);
-    return;
-  }
-
-  gen(node->lhs);
-  gen(node->rhs);
-    
   printf("  pop rdi\n");
   printf("  pop rax\n");
     
   switch (node->kind) {
   case ND_ADD:
+  case ND_ADD_EQ:
     printf("  add rax, rdi\n");
     break;
   case ND_PTR_ADD:
+  case ND_PTR_ADD_EQ:
     printf("  imul rdi, %d\n", node->ty->base->size);
     printf("  add rax, rdi\n");
     break;
   case ND_SUB:
+  case ND_SUB_EQ:
     printf("  sub rax, rdi\n");
     break;
   case ND_PTR_SUB:
+  case ND_PTR_SUB_EQ:
     printf("  imul rdi, %d\n", node->ty->base->size);
     printf("  sub rax, rdi\n");
     break;
@@ -280,6 +145,7 @@ static void gen(Node *node) {
     printf("  idiv rdi\n");
     break;
   case ND_MUL:
+  case ND_MUL_EQ:
     printf("  mul rdi\n");
     break;
   case ND_BITAND:
@@ -291,9 +157,20 @@ static void gen(Node *node) {
   case ND_BITXOR:
     printf("  xor rax, rdi\n");
     break;
+  case ND_SHL:
+  case ND_SHL_EQ:
+    printf("  mov cl, dil\n");
+    printf("  shl rax, cl\n");
+    break;
+  case ND_SHR:
+  case ND_SHR_EQ:
+    printf("  mov cl, dil\n");
+    printf("  sar rax, cl\n");
+    break;
   case ND_NULL:
     break;
   case ND_DIV:
+  case ND_DIV_EQ:
     printf("  mov rdx, 0\n");
     printf("  div rdi\n");
     break;
@@ -319,6 +196,215 @@ static void gen(Node *node) {
   }
   
   printf("  push rax\n");
+
+}
+
+// Generatecode for given code
+static void gen(Node *node) {
+
+  switch (node->kind) {
+    case ND_NULL:
+      return;
+    case ND_NUM:
+      if (node->val == (int)node->val) {
+        printf("  push %ld\n", node->val);
+      } else {
+        printf("  movabs rax, %ld\n", node->val);
+        printf("  push rax\n");
+      }
+      return;
+    case ND_EXPR_STMT:
+      gen(node->lhs);
+      printf("  add rsp, 8\n");
+      return;
+    case ND_VAR:
+    case ND_MEMBER:
+      gen_addr(node);
+      if (node->ty->kind != TY_ARRAY)
+        load(node->ty);
+      return;
+    case ND_ASSIGN:
+      gen_lval(node->lhs);    
+      gen(node->rhs);
+      store(node->ty);
+      return;
+    case ND_PRE_INC:
+      gen_lval(node->lhs);
+      printf("  push [rsp]\n");
+      load(node->ty);
+      inc(node->ty);
+      store(node->ty);
+      return;
+    case ND_PRE_DEC:
+      gen_lval(node->lhs);
+      printf("  push [rsp]\n");
+      load(node->ty);
+      dec(node->ty);
+      store(node->ty);
+      return;
+    case ND_POST_INC:
+      gen_lval(node->lhs);
+      printf("  push [rsp]\n");
+      load(node->ty);
+      inc(node->ty);
+      store(node->ty);
+      dec(node->ty);
+      return;
+    case ND_POST_DEC:
+      gen_lval(node->lhs);
+      printf("  push [rsp]\n");
+      load(node->ty);
+      dec(node->ty);
+      store(node->ty);
+      inc(node->ty);
+      return;
+    case ND_ADD_EQ:
+    case ND_PTR_ADD_EQ:
+    case ND_SUB_EQ:
+    case ND_PTR_SUB_EQ:
+    case ND_MUL_EQ:
+    case ND_DIV_EQ:
+      gen_lval(node->lhs);
+      printf("  push [rsp]\n");
+      load(node->lhs->ty);
+      gen(node->rhs);
+      gen_binary(node);
+      store(node->ty);
+      return;
+    case ND_TERNARY: {
+      int seq = label_count++;
+      gen(node->cond);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je  .L.else.%d\n", seq);
+      gen(node->then);
+      printf("  jmp .L.end.%d\n", seq);
+      printf(".L.else.%d:\n", seq);
+      gen(node->els);
+      printf(".L.end.%d:\n", seq);
+      return;
+    }
+    case ND_SHL_EQ:
+    case ND_SHR_EQ:
+      gen_lval(node->lhs);
+      printf("  push [rsp]\n");
+      load(node->lhs->ty);
+      gen(node->rhs);
+      gen_binary(node);
+      store(node->ty);
+      return;
+    case ND_COMMA:
+      gen(node->lhs);
+      gen(node->rhs);
+      return;
+    case ND_ADDR:
+      gen_addr(node->lhs);
+      return;
+    case ND_DEREF:
+      gen(node->lhs);
+      if (node->ty->kind != TY_ARRAY)
+        load(node->ty);
+      return;
+    case ND_IF:{
+      int seq = label_count++;
+      if(node->els) {
+        gen(node->cond);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je .L.else.%d\n", seq);
+        gen(node->then);
+        printf("  jmp .L.end.%d\n", seq);
+        printf(".L.else.%d:\n", seq);
+        gen(node->els);
+        printf(".L.end.%d:\n", seq);
+      } else {
+        gen(node->cond);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je .L.end.%d\n", seq);
+        gen(node->then);
+        printf(".L.end.%d:\n", seq);
+      }
+      return;
+    }
+    case ND_WHILE: {
+      int seq = label_count++;
+      printf(".L.begin.%d:\n", seq);
+      gen(node->cond);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je  .L.end.%d\n", seq);
+      gen(node->then);
+      printf("  jmp  .L.begin.%d\n", seq);
+      printf(".L.end.%d:\n", seq);
+      return;
+    }
+    case ND_FOR: {
+      int seq = label_count++;
+      if(node->init)
+        gen(node->init);
+      printf(".L.begin.%d:\n", seq);
+      if(node->cond) {
+        gen(node->cond);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je  .L.end.%d\n", seq);
+      }
+      gen(node->then);
+      if(node->inc)
+        gen(node->inc);
+      printf("  jmp  .L.begin.%d\n", seq);
+      printf(".L.end.%d:\n", seq);
+      return;
+    }
+    case ND_BLOCK:
+    case ND_STMT_EXPR:
+      for (Node *n = node->body; n; n = n->next)
+        gen(n);
+      return;
+    case ND_FUNCALL: {
+      int nargs = 0;
+      for (Node *arg = node->args; arg; arg = arg->next) {
+        gen(arg);
+        nargs++;
+      }
+
+      for (int i = nargs - 1; i >= 0; i--)
+        printf("  pop %s\n", argreg8[i]);
+      // We need to align RSP to a 16 byte boundary before
+      // calling a function because it is an ABI requirement.
+      // RAX is set to 0 for variadic function
+      int seq = label_count++;
+      printf("  mov rax, rsp\n");
+      printf("  and rax, 15\n");
+      printf("  jnz .L.call.%d\n", seq);
+      printf("  mov rax, 0\n");
+      printf("  call %s\n", node->funcname);
+      printf("  jmp .L.end.%d\n", seq);
+      printf(".L.call.%d:\n", seq);
+      printf("  sub rsp, 8\n");
+      printf("  mov rax, 0\n");
+      printf("  call %s\n", node->funcname);
+      printf("  add rsp, 8\n");
+      printf(".L.end.%d:\n", seq);
+      printf("  push rax\n");
+      return;
+    }
+    case ND_RETURN:
+      gen(node->lhs);
+      printf("  pop rax\n");
+      printf("  jmp .L.return.%s\n", funcname);
+      return;
+    case ND_CAST:
+      gen(node->lhs);
+      truncate(node->ty);
+      return;
+  }
+
+  gen(node->lhs);
+  gen(node->rhs);
+  gen_binary(node);
+    
 }
 
 static void emit_data(Program *prog) {
@@ -364,8 +450,9 @@ static void emit_text(Program *prog) {
   printf(".text\n");
   
   for (Function *fn = prog->fns; fn; fn = fn->next){
-    printf(".global %s\n",fn->name);
-    printf("%s:\n",fn->name);
+    if (!fn->is_static)
+      printf(".global %s\n", fn->name);
+    printf("%s:\n", fn->name);
     funcname = fn->name;
     // Prologue
     printf("  push rbp\n");
