@@ -525,6 +525,12 @@ static Initializer *gvar_init_string(char *p, int len) {
   return head.next;
 }
 
+static Initializer *emit_struct_padding(Initializer *cur, Type *parent, Member *mem) {
+  int start = mem->offset + mem->ty->size;
+  int end = mem->next ? mem->next->offset : parent->size;
+  return new_init_zero(cur, end - start);
+}
+
 // gvar-initializer2 = assign
 static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   Token *tok = token;
