@@ -126,6 +126,10 @@ int g5 = 5;
 long g6 = 6;
 int *g7 = &g5;
 char *g8 = "abc";
+int g9[3] = {0, 1, 2};
+char *g10[] = {"foo","bar"};
+struct {char a; int b;} g11[2] = {{1, 2}, {3, 4}};
+struct {int a[2];} g12[2] = {{{1, 2}}};
 
 int main() {
 
@@ -446,6 +450,11 @@ int main() {
     assert(1,({0b1;}),"{0b1;}");
     assert(47,({0b101111;}),"{0b101111;}");
     assert(47,({0B101111;}),"{0B101111;}");
+
+    assert(0, g9[0], "g9[0]");
+    assert(0, strcmp(g10[0], "foo"), "strcmp(g10[0], \"foo\")");
+    assert(1, g11[0].a, "g11[0].a");
+    assert(1, g12[0].a[0], "g12[0].a[0]");
 
     printf("OK\n");
     return 0;

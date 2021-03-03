@@ -189,6 +189,8 @@ static Type *abstract_declarator(Type *ty);
 static Type *type_name(void);
 static Type *type_suffix(Type *ty);
 static bool is_typename();
+static bool peek_end(void);
+static void expect_end(void);
 
 // basetype = builtin-type | struct-decl | typedef-name | enum-specifier
 //
@@ -534,7 +536,51 @@ static Initializer *emit_struct_padding(Initializer *cur, Type *parent, Member *
 // gvar-initializer2 = assign
 static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   Token *tok = token;
-  Node *expr = assign();
+
+  if (ty->kind == TY_ARRAY) {
+    expect("{");
+    int i = 0;
+
+    if (!peek("}")) {
+      do {
+        cur = gvar_initializer2(cur, ty->base);
+        i++;
+      } while (!peek_end() && consume(","));
+    }
+    expect_end();
+
+    // Set excess array elements to zero.
+    if (i < ty->array_len)
+      cur = new_init_zero(cur, ty->base->size * (ty->array_len - i));
+
+    if (ty->is_incomplete) {
+      ty->size = ty->base->size * i;
+      ty->array_len = i;
+      ty->is_incomplete = false;
+    }
+    return cur;
+  }
+
+  if (ty->kind = TY_STRUCT) {
+    expect("{");
+    Member *mem = ty->members;
+
+    if(!peek("}")) {
+      do {
+        cur = gvar_initializer2(cur, mem->ty);
+        cur = emit_struct_padding(cur, ty, mem);
+        mem = mem->next;
+      } while(!peek_end() && consume(","));
+    }
+    expect_end();
+
+    // Set excess struct elements to zero.
+    if (mem)
+      cur = new_init_zero(cur, ty->size - mem->offset);
+    return cur;    
+  }
+
+  Node *expr = conditional();
 
   if (expr->kind == ND_ADDR) {
     if (expr->lhs->kind != ND_VAR)
