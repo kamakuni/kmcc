@@ -1191,6 +1191,15 @@ static Node *conditional() {
   return ternary;
 }
 
+// logand = bitor ("&&" bitor)*
+static Node *logand(void) {
+  Node *node = bitor();
+  Token *tok;
+  while (tok = consume("&&"))
+    node = new_binary(ND_LOGAND, node, bitor(), tok);
+  return node;
+}
+
 static Node *new_add(Node *lhs, Node *rhs, Token *tok) {
   add_type(lhs);
   add_type(rhs);
