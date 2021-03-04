@@ -534,6 +534,7 @@ static Initializer *emit_struct_padding(Initializer *cur, Type *parent, Member *
 }
 
 // gvar-initializer2 = assign
+//                   | "{" (gvar_initializer2 ("," gvar_initializer2)* ","?)? "}"
 static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   Token *tok = token;
 
