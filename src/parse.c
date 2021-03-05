@@ -1012,6 +1012,24 @@ static Node *assign() {
     return node;
 }
 
+// logor = logand ("||" logand)*
+static Node *logor(void) {
+  Node *node = logand();
+  Token *tok;
+  while (tok = consume("||"))
+    node = new_binary(ND_LOGOR, node, logand(), tok);
+  return node;
+}
+
+// logand = bitor ("&&" bitor)*
+static Node *logand(void) {
+  Node *node = bitor();
+  Token *tok;
+  while (tok = consume("&&"))
+    node = new_binary(ND_LOGAND, node, bitor(), tok);
+  return node;
+}
+
 // bitor = bitxor ("|" bitxor)*
 static Node *bitor() {
   Node *node = bitxor();
@@ -1189,15 +1207,6 @@ static Node *conditional() {
   expect(":");
   ternary->els = conditional();
   return ternary;
-}
-
-// logand = bitor ("&&" bitor)*
-static Node *logand(void) {
-  Node *node = bitor();
-  Token *tok;
-  while (tok = consume("&&"))
-    node = new_binary(ND_LOGAND, node, bitor(), tok);
-  return node;
 }
 
 static Node *new_add(Node *lhs, Node *rhs, Token *tok) {
