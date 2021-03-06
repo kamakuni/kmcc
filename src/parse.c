@@ -1195,8 +1195,9 @@ static Node *relational() {
     }
 }
 
+// conditional = logor ("?" expr ":" conditional)?
 static Node *conditional() {
-  Node *node = bitor();
+  Node *node = logor();
   Token *tok = consume("?");
   if (!tok)
     return node;
