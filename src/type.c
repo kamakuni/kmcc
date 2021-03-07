@@ -46,6 +46,12 @@ Type *enum_type() {
   return new_type(TY_ENUM, 4, 4);
 }
 
+Type *struct_type(void) {
+  Type *ty = new_type(TY_STRUCT, 0, 1);
+  ty->is_incomplete = true;
+  return ty;
+}
+
 void add_type(Node *node) {
   if (!node || node->ty)
     return;

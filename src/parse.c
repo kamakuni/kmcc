@@ -191,6 +191,7 @@ static Type *type_suffix(Type *ty);
 static bool is_typename();
 static bool peek_end(void);
 static void expect_end(void);
+static Node *logand(void);
 
 // basetype = builtin-type | struct-decl | typedef-name | enum-specifier
 //
@@ -1195,7 +1196,7 @@ static Node *relational() {
     }
 }
 
-// conditional = logor ("?" expr ":" conditional)?
+// conditional = logor ("?" expr ":" conditional)?ss
 static Node *conditional() {
   Node *node = logor();
   Token *tok = consume("?");
