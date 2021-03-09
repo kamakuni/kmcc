@@ -274,6 +274,7 @@ Type *array_of(Type *base, int size);
 Type *struct_type(void);
 Type *func_type(Type *return_ty);
 Type *enum_type();
+Type *struct_type(void);
 void add_type(Node *node);
 
 //Node *function();

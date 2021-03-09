@@ -451,6 +451,10 @@ int main() {
     assert(47,({0b101111;}),"{0b101111;}");
     assert(47,({0B101111;}),"{0B101111;}");
 
+    assert(8, ({ struct *foo; sizeof(foo); }), "struct *foo; sizeof(foo);");
+    assert(4, ({ struct T *foo; struct T {int x;}; sizeof(struct T); }), "struct T *foo; struct T {int x;}; sizeof(struct T);");
+    assert(1, ({ struct T { struct T *next; int x; } a; struct T b; b.x=1; a.next=&b; a.next->x; }), "struct T { struct T *next; int x; } a; struct T b; b.x=1; a.next=&b; a.next->x;");
+
     //assert(0, g9[0], "g9[0]");
     //assert(0, strcmp(g10[0], "foo"), "strcmp(g10[0], \"foo\")");
     //assert(1, g11[0].a, "g11[0].a");

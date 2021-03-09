@@ -917,14 +917,41 @@ static Type *struct_decl() {
   Token *tag = consume_ident();
   if (tag && !peek("{")) {
     TagScope *sc = find_tag(tag);
-    if (!sc)
-      error_tok(tag, "unknown struct type");
+    if (!sc) {
+      Type *ty = struct_type();
+      push_tag_scope(tag, ty);
+      return ty;
+    }
     if (sc->ty->kind != TY_STRUCT)
       error_tok(tag, "not a struct tag");
     return sc->ty;
   }
 
-  expect("{");
+  // Although it looks wired, "struct *foo" is legal C that defines
+  // foo as a pointer to an unnamed incomplete struct type.
+  if (!consume("{"))
+    return struct_type();
+
+  Type *ty;
+
+  TagScope *sc = NULL;
+  if (tag)
+    sc = find_tag(tag);
+
+  if (sc && sc->depth == scope_depth) {
+    // If there's an existing struct type having the same tag name in
+    // th same block scope, this is a redefinition.
+    if (sc->ty->kind != TY_STRUCT)
+      error_tok(tag, "not a struct tag");
+    ty = sc->ty;
+  } else {
+    // Register a struct type as an inconplete type early, so that you
+    // can write recursive struct such as
+    // "struct T { struct T *next; }".
+    ty = struct_type();
+    if (tag)
+      push_tag_scope(tag,ty);
+  }
 
   // Read struct members.
   Member head = {};
@@ -935,8 +962,6 @@ static Type *struct_decl() {
     cur = cur->next;
   }
 
-  Type *ty = calloc(1, sizeof(Type));
-  ty->kind = TY_STRUCT;
   ty->members = head.next;
 
   // Assign offsets within the struc to members.
@@ -944,17 +969,17 @@ static Type *struct_decl() {
   for (Member *mem = ty->members; mem; mem = mem->next) {
     if (mem->ty->is_incomplete)
       error_tok(mem->tok, "incomplete struct member");
+
     offset =  align_to(offset, mem->ty->align);
     mem->offset = offset;
     offset += mem->ty->size;
+
     if (ty->align < mem->ty->align)
       ty->align = mem->ty->align;
   }
   ty->size = align_to(offset, ty->align);
   
-  // Register the struct type if a name was given.
-  if (tag)
-    push_tag_scope(tag, ty);
+  ty->is_incomplete = false;
   return ty;
 }
 
