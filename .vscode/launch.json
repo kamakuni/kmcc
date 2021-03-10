@@ -13,7 +13,7 @@
             //"args": ["int main(){int a;a=30; return a;}"],
             //"args": ["int main() { return \"abc\"[0]; }"],
             //"args": ["int main() { return \"\\a\"[0]; }"],
-            "args": ["/home/vagrant/development/kmcc/src/tests"],
+            "args": ["/home/vagrant/development/kmcc/test.c"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

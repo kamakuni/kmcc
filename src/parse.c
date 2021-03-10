@@ -570,7 +570,7 @@ static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
     return cur;
   }
 
-  if (ty->kind = TY_STRUCT) {
+  if (ty->kind == TY_STRUCT) {
     expect("{");
     Member *mem = ty->members;
 
