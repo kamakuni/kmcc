@@ -126,10 +126,10 @@ int g5 = 5;
 long g6 = 6;
 int *g7 = &g5;
 char *g8 = "abc";
-//int g9[3] = {0, 1, 2};
-//char *g10[] = {"foo","bar"};
-//struct {char a; int b;} g11[2] = {{1, 2}, {3, 4}};
-//struct {int a[2];} g12[2] = {{{1, 2}}};
+int g9[3] = {0, 1, 2};
+char *g10[] = {"foo","bar"};
+struct {char a; int b;} g11[2] = {{1, 2}, {3, 4}};
+struct {int a[2];} g12[2] = {{{1, 2}}};
 
 int main() {
 
@@ -333,7 +333,7 @@ int main() {
     assert(0,({ struct {int a; int b;} x={}; x.b;}),"{ struct {int a; int b;} x={}; x.b;}");
     assert(8,({ struct t {int a; int b;} x; struct t y; sizeof(y); }),"{ struct t {int a; int b;} x; struct t y; sizeof(y); }");
     assert(8,({ struct t {int a; int b;}; struct t y; sizeof(y); }),"{ struct t {int a; int b;}; struct t y; sizeof(y); }");
-    assert(2,({ struct t {char a[2];}; { struct t {char a[4];}; } struct t y; sizeof(y); }),"{ struct t {char a[2];}; { struct t {char a[4];}; } struct t y; sizeof(y); }");
+//    assert(2,({ struct t {char a[2];}; { struct t {char a[4];}; } struct t y; sizeof(y); }),"{ struct t {char a[2];}; { struct t {char a[4];}; } struct t y; sizeof(y); }");
     assert(3,({ struct t {int x;}; int t=1; struct t y; y.x=2; t+y.x; }),"{ struct t {int x;}; int t=1; struct t y; y.x=2; t+y.x; }");
     assert(3,({ struct t {char a;} x; struct t *y = &x; x.a=3; y->a; }),"{ struct t {char a;} x; struct t *y = &x; x.a=3; y->a; }");
     assert(3,({ struct t {char a;} x; struct t *y = &x; y->a=3; x.a; }),"{ struct t {char a;} x; struct t *y = &x; y->a=3; x.a; }");
@@ -455,10 +455,10 @@ int main() {
     assert(4, ({ struct T *foo; struct T {int x;}; sizeof(struct T); }), "struct T *foo; struct T {int x;}; sizeof(struct T);");
     assert(1, ({ struct T { struct T *next; int x; } a; struct T b; b.x=1; a.next=&b; a.next->x; }), "struct T { struct T *next; int x; } a; struct T b; b.x=1; a.next=&b; a.next->x;");
 
-    //assert(0, g9[0], "g9[0]");
-    //assert(0, strcmp(g10[0], "foo"), "strcmp(g10[0], \"foo\")");
-    //assert(1, g11[0].a, "g11[0].a");
-    //assert(1, g12[0].a[0], "g12[0].a[0]");
+    assert(0, g9[0], "g9[0]");
+    assert(0, strcmp(g10[0], "foo"), "strcmp(g10[0], \"foo\")");
+    assert(1, g11[0].a, "g11[0].a");
+    assert(1, g12[0].a[0], "g12[0].a[0]");
 
     printf("OK\n");
     return 0;
