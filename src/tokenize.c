@@ -326,7 +326,14 @@ Token *tokenize(char *p) {
       p += cur->len;
       continue;
     }
-          
+    
+    // Character literal
+    if (*p == '\'') {
+      cur = read_char_literal(cur, p);
+      p += cur->len;
+      continue;
+    }
+
     // Keywords or Multi-letter punctuators
     char *kw = starts_with_reserved(p);
     if (kw) {
