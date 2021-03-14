@@ -196,6 +196,7 @@ static Type *type_name(void);
 static Type *type_suffix(Type *ty);
 static bool is_typename();
 static bool peek_end(void);
+static bool consume_end(void);
 static void expect_end(void);
 static Node *logand(void);
 
@@ -565,6 +566,24 @@ static void skip_excess_elements(void) {
 static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   Token *tok = token;
 
+  if (ty->kind == TY_ARRAY && ty->base->kind == TY_CHAR &&
+      token->kind == TK_STR) {
+    token = token->next;
+
+    if (ty->is_incomplete) {
+      ty->size = tok->cont_len;
+      ty->array_len = tok->cont_len;
+      ty->is_incomplete = false;
+    }
+
+    int len = (ty->array_len < tok->cont_len)
+      ? ty->array_len : tok->cont_len;
+
+    for (int i = 0; i < len; i++)
+      cur = new_init_val(cur, 1, tok->contents[i]);
+    return new_init_zero(cur, ty->array_len - len);
+  }
+
   if (ty->kind == TY_ARRAY) {
     bool open = consume("{");
     int i = 0;
@@ -577,8 +596,8 @@ static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
       } while (i < limit && !peek_end() && consume(","));
     }
 
-    if(open)
-      expect_end();
+    if(open && !consume_end())
+      skip_excess_elements();
 
     // Set excess array elements to zero.
     cur = new_init_zero(cur, ty->base->size * (ty->array_len - i));
@@ -603,8 +622,8 @@ static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
       } while(mem && !peek_end() && consume(","));
     }
 
-    if (open)
-      expect_end();
+    if (open && !consume_end())
+      skip_excess_elements();
 
     // Set excess struct elements to zero.
     if (mem)
@@ -844,8 +863,8 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
       } while (i < limit && !peek_end() && consume(","));
     }
     
-    if (open)
-      expect_end();
+    if (open && !consume_end())
+      skip_excess_elements();
     
     // Set excess array elements to zero.
     while (i < ty->array_len) {
@@ -872,8 +891,8 @@ static Node *lvar_initializer2(Node *cur, Var *var, Type *ty, Designator *desg) 
       } while(mem && !peek_end() && consume(","));
     }
 
-    if (open)
-      expect_end();
+    if (open && !consume_end())
+      skip_excess_elements();
 
     // Set excess struct elements to zero.
     for (; mem; mem = mem->next) {
