@@ -6,9 +6,6 @@
  * This is a block comment.
  */
 
-char c = 'c';
-char g16[][4] = {'f', 'o', 'o', 0, 'b', 'a', 'r', 0};
-
 int strcmp(char *p, char *q);
 
 int assert(int expected, int actual, char *code) {
@@ -136,6 +133,7 @@ struct {int a[2];} g12[2] = {{{1, 2}}};
 struct {int a[2];} g13[2] = {{1, 2}, 3, 4};
 struct {int a[2];} g14[2] = {1, 2, 3, 4};
 char *g15 = {"foo"};
+char g16[][4] = {'f', 'o', 'o', 0, 'b', 'a', 'r', 0};
 
 int main() {
 
@@ -486,8 +484,8 @@ int main() {
     assert(2, ({ struct {int a; int b;} x[2]={0,1,2,3}; x[1].a; }), "struct {int a; int b;} x[2]={0,1,2,3}; x[1].a;");
 
     assert(0, strcmp(g15, "foo"), "strcmp(g15, \"foo\")");
-//    assert(0, strcmp(g16[0], "foo"), "strcmp(g16[0], \"foo\")");
-//    assert(0, strcmp(g16[1], "bar"), "strcmp(g16[1], \"bar\")");
+    assert(0, strcmp(g16[0], "foo"), "strcmp(g16[0], \"foo\")");
+    assert(0, strcmp(g16[1], "bar"), "strcmp(g16[1], \"bar\")");
 
     printf("OK\n");
     return 0;

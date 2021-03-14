@@ -541,6 +541,25 @@ static Initializer *emit_struct_padding(Initializer *cur, Type *parent, Member *
   return new_init_zero(cur, end - start);
 }
 
+static void skip_excess_elements2(void) {
+  for (;;) {
+    if (consume("{"))
+      skip_excess_elements2();
+    else
+      assign();
+    
+    if (consume_end())
+      return;
+    expect(",");
+  }
+}
+
+static void skip_excess_elements(void) {
+  expect(",");
+  warn_tok(token, "excess elements in initializer");
+  skip_excess_elements2();
+}
+
 // gvar-initializer2 = assign
 //                   | "{" (gvar_initializer2 ("," gvar_initializer2)* ","?)? "}"
 static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
