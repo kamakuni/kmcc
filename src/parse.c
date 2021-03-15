@@ -515,9 +515,10 @@ static Initializer *new_init_val(Initializer *cur, int sz, int val) {
   return init;
 }
 
-static Initializer *new_init_label(Initializer *cur, char *label) {
+static Initializer *new_init_label(Initializer *cur, char *label, long addend) {
   Initializer *init = calloc(1, sizeof(Initializer));
   init->label = label;
+  init->addend = addend;
   cur->next= init;
   return init;
 }
