@@ -499,7 +499,7 @@ int main() {
     assert(10, sizeof(g18), "sizeof(g18)");
     assert(3, sizeof(g19), "sizeof(g19)");
 
-//    assert(0, memcmp(g17, "foobar", 7), "memcmp(g17, \"foobar\", 7)");
+    assert(0, memcmp(g17, "foobar", 7), "memcmp(g17, \"foobar\", 7)");
 //    assert(0, memcmp(g18, "foobar\0\0\0", 10), "memcmp(g18, \"foobar\\0\\0\\0\", 10)");
 //    assert(0, memcmp(g19, "foo", 3), "memcmp(g19, \"foo\", 3)");
 

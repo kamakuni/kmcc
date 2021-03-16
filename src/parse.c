@@ -637,16 +637,16 @@ static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   if (open)
     expect_end();
 
-  if (expr->kind == ND_ADDR) {
-    if (expr->lhs->kind != ND_VAR)
-      error_tok(tok, "invalid initializer");
-    return new_init_label(cur, expr->lhs->var->name);
+  Var *var = NULL;
+  long addend = eval2(expr, &var);
+
+  if (var) {
+    int scale = (var->ty->kind == TY_ARRAY)
+      ? var->ty->base->size : var->ty->size;
+      return new_init_label(cur, var->name, addend * scale);
   }
 
-  if (expr->kind == ND_VAR && expr->var->ty->kind == TY_ARRAY)
-    return new_init_label(cur ,expr->var->name);
-
-  return new_init_val(cur, ty->size, eval(expr));
+  return new_init_val(cur, ty->size, addend);
 }
 
 static Initializer *gvar_initializer(Type *ty) {
