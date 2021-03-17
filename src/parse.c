@@ -1579,13 +1579,28 @@ static Node *primary() {
   return new_num(expect_number(), tok);
 }
 
-// Evaluate a given node as a content expression.
 static long eval(Node *node) {
+  return eval2(node, NULL);
+}
+
+// Evaluate a given node as a content expression.
+//
+// A constant expression is either just a number or ptr-n where ptr
+// is a pointer to a global variable and n is a positive/negative
+// number. The latter form is accepted only as an initialization
+// expression for a global variable.
+static long eval2(Node *node, Var **var) {
   switch (node->kind){
   case ND_ADD:
     return eval(node->lhs) + eval(node->rhs);
+  case ND_PTR_ADD:
+    return eval2(node->lhs, var) + eval(node->rhs);
   case ND_SUB:
     return eval(node->lhs) - eval(node->rhs);
+  case ND_PTR_SUB:
+    return eval2(node->lhs, var) - eval(node->rhs);
+  case ND_PTR_DIFF:
+    return eval2(node->lhs, var) - eval2(node->rhs, var);
   case ND_MUL:
     return eval(node->lhs) * eval(node->rhs);
   case ND_DIV:
