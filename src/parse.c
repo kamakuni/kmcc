@@ -1635,6 +1635,16 @@ static long eval2(Node *node, Var **var) {
     return eval(node->lhs) || eval(node->rhs);
   case ND_NUM:
     return node->val;
+  case ND_ADDR:
+    if (!var || *var || node->lhs->kind != ND_VAR)
+      error_tok(node->tok, "invalid initializer");
+    *var = node->lhs->var;
+    return 0;
+  case ND_VAR:
+    if (!var || *var || node->var->ty->kind != TY_ARRAY)
+      error_tok(node->tok, "invalid initializer");
+    *var = node->var;
+    return 0;
   }
 
   error_tok(node->tok, "not a constant expression");
