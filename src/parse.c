@@ -565,6 +565,11 @@ static void skip_excess_elements(void) {
 
 // gvar-initializer2 = assign
 //                   | "{" (gvar_initializer2 ("," gvar_initializer2)* ","?)? "}"
+//
+// A gver-initializer represents an initialization expression for
+// a global variable. Since global variables are just mapped from
+// a file to memory before the control is passed to main(), their
+// contents have to be fixed at like-time.
 static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   Token *tok = token;
 
