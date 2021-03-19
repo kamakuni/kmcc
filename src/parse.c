@@ -171,6 +171,7 @@ static Node *stmt();
 static Node *stmt2();
 static Node *expr();
 static long eval(Node *node);
+static long eval2(Node *node, Var **var);
 static long const_expr();
 static Node *new_add(Node *lhs, Node *rhs, Token *tok);
 static Node *add();
