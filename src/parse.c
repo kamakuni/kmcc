@@ -569,7 +569,25 @@ static void skip_excess_elements(void) {
 // A gver-initializer represents an initialization expression for
 // a global variable. Since global variables are just mapped from
 // a file to memory before the control is passed to main(), their
-// contents have to be fixed at like-time.
+// contents have to be fixed at like-time. Therefore, you cannot
+// write an expression that needs to be initialized at run-time.
+// For example, the following global variable definition is illegal:
+// 
+//   int foo = bar(void);
+// 
+// If the above definition were legal, someone would have to call
+// bar() before main(), but such initialization mechanism doesn't
+// exist in the C execution model.
+//
+// Only the following expressions are allowed in a intializer:
+//
+//   1. A constant such as a number or a string literal
+//   2. An address of another global variable with an optional addend
+//
+// It is obvious that we can embed (1) to an object file as static data.
+// (2) may not be obvious why that can result in static data, but
+// the linker supports an expression consisting of a label address
+// plus/minus an addend, so (2) is allowed.
 static Initializer *gvar_initializer2(Initializer *cur, Type *ty) {
   Token *tok = token;
 
