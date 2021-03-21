@@ -123,6 +123,8 @@ static int static_fn() {
     return 3;
 } 
 
+void voidfn(void) {}
+
 int g1[4];
 int g2;
 char g3 = 3;
