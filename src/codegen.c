@@ -415,6 +415,7 @@ static void emit_data(Program *prog) {
     if (var->initializer)
       continue;
 
+    printf(".align %d\n", var->ty->align);
     printf("%s:\n", var->name);
     printf("  .zero %d\n", var->ty->size);
   }
@@ -426,6 +427,7 @@ static void emit_data(Program *prog) {
     if (!var->initializer)
       continue;
 
+    printf(".align %d\n", var->ty->align);
     printf("%s:\n", var->name);
 
     for (Initializer *init = var->initializer ; init; init = init->next) {
