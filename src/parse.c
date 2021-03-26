@@ -324,14 +324,17 @@ static Type *basetype(StorageClass *sclass) {
 static bool is_function() {
   // To keep current token
   Token *tok = token;
+  bool isfunc = false;
   StorageClass sclass;
   Type *ty = basetype(&sclass);
-  char *name = NULL;
-  declarator(ty, &name);
-  bool is_func = name && consume("(");
 
+  if (!consume(";")){
+    char *name = NULL;
+    declarator(ty, &name);
+    isfunc = name && consume("(");
+  }
   token = tok; // args of ) token
-  return is_func;
+  return isfunc;
 }
 
 // program = (grobal var | function)*
