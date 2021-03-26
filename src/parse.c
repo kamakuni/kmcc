@@ -695,6 +695,9 @@ static void global_var() {
   Token *tok = token;
   StorageClass sclass;
   Type *ty = basetype(&sclass);
+  if (consume(";"))
+    return;
+  
   char *name = NULL;
   ty = declarator(ty, &name);
   ty = type_suffix(ty);
