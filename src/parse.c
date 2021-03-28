@@ -1212,6 +1212,7 @@ static Node *stmt() {
 //       | "{" stmt* "}"
 //       | declaration
 //       | expr ";"
+//       | ";"
 static Node *stmt2() {
   Token *tok;
   if (tok = consume("return")) {
@@ -1282,6 +1283,9 @@ static Node *stmt2() {
     node->body = head.next;
     return node;
   }
+
+  if (tok = consume(";"))
+    return new_node(ND_NULL, tok);
 
   if (is_typename())
     return declaration();
