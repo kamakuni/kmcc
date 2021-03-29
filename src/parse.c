@@ -1538,6 +1538,7 @@ static Node *func_args() {
 // primary =  "(" expr ")"
 //         | "sizeof" "(" type-name ")"
 //         | "sizeof" unary
+//         | "_Alignof" "(" type-name ")"
 //         | ident func-args?
 //         | str
 //         | num
@@ -1568,13 +1569,15 @@ static Node *primary() {
     if (node->ty->is_incomplete)
       error_tok(node->tok, "incomplete type");
     return new_num(node->ty->size,tok);
-    //if(node->ty->kind == TY_INT) {
-    //  return new_num(4,tok);
-    //} else if (node->ty->kind == TY_PTR) {
-    //  return new_num(8,tok);
-    //}
   }
-  
+
+  if (tok = consume("_Alignof")) {
+    expect("(");
+    Type *ty = type_name();
+    expect(")");
+    return new_num(ty->align, tok);
+  }
+
   if (tok = consume_ident()) {
     
     if (consume("(")) {
