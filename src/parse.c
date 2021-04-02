@@ -991,7 +991,7 @@ static Node *declaration(){
     push_scope(name)->var = var;
 
     if (consume("="))
-      var->initializer = gvar_initialize(ty);
+      var->initializer = gvar_initializer(ty);
     else if (ty->is_incomplete)
       error_tok(tok, "incomplete type");
     consume(";");
