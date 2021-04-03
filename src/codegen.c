@@ -12,6 +12,9 @@ char *argreg8[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 static void gen_addr(Node *node) {
   switch(node->kind) {
   case ND_VAR: {
+    if (node->init)
+      gen(node->init);
+
     Var *var = node->var;
     if (var->is_local) {
       printf("  lea rax, [rbp-%d]\n", node->var->offset);
@@ -218,6 +221,12 @@ static void gen(Node *node) {
       printf("  add rsp, 8\n");
       return;
     case ND_VAR:
+      if (node->init)
+        gen(node->init);
+      gen_addr(node);
+      if (node->ty->kind != TY_ARRAY)
+        load(node->ty);
+      return;
     case ND_MEMBER:
       gen_addr(node);
       if (node->ty->kind != TY_ARRAY)
