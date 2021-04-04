@@ -577,6 +577,14 @@ int main() {
     assert(6, counter(), "counter()");
 
     assert(1, (int){1}, "(int){1}");
+    assert(2, ((int[]){0,1,2})[2], "((int[]){0,1,2})[2]");
+    assert('a', ((struct {char a; char b;}){'a', 3}).a, "((struct {char a; char b;}){'a', 3}).a");
+    assert(3, ({ int x=3; (int){x}; }), "int x=3; (int){x};");
+    
+    assert(1, tree->val, "tree->val");
+    assert(2, tree->lhs->val, "tree->lhs->val");
+    assert(3, tree->lhs->lhs->val, "tree->lhs->lhs->val");
+    assert(4, tree->lhs->rhs->val, "tree->lhs->rhs->val");
 
     printf("OK\n");
     return 0;
