@@ -124,8 +124,9 @@ static Var *new_lvar(char *name, Type *ty){
   return var;
 }
 
-static Var *new_gvar(char *name, Type *ty, bool emit) {
+static Var *new_gvar(char *name, Type *ty, bool is_static, bool emit) {
   Var *var = new_var(name, ty, false);
+  var->is_static = is_static;
   push_scope(name)->var = var;
 
   if (emit) {
@@ -489,7 +490,7 @@ static Function *function() {
   ty = declarator(ty, &name);
   
   // Add a function type to scope
-  new_gvar(name, func_type(ty), false);
+  new_gvar(name, func_type(ty), false, false);
 
   // Construct a function object
   Function *fn = calloc(1,sizeof(Function));
@@ -708,7 +709,7 @@ static void global_var() {
   if (sclass == TYPEDEF)
     push_scope(name)->type_def = ty;
   else
-    var = new_gvar(name, ty, sclass != EXTERN);
+    var = new_gvar(name, ty, sclass == STATIC, sclass != EXTERN);
 
   if (sclass == EXTERN) {
     expect(";");
@@ -988,7 +989,7 @@ static Node *declaration(){
 
   if (sclass == STATIC) {
     // static local variable
-    Var *var = new_gvar(new_label(), ty, true);
+    Var *var = new_gvar(new_label(), ty, true, true);
     push_scope(name)->var = var;
 
     if (consume("="))
@@ -1504,7 +1505,7 @@ static Node *compound_literal(void) {
   }
 
   if (scope_depth == 0) {
-    Var *var = new_gvar(new_label(), ty, true);
+    Var *var = new_gvar(new_label(), ty, true, true);
     var->initializer = gvar_initializer(ty);
     return new_var_node(var, tok);
   }
@@ -1671,7 +1672,7 @@ static Node *primary() {
     token = token->next;
 
     Type *ty = array_of(char_type, tok->cont_len);
-    Var *var = new_gvar(new_label(), ty, true);
+    Var *var = new_gvar(new_label(), ty, true, true);
     var->initializer = gvar_init_string(tok->contents, tok->cont_len);
     return new_var_node(var, tok);
   }
