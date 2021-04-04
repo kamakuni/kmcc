@@ -1219,7 +1219,7 @@ static Node *stmt() {
   return node;
 }
 
-// stmt2 = "return" expr ";"
+// stmt2 = "return" expr? ";"
 //       | "if" "(" expr ")" stmt ("else" stmt)?
 //       | "while" "(" expr ")" stmt
 //       | "for" "(" (expr? ";" | declaration) expr? ";" expr? ")" stmt 
@@ -1230,6 +1230,9 @@ static Node *stmt() {
 static Node *stmt2() {
   Token *tok;
   if (tok = consume("return")) {
+    if (consume(";"))
+      return new_node(ND_RETURN, tok);
+      
     Node *node = new_unary(ND_RETURN, expr(), tok);
     expect(";");
     return node;

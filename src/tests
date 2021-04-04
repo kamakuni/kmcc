@@ -117,7 +117,11 @@ short sub_short(short a, short b, short c) {
 
 long sub_long(long a, long b, long c) {
     return a-b-c;
-} 
+}
+
+void ret_node() {
+    return;
+}
 
 static int static_fn() {
     return 3;
@@ -585,6 +589,8 @@ int main() {
     assert(2, tree->lhs->val, "tree->lhs->val");
     assert(3, tree->lhs->lhs->val, "tree->lhs->lhs->val");
     assert(4, tree->lhs->rhs->val, "tree->lhs->rhs->val");
+
+    ret_node();
 
     printf("OK\n");
     return 0;
