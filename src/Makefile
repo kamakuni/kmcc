@@ -7,16 +7,23 @@ kmcc: $(OBJS)
 
 $(OBJS): kmcc.h
 
-test: kmcc
+kmcc-gen2: kmcc $(SRCS) kmcc.h
+	./self.sh
+
+extern.o: tests-extern
+	gcc -xc -c -o extern.o tests-extern
+
+test: kmcc extern.o
 		./kmcc tests > tmp.s
-		echo 'int ext1; int *ext2; int char_fn() { return 257; }' \
-          'int static_fn() { return 5; }' | \
-		  gcc -xc -c -o tmp2.o -
-		gcc -static -o tmp tmp.s tmp2.o
+		gcc -static -o tmp tmp.s extern.o
 		./tmp
 
-clean:
-		rm -f kmcc *.o *~ tmp*
+test-gen2: kmcc-gen2 extern.o
+	./kmcc-gen2 tests > tmp.s
+	gcc -static -o tmp tmp.s extern.o
+	./tmp
 
-debug: $(OBJS)
-			$(CC) -g3 -O0 -o kmcc $(OBJS)
+clean:
+		rm -rf kmcc kmcc-gen* *.o *~ tmp*
+
+.PHONY: test clean
