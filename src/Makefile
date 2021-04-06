@@ -1,9 +1,9 @@
-CFLAGS=-std=c11 -g -o0
+CFLAGS=-std=c11 -g -static -fno-common
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
 kmcc: $(OBJS)
-			$(CC) -no-pie -o kmcc $(OBJS) $(LDFLAGS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 
 $(OBJS): kmcc.h
 
