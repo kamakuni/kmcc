@@ -183,13 +183,6 @@ static char get_escape_char(char c) {
   }
 }
 
-char *strndup(char *p,int len) {
-    char *buf = malloc(len + 1);
-    strncpy(buf, p , len);
-    buf[len] = '\0';
-    return buf;
-}
-
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     Token *t = calloc(1, sizeof(Token));
     t->kind = kind;

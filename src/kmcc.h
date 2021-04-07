@@ -224,7 +224,7 @@ Token *tokenize(char *p);
 bool is_alnum(char c);
 bool is_alpha(char c);
 
-char *strndup(char *p,int len);
+//char *strndup(char *p,int len);
 void error(char *fmt, ...);
 void error_tok(Token *tok, char *fmt, ...);
 void warn_tok(Token *tok, char *fmt, ...);
