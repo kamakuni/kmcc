@@ -1,7 +1,7 @@
 #include "kmcc.h"
 
-char *filename;
-char *user_input;
+//char *filename;
+//char *user_input;
 
 // Report an error and exit.
 void error(char *fmt, ...) {
