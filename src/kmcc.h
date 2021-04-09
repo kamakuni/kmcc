@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
@@ -112,7 +113,7 @@ struct Initializer {
 
   // Reference to another global variable
   char *label;
-  long *addend;
+  long addend;
 };
 
 typedef enum {
@@ -175,7 +176,7 @@ struct Function {
   VarList *params;
   bool is_static;
   Node *node;
-  Var *locals;
+  VarList *locals;
   int stack_size;
 };
 
