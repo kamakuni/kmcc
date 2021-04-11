@@ -294,8 +294,4 @@ void codegen(Program *prog);
 
 extern char *filename;
 extern char *user_input;
-extern int pos;
 extern Token *token;
-extern Tokens *tokens;
-extern Node *code[];
-extern Var *variables;
