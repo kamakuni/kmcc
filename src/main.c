@@ -1,10 +1,5 @@
 #include "kmcc.h"
 
-Tokens *tokens;
-Token *token;
-char *filename;
-char *user_input;
-
 // Return the contents of a given file.
 static char *read_file(char *path) {
   // Open and read file.
