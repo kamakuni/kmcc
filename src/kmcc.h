@@ -281,16 +281,7 @@ Type *enum_type();
 Type *struct_type(void);
 void add_type(Node *node);
 
-//Node *function();
-//Node *stmt();
-//Node *add();
-//Node *equality();
-//Node *relational();
-//Node *primary();
-//Node *mul();
-//Node *unary();
 void codegen(Program *prog);
-//void gen();
 
 extern char *filename;
 extern char *user_input;
