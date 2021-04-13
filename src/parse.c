@@ -694,22 +694,24 @@ static Initializer *gvar_initializer(Type *ty) {
 
 // global-var = basetype declarator type-suffix ("=" gvar-initializer)? ";"
 static void global_var() {
-  Token *tok = token;
   StorageClass sclass;
   Type *ty = basetype(&sclass);
   if (consume(";"))
     return;
   
   char *name = NULL;
+  Token *tok = token;
   ty = declarator(ty, &name);
   ty = type_suffix(ty);
   //expect(";");
 
-  Var *var;
-  if (sclass == TYPEDEF)
+  if (sclass == TYPEDEF) {
+    expect(";");
     push_scope(name)->type_def = ty;
-  else
-    var = new_gvar(name, ty, sclass == STATIC, sclass != EXTERN);
+    return;
+  }
+  
+  Var *var = new_gvar(name, ty, sclass == STATIC, sclass != EXTERN);
 
   if (sclass == EXTERN) {
     expect(";");

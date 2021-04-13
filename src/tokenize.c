@@ -286,7 +286,8 @@ static Token *read_int_literal(Token *cur, char *start) {
   return tok;
 }
 
-Token *tokenize(char *p) {
+Token *tokenize(void) {
+  char *p = user_input;
   Token head = {};
   Token *cur = &head;
     

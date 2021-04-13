@@ -220,7 +220,7 @@ void expect(char *s);
 long expect_number();
 char *expect_ident();
 bool at_eof();
-Token *tokenize(char *p);
+Token *tokenize(void);
 
 bool is_alnum(char c);
 bool is_alpha(char c);
