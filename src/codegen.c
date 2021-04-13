@@ -314,6 +314,13 @@ static void gen(Node *node) {
       if (node->ty->kind != TY_ARRAY)
         load(node->ty);
       return;
+    case ND_NOT:
+      gen(node->lhs);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  sete al\n");
+      printf("  movzb rax, al\n");
+      printf("  push rax\n");
     case ND_IF:{
       int seq = label_count++;
       if(node->els) {

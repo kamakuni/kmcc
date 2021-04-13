@@ -18,7 +18,7 @@ FILE *fopen(char *pathname, char *mode);
 long fread(void *ptr, long size, long nmemb, FILE *stream);
 int feof(FILE *stream);
 static void assert() {}
-int strcmp(char *s1, *s2);
+int strcmp(char *s1, char *s2);
 EOF
 
     grep -v '^#' kmcc.h >> $TMP/$1

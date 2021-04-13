@@ -163,6 +163,7 @@ typedef enum {
     ND_TERNARY,
     ND_ADDR,
     ND_DEREF,
+    ND_NOT, // !
     ND_VAR,
     ND_PTR_DIFF,
     ND_PTR_ADD,
