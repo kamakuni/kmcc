@@ -595,6 +595,10 @@ int main() {
 
     assert(3, ext3, "ext3");
 
+    assert(0, !1, "!1");
+    assert(0, !2, "!2");
+    assert(1, !0, "!0");
+
     printf("OK\n");
     return 0;
 }

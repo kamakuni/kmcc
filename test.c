@@ -8,4 +8,7 @@
 //}
 //int main() { struct t {char a[2];}; { struct t {char a[4];}; } struct t y; return sizeof(y); }
 //int main() {char g = 'c'; return g; };
-typedef struct FILE FILE;
+//typedef struct FILE FILE;
+int main() {
+    return !0;
+}

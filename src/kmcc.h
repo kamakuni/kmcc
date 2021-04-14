@@ -142,7 +142,7 @@ typedef enum {
     ND_SUB,
     ND_MUL,
     ND_DIV,
-    ND_NOT,
+    ND_NOT, // !
     ND_NUM, // Integer
     ND_CAST, // Type cast
     ND_NULL, // Empty statement
@@ -163,7 +163,6 @@ typedef enum {
     ND_TERNARY,
     ND_ADDR,
     ND_DEREF,
-    ND_NOT, // !
     ND_VAR,
     ND_PTR_DIFF,
     ND_PTR_ADD,
