@@ -322,6 +322,29 @@ static void gen(Node *node) {
       printf("  movzb rax, al\n");
       printf("  push rax\n");
       return;
+    case ND_LOGAND:{
+      int seq = label_count++;
+      gen(node->lhs);
+      printf("  pop rax\n");
+      // if left hand operand is false
+      // then jump to false label.
+      printf("  cmp rax, 0\n");
+      printf("  je .L.false.%d\n",seq);
+      gen(node->rhs);
+      // if right hand operand is false
+      // then jump to false label.
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je .L.false.%d\n", seq);
+      // push true onto stack top
+      printf("  push 1\n");
+      printf("  jmp .L.end.%d\n", seq);
+      printf(".L.false.%d:\n", seq);
+      // push false onto stack top
+      printf("  push 0\n");
+      printf(".L.end.%d:\n", seq);
+      return;
+    }
     case ND_IF:{
       int seq = label_count++;
       if(node->els) {

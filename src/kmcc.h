@@ -158,8 +158,8 @@ typedef enum {
     ND_LE,
     ND_SHL_EQ, // <<=
     ND_SHR_EQ, // >>=
-    ND_LOGAND,
-    ND_LOGOR,
+    ND_LOGAND, // &&
+    ND_LOGOR, // ||
     ND_TERNARY,
     ND_ADDR,
     ND_DEREF,

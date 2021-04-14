@@ -599,6 +599,10 @@ int main() {
     assert(0, !2, "!2");
     assert(1, !0, "!0");
 
+    assert(0, 0&&1, "0&&1");
+    assert(0, (2-2)&&5, "(2-2)&&5");
+    assert(1, 1&&5, "1&&5");
+
     printf("OK\n");
     return 0;
 }
