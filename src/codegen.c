@@ -345,6 +345,29 @@ static void gen(Node *node) {
       printf(".L.end.%d:\n", seq);
       return;
     }
+    case ND_LOGOR:{
+      int seq = label_count++;
+      gen(node->lhs);
+      printf("  pop rax\n");
+      // if left hand operand is false
+      // then jump to true label.
+      printf("  cmp rax, 0\n");
+      printf("  jne .L.true.%d\n",seq);
+      gen(node->rhs);
+      // if right hand operand is false
+      // then jump to true label.
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  jne .L.true.%d\n", seq);
+      // push false onto stack top
+      printf("  push 0\n");
+      printf("  jmp .L.end.%d\n", seq);
+      printf(".L.true.%d:\n", seq);
+      // push true onto stack top
+      printf("  push 1\n");
+      printf(".L.end.%d:\n", seq);
+      return;
+    }
     case ND_IF:{
       int seq = label_count++;
       if(node->els) {
