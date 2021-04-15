@@ -97,6 +97,7 @@ void add_type(Node *node) {
   case ND_PTR_SUB_EQ:
   case ND_MUL_EQ:
   case ND_DIV_EQ:
+  case ND_BITNOT:
   case ND_SHL:
   case ND_SHR:
   case ND_SHL_EQ:
