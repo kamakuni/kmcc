@@ -122,7 +122,7 @@ typedef enum {
     ND_BITAND,
     ND_BITOR,
     ND_BITXOR,
-    ND_BITNOT,
+    ND_BITNOT, // ~
     ND_PRE_INC, // pre ++
     ND_PRE_DEC, // pre --
     ND_POST_INC, // post ++

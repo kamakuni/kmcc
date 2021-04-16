@@ -10,5 +10,5 @@
 //int main() {char g = 'c'; return g; };
 //typedef struct FILE FILE;
 int main() {
-    return !0;
+    return ~0;
 }
