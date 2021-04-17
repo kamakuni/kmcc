@@ -400,7 +400,7 @@ static void gen(Node *node) {
     case ND_WHILE: {
       int seq = labelseq++;
       int brk = brkseq;
-
+      brkseq = seq;
 
       printf(".L.begin.%d:\n", seq);
       gen(node->cond);
