@@ -1304,6 +1304,11 @@ static Node *stmt2() {
     return node;
   }
 
+  if(tok = consume("break")) {
+    expect(";");
+    return new_node(ND_BREAK, tok);
+  }
+
   if (tok = consume(";"))
     return new_node(ND_NULL, tok);
 

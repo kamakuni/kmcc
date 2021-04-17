@@ -1,6 +1,7 @@
 #include "kmcc.h"
 
-static int label_count = 1;
+static int labelseq = 1;
+static int brkseq;
 static char *funcname;
 static void gen(Node *node);
 
@@ -281,7 +282,7 @@ static void gen(Node *node) {
       store(node->ty);
       return;
     case ND_TERNARY: {
-      int seq = label_count++;
+      int seq = labelseq++;
       gen(node->cond);
       printf("  pop rax\n");
       printf("  cmp rax, 0\n");
@@ -323,7 +324,7 @@ static void gen(Node *node) {
       printf("  push rax\n");
       return;
     case ND_LOGAND:{
-      int seq = label_count++;
+      int seq = labelseq++;
       gen(node->lhs);
       printf("  pop rax\n");
       // if left hand operand is false
@@ -346,7 +347,7 @@ static void gen(Node *node) {
       return;
     }
     case ND_LOGOR:{
-      int seq = label_count++;
+      int seq = labelseq++;
       gen(node->lhs);
       printf("  pop rax\n");
       // if left hand operand is false
@@ -375,7 +376,7 @@ static void gen(Node *node) {
       printf("  push rax\n");
       return;
     case ND_IF:{
-      int seq = label_count++;
+      int seq = labelseq++;
       if(node->els) {
         gen(node->cond);
         printf("  pop rax\n");
@@ -397,19 +398,27 @@ static void gen(Node *node) {
       return;
     }
     case ND_WHILE: {
-      int seq = label_count++;
+      int seq = labelseq++;
+      int brk = brkseq;
+
+
       printf(".L.begin.%d:\n", seq);
       gen(node->cond);
       printf("  pop rax\n");
       printf("  cmp rax, 0\n");
-      printf("  je  .L.end.%d\n", seq);
+      printf("  je  .L.break.%d\n", seq);
       gen(node->then);
       printf("  jmp  .L.begin.%d\n", seq);
-      printf(".L.end.%d:\n", seq);
+      printf(".L.break.%d:\n", seq);
+
+      brkseq = brk;
       return;
     }
     case ND_FOR: {
-      int seq = label_count++;
+      int seq = labelseq++;
+      int brk = brkseq;
+      brkseq = seq;
+
       if(node->init)
         gen(node->init);
       printf(".L.begin.%d:\n", seq);
@@ -417,19 +426,26 @@ static void gen(Node *node) {
         gen(node->cond);
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je  .L.end.%d\n", seq);
+        printf("  je  .L.break.%d\n", seq);
       }
       gen(node->then);
       if(node->inc)
         gen(node->inc);
       printf("  jmp  .L.begin.%d\n", seq);
-      printf(".L.end.%d:\n", seq);
+      printf(".L.break.%d:\n", seq);
+
+      brkseq = brk;
       return;
     }
     case ND_BLOCK:
     case ND_STMT_EXPR:
       for (Node *n = node->body; n; n = n->next)
         gen(n);
+      return;
+    case ND_BREAK:
+      if (brkseq == 0)
+        error_tok(node->tok, "stray break");
+      printf("  jmp .L.break.%d\n", brkseq);
       return;
     case ND_FUNCALL: {
       int nargs = 0;
@@ -443,7 +459,7 @@ static void gen(Node *node) {
       // We need to align RSP to a 16 byte boundary before
       // calling a function because it is an ABI requirement.
       // RAX is set to 0 for variadic function
-      int seq = label_count++;
+      int seq = labelseq++;
       printf("  mov rax, rsp\n");
       printf("  and rax, 15\n");
       printf("  jnz .L.call.%d\n", seq);

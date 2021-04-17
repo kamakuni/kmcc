@@ -146,7 +146,8 @@ typedef enum {
     ND_NUM, // Integer
     ND_CAST, // Type cast
     ND_NULL, // Empty statement
-    ND_BLOCK,
+    ND_BLOCK, // { ... }
+    ND_BREAK, // "break"
     ND_FUNCALL,
     ND_IF,
     ND_WHILE,
