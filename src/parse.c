@@ -1228,6 +1228,7 @@ static Node *stmt() {
 //       | "for" "(" (expr? ";" | declaration) expr? ";" expr? ")" stmt 
 //       | "{" stmt* "}"
 //       | "break" ";"
+//       | "continue" ";"
 //       | declaration
 //       | expr ";"
 //       | ";"
@@ -1305,9 +1306,14 @@ static Node *stmt2() {
     return node;
   }
 
-  if(tok = consume("break")) {
+  if (tok = consume("break")) {
     expect(";");
     return new_node(ND_BREAK, tok);
+  }
+
+  if (tok = consume("continue")) {
+    expect(";");
+    return new_node(ND_CONTINUE, tok);
   }
 
   if (tok = consume(";"))

@@ -148,6 +148,7 @@ typedef enum {
     ND_NULL, // Empty statement
     ND_BLOCK, // { ... }
     ND_BREAK, // "break"
+    ND_CONTINUE, // "continue"
     ND_FUNCALL,
     ND_IF,
     ND_WHILE,
