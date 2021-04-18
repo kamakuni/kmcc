@@ -95,6 +95,9 @@ struct Node {
   // Function call
   char *funcname;
   Node *args; // for ND_CALL
+  // Goto or labeled statement
+  char *label_name;
+  
   Type *ty;
   Token *tok;
   long val; // Integer literal
@@ -149,6 +152,8 @@ typedef enum {
     ND_BLOCK, // { ... }
     ND_BREAK, // "break"
     ND_CONTINUE, // "continue"
+    ND_GOTO, // "goto"
+    ND_LABEL, // "Labeled statement"
     ND_FUNCALL,
     ND_IF,
     ND_WHILE,
