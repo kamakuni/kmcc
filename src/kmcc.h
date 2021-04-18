@@ -100,8 +100,16 @@ struct Node {
   
   Type *ty;
   Token *tok;
-  long val; // Integer literal
+  // Switch-cases
+  Node *case_next;
+  Node *default_case;
+  int case_label;
+  int case_end_label;
+  
+  // Variable
   Var *var;
+  // Integer literal
+  long val;
 };
 
 // Global variable initializer. Global variables can be initialized
@@ -158,6 +166,8 @@ typedef enum {
     ND_IF,
     ND_WHILE,
     ND_FOR,
+    ND_SWITCH, // "swith"
+    ND_CASE, // "cases"
     ND_RETURN,
     ND_EQ,
     ND_NE,
