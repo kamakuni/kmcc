@@ -450,6 +450,7 @@ static void gen(Node *node) {
       node->case_label = seq;
 
       gen(node->cond);
+      printf("  pop rax\n");
 
       for (Node *n = node->case_next; n; n = n->case_next) {
         n->case_label = labelseq++;
