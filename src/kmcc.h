@@ -108,6 +108,7 @@ struct Node {
   
   // Variable
   Var *var;
+  
   // Integer literal
   long val;
 };
@@ -166,8 +167,8 @@ typedef enum {
     ND_IF,
     ND_WHILE,
     ND_FOR,
-    ND_SWITCH, // "swith"
-    ND_CASE, // "cases"
+    ND_SWITCH, // "switch"
+    ND_CASE, // "case"
     ND_RETURN,
     ND_EQ,
     ND_NE,

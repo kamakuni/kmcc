@@ -474,7 +474,7 @@ static void gen(Node *node) {
     }
     case ND_CASE:
       printf(".L.case.%d:\n", node->case_label);
-      gen(node->then);
+      gen(node->lhs);
       return;
     case ND_BLOCK:
     case ND_STMT_EXPR:

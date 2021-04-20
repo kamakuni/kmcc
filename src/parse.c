@@ -1231,7 +1231,6 @@ static Node *stmt() {
 //       | "switch" "(" expr ")" stmt
 //       | "case" num ":" stmt
 //       | "default" ":" stmt
-//       | "default" ":" stmt
 //       | "while" "(" expr ")" stmt
 //       | "for" "(" (expr? ";" | declaration) expr? ";" expr? ")" stmt 
 //       | "{" stmt* "}"
