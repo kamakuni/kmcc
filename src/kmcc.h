@@ -176,6 +176,9 @@ typedef enum {
     ND_LE,
     ND_SHL_EQ, // <<=
     ND_SHR_EQ, // >>=
+    ND_BITAND_EQ, // &=
+    ND_BITOR_EQ, // |=
+    ND_BITXOR_EQ, // ^=
     ND_LOGAND, // &&
     ND_LOGOR, // ||
     ND_TERNARY,

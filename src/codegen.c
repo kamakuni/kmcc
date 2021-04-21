@@ -154,12 +154,15 @@ static void gen_binary(Node *node) {
     printf("  mul rdi\n");
     break;
   case ND_BITAND:
+  case ND_BITAND_EQ:
     printf("  and rax, rdi\n");
     break;
   case ND_BITOR:
+  case ND_BITOR_EQ:
     printf("  or rax, rdi\n");
     break;
   case ND_BITXOR:
+  case ND_BITXOR_EQ:
     printf("  xor rax, rdi\n");
     break;
   case ND_SHL:
