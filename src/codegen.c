@@ -278,6 +278,9 @@ static void gen(Node *node) {
     case ND_PTR_SUB_EQ:
     case ND_MUL_EQ:
     case ND_DIV_EQ:
+    case ND_BITAND_EQ:
+    case ND_BITOR_EQ:
+    case ND_BITXOR_EQ:
       gen_lval(node->lhs);
       printf("  push [rsp]\n");
       load(node->lhs->ty);
