@@ -1344,6 +1344,17 @@ static Node *stmt2() {
     return node;
   }
 
+  if (tok = consume("do")) {
+    Node *node = new_node(ND_DO, tok);
+    node->then = stmt();
+    expect("while");
+    expect("(");
+    node->cond = expr();
+    expect(")");
+    expect(";");
+    return node;
+  }
+
   if (tok = consume("{")) {
     Node head = {};
     Node *cur = &head;
