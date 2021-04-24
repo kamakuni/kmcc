@@ -1242,6 +1242,7 @@ static Node *stmt() {
 //       | "default" ":" stmt
 //       | "while" "(" expr ")" stmt
 //       | "for" "(" (expr? ";" | declaration) expr? ";" expr? ")" stmt 
+//       | "do" stmt "while" "(" expr ")" ";"
 //       | "{" stmt* "}"
 //       | "break" ";"
 //       | "continue" ";"

@@ -40,5 +40,7 @@ done
 
 expand main.c
 expand type.c
+expand parse.c
+expand codegen.c
 
 gcc -static -o kmcc-gen2 $TMP/*.o
