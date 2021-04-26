@@ -82,13 +82,6 @@ static void store(Type *ty) {
   printf("  push rdi\n");
 }
 
-//void gen_block(Node *node){
-//    for (int i = 0; i < node->stmts->len; i++) {
-//        gen((Node *)vec_get(node->stmts, i));
-//        printf("  pop rax\n");
-//    }
-//}
-
 static void truncate(Type *ty) {
   printf("  pop rax\n");
 
