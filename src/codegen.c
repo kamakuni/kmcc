@@ -453,7 +453,7 @@ static void gen(Node *node) {
       printf(".L.continue.%d:\n",seq);
       gen(node->cond);
       printf("  pop rax\n");
-      printf("  cmd rax, 0\n");
+      printf("  cmp rax, 0\n");
       printf("  jne .L.begin.%d\n", seq);
       printf(".L.break.%d:\n", seq);
 
