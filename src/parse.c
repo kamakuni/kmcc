@@ -312,16 +312,7 @@ static Type *basetype(StorageClass *sclass) {
       error_tok(tok, "invalid type");
     }
   }
-  /*
-  } else if (consume("struct"))
-    ty = struct_decl();
-  else if (consume("enum"))
-    ty = enum_specifier();
-  else
-    ty = find_var(consume_ident())->type_def;
 
-  while (consume("*"))
-    ty = pointer_to(ty);*/
   return ty;
 }
 

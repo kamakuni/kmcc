@@ -108,7 +108,7 @@ static void inc(Type *ty) {
 
 static void dec(Type *ty) {
   printf("  pop rax\n");
-  printf("  sub  rax, %d\n", ty->base ? ty->base->size : 1);
+  printf("  sub rax, %d\n", ty->base ? ty->base->size : 1);
   printf("  push rax\n");
 }
 

@@ -10,10 +10,7 @@
 //int main() {char g = 'c'; return g; };
 //typedef struct FILE FILE;
 int main() {
-    int i=0;
-    int j=0;
-    do {
-        j++;
-    } while (i++ < 6);
-    return j;
+    int i=6;
+    i&=3;
+    i;
 }
