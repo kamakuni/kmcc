@@ -22,6 +22,7 @@ int strcmp(char *s1, char *s2);
 int printf(char *fmt, ...);
 int sprintf(char *buf, char *fmt, ...);
 long strlen(char *p);
+int strncmp(char *p, char *q);
 void *memcpy(char *dst, char *src, long n);
 char *strndup(char *p, long n);
 int isspace(int c);
@@ -50,6 +51,6 @@ done
 expand main.c
 expand type.c
 expand parse.c
-expand codegen.c
+#expand codegen.c
 
 gcc -static -o kmcc-gen2 $TMP/*.o
