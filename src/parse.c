@@ -1704,6 +1704,8 @@ static Node *primary() {
     if (consume("(")) {
       if (is_typename()) {
         Type *ty = type_name();
+        if (ty->is_incomplete)
+          error_tok(tok, "incomplete type");    
         expect(")");
         return new_num(ty->size, tok);
       }

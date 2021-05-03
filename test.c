@@ -9,8 +9,64 @@
 //int main() { struct t {char a[2];}; { struct t {char a[4];}; } struct t y; return sizeof(y); }
 //int main() {char g = 'c'; return g; };
 //typedef struct FILE FILE;
-int main() {
-    int i=6;
-    i&=3;
-    i;
-}
+
+// Values for token types
+typedef enum {
+    TK_RESERVED, // Keywords or punctuators
+    TK_NUM, // Integer literals
+    TK_IDENT, // Identifiers
+    TK_STR, // Strings
+    TK_EOF, // End-of-file markers
+    TK_SIZEOF, // sizeof
+} TokenKind;
+
+typedef struct Token Token;
+// Type for tokens
+struct Token {
+    TokenKind kind; // token kind
+    Token *next;
+    int len; // token length
+    long val; // value for Integer token
+    char *str; // token stirng for debugging
+    char *contents; // String literal contents including terminating '\0'
+    char cont_len; //  String literal length
+};
+
+typedef enum { 
+  TY_VOID,
+  TY_BOOL,
+  TY_CHAR,
+  TY_SHORT,
+  TY_INT,
+  TY_LONG,
+  TY_ENUM,
+  TY_PTR,
+  TY_ARRAY,
+  TY_STRUCT,
+  TY_FUNC,
+} TypeKind;
+
+typedef struct Type Type;
+typedef struct Member Member;
+
+struct Type {
+  TypeKind kind;
+  int size; // sizeof() value
+  int align; // alignment
+  _Bool is_incomplete; // incomplete type
+  Type *base; // pointer or array
+  int array_len; // array
+  Member *members; // struct
+  Type *return_ty; // function
+};
+
+// Struct Member
+struct Member {
+  Member *next;
+  Type *ty;
+  Token *tok; // for rror message
+  char *name;
+  int offset;
+};
+
+Type *void_type = &(Type){ TY_VOID, 1, 1 };
