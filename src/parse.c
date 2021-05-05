@@ -761,7 +761,7 @@ static Type *enum_specifier() {
   for (;;) {
     char *name = expect_ident();
     if (consume("="))
-      cnt = expect_number();
+      cnt = const_expr();
     
     VarScope *sc = push_scope(name);
     sc->enum_ty = ty;

@@ -9,7 +9,7 @@
 //int main() { struct t {char a[2];}; { struct t {char a[4];}; } struct t y; return sizeof(y); }
 //int main() {char g = 'c'; return g; };
 //typedef struct FILE FILE;
-
+/*
 // Values for token types
 typedef enum {
     TK_RESERVED, // Keywords or punctuators
@@ -70,3 +70,9 @@ struct Member {
 };
 
 Type *void_type = &(Type){ TY_VOID, 1, 1 };
+*/
+typedef enum {
+  TYPEDEF = 1 << 0,
+  STATIC = 1 << 1,
+  EXTERN = 1 << 2,
+} StorageClass;
