@@ -73,6 +73,22 @@ Type *void_type = &(Type){ TY_VOID, 1, 1 };
 */
 typedef enum {
   TYPEDEF = 1 << 0,
-  STATIC = 1 << 1,
-  EXTERN = 1 << 2,
 } StorageClass;
+
+int basetype(StorageClass *sclass) {
+  if (*sclass & (*sclass - 1))
+    return 1;
+  return 0;
+}
+
+int main() {
+  /*int type = ND_ADD;
+  switch(type) {
+    case ND_ADD:
+      return 0;
+    default:
+      return 1;
+  }*/
+  StorageClass sclass;
+  return basetype(&sclass);
+}

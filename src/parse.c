@@ -1280,7 +1280,7 @@ static Node *stmt2() {
   if (tok = consume("case")) {
     if (!current_switch)
       error_tok(tok, "stray case");
-    int val = expect_number();
+    int val = const_expr();
     expect(":");
 
     Node *node = new_unary(ND_CASE, stmt(), tok);
