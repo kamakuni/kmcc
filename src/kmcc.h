@@ -244,6 +244,10 @@ char *expect_ident();
 bool at_eof();
 Token *tokenize(void);
 
+extern char *filename;
+extern char *user_input;
+extern Token *token;
+
 bool is_alnum(char c);
 bool is_alpha(char c);
 
@@ -304,7 +308,3 @@ Type *struct_type(void);
 void add_type(Node *node);
 
 void codegen(Program *prog);
-
-extern char *filename;
-extern char *user_input;
-extern Token *token;

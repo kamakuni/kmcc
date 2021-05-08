@@ -75,11 +75,13 @@ void add_type(Node *node) {
   case ND_PTR_DIFF:
   case ND_MUL:
   case ND_DIV:
+  case ND_BITAND:
+  case ND_BITOR:
+  case ND_BITXOR:
   case ND_EQ:
   case ND_NE:
   case ND_LT:
   case ND_LE:
-  case ND_FUNCALL:
   case ND_NUM:
   case ND_NOT:
   case ND_LOGOR:
@@ -89,6 +91,8 @@ void add_type(Node *node) {
   case ND_PTR_ADD:
   case ND_PTR_SUB:
   case ND_ASSIGN:
+  case ND_SHL:
+  case ND_SHR:
   case ND_PRE_INC:
   case ND_PRE_DEC:
   case ND_POST_INC:
@@ -99,8 +103,6 @@ void add_type(Node *node) {
   case ND_PTR_SUB_EQ:
   case ND_MUL_EQ:
   case ND_DIV_EQ:
-  case ND_SHL:
-  case ND_SHR:
   case ND_SHL_EQ:
   case ND_SHR_EQ:
   case ND_BITAND_EQ:
