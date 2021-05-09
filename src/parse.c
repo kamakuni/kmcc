@@ -264,6 +264,7 @@ static Type *basetype(StorageClass *sclass) {
         ty = enum_specifier();
       } else {
         ty = find_typedef(token);
+        assert(ty);
         token = token->next;
       }
 
