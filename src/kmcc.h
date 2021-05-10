@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 typedef struct Type Type;
 typedef struct Member Member;
@@ -212,16 +213,9 @@ typedef struct {
 
 Program *program(void);
 
-void runtest();
-
-Node *new_node(NodeKind kind, Token *tok);
-Node *new_binary(NodeKind kind, Node *lhs, Node *rhs, Token *tok);
-Node *new_num(long val, Token *tok);
-Node *new_node_ident(Type *ty, char *name);
-Node *new_node_if(Node *ifCond, Node *ifBody, Node *els);
-
-bool is_alnum(char c);
-bool is_alpha(char c);
+//
+// typing.c
+//
 
 typedef enum { 
   TY_VOID,
@@ -271,7 +265,10 @@ Type *array_of(Type *base, int size);
 Type *struct_type(void);
 Type *func_type(Type *return_ty);
 Type *enum_type();
-Type *struct_type(void);
 void add_type(Node *node);
+
+//
+// codegen.c
+//
 
 void codegen(Program *prog);
