@@ -248,7 +248,10 @@ static Type *basetype(StorageClass *sclass) {
         *sclass |= STATIC;
       else if (consume("extern"))
         *sclass |= EXTERN;
-      if (*sclass & (*sclass - 1))
+      int prev = *sclass;
+      if (*sclass & (prev - 1))
+      // TODO
+      //if (*sclass & (*sclass - 1))
         error_tok(tok, "typedef, static and extern may not be used together");
       continue;
     }
@@ -431,6 +434,7 @@ static void push_tag_scope(Token *tok, Type *ty) {
 // struct-member = basetype declarator type-suffix ";"
 static Member *struct_member() {
   Type *ty = basetype(NULL);
+  Token *tok = token;
   char *name = NULL;
   ty = declarator(ty, &name);
   ty = type_suffix(ty);
@@ -439,6 +443,7 @@ static Member *struct_member() {
   Member *mem = calloc(1, sizeof(Member));
   mem->name = name;
   mem->ty = ty;
+  mem->tok = tok;
   return mem;
 }
 
@@ -448,6 +453,11 @@ static VarList *read_func_param() {
   ty = declarator(ty, &name);
   ty = type_suffix(ty);
   
+  // "array of T" is converted to "pointer to T" only in the parameter
+  // context. For example, *argv[] is converted to **argv by this.
+  if (ty->kind == TY_ARRAY)
+    ty = pointer_to(ty->base);
+
   VarList *vl = calloc(1, sizeof(VarList));
   vl->var = new_lvar(name, ty);
   return vl;
@@ -967,11 +977,11 @@ static Node *lvar_initializer(Var *var, Token *tok) {
 static Node *declaration(){
   Token *tok = token;
   StorageClass sclass;
-  
   Type *ty = basetype(&sclass);
-  if (consume(";"))
+  if (tok = consume(";"))
     return new_node(ND_NULL, tok);
 
+  tok = token;
   char *name = NULL;
   ty = declarator(ty, &name);
   ty = type_suffix(ty);
@@ -999,6 +1009,7 @@ static Node *declaration(){
   } 
 
   Var *var = new_lvar(name, ty);
+
   if (consume(";")) {
     if (ty->is_incomplete)
       error_tok(tok, "incomplete type");
@@ -1293,7 +1304,7 @@ static Node *stmt2() {
 
   if (tok = consume("default")) {
     if (!current_switch)
-      error_tok(tok, "stray case");
+      error_tok(tok, "stray default");
     expect(":");
 
     Node *node = new_unary(ND_CASE, stmt(), tok);
@@ -1381,6 +1392,9 @@ static Node *stmt2() {
     return node;
   }
 
+  if (tok = consume(";"))
+    return new_node(ND_NULL, tok);
+
   if (tok = consume_ident()) {
     if (consume(":")) {
       Node *node = new_unary(ND_LABEL, stmt(), tok);
@@ -1389,9 +1403,6 @@ static Node *stmt2() {
     }
     token = tok;
   }
-
-  if (tok = consume(";"))
-    return new_node(ND_NULL, tok);
 
   if (is_typename())
     return declaration();
@@ -1650,6 +1661,7 @@ static Node *shift() {
 // 
 // Statement expression is a GNU C expression.
 static Node *stmt_expr(Token *tok) {
+  Scope *sc = enter_scope();
   Node *node = new_node(ND_STMT_EXPR, tok);
   node->body = stmt();
   Node *cur = node->body;
@@ -1659,6 +1671,7 @@ static Node *stmt_expr(Token *tok) {
     cur = cur->next;
   }
   expect(")");
+  leave_scope(sc);
 
   if (cur->kind != ND_EXPR_STMT)
     error_tok(cur->tok, "stmt expr returning void is not supported");
