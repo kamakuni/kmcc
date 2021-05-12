@@ -463,25 +463,30 @@ static VarList *read_func_param() {
   return vl;
 }
 
-static VarList *read_func_params() {
+static void read_func_params(Function *fn) {
   if (consume(")"))
-    return NULL;
+    return;
 
   Token *tok = token;
   if (consume("void") && consume(")"))
-    return NULL;
+    return;
   token = tok;
 
-  VarList *head = read_func_param();
-  VarList *cur = head;
+  fn->params = read_func_param();
+  VarList *cur = fn->params;
 
   while (!consume(")")) {
     expect(",");
+
+    if (consume("...")) {
+      fn->has_varargs = true;
+      expect(")");
+      return;
+    }
+
     cur->next = read_func_param();
     cur = cur->next;
   }
-
-  return head;
 }
 
 // function = basetype declarator "(" params? ")" ("{" stmt* "}" | ";")
@@ -505,7 +510,7 @@ static Function *function() {
   expect("(");
 
   Scope *sc = enter_scope();
-  fn->params = read_func_params();
+  read_func_params(fn);
 
   if (consume(";")){
     leave_scope(sc);

@@ -201,7 +201,7 @@ struct Function {
   char *name;
   VarList *params;
   bool is_static;
-  bool is_varargs;
+  bool has_varargs;
   Node *node;
   VarList *locals;
   int stack_size;
