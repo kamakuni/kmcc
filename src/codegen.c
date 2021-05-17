@@ -19,7 +19,7 @@ static void gen_addr(Node *node) {
 
     Var *var = node->var;
     if (var->is_local) {
-      printf("  lea rax, [rbp-%d]\n", node->var->offset);
+      printf("  lea rax, [rbp-%d]\n", var->offset);
       printf("  push rax\n");
     } else {
       printf("  push offset %s\n", var->name);
@@ -55,6 +55,7 @@ static void load(Type *ty) {
   } else if (ty->size == 4) {
     printf("  movsxd rax, dword ptr [rax]\n");
   } else {
+    assert(ty->size == 8);
     printf("  mov rax, [rax]\n"); // add a value from the address to rax
   }
   printf("  push rax\n"); // push a value to the stack
@@ -77,6 +78,7 @@ static void store(Type *ty) {
   } else if (ty->size == 4) {
     printf("  mov [rax], edi\n");
   } else {
+    assert(ty->size == 8);
     printf("  mov [rax], rdi\n");
   }
   printf("  push rdi\n");
@@ -144,7 +146,12 @@ static void gen_binary(Node *node) {
     break;
   case ND_MUL:
   case ND_MUL_EQ:
-    printf("  mul rdi\n");
+    printf("  imul rax, rdi\n");
+    break;
+  case ND_DIV:
+  case ND_DIV_EQ:
+    printf("  cqo\n");
+    printf("  idiv rdi\n");
     break;
   case ND_BITAND:
   case ND_BITAND_EQ:
@@ -168,12 +175,15 @@ static void gen_binary(Node *node) {
     printf("  mov cl, dil\n");
     printf("  sar rax, cl\n");
     break;
-  case ND_NULL:
+  case ND_EQ:
+    printf("  cmp rax, rdi\n");
+    printf("  sete al\n");
+    printf("  movzb rax, al\n");
     break;
-  case ND_DIV:
-  case ND_DIV_EQ:
-    printf("  mov rdx, 0\n");
-    printf("  div rdi\n");
+  case ND_NE:
+    printf("  cmp rax, rdi\n");
+    printf("  setne al\n");
+    printf("  movzb rax, al\n");
     break;
   case ND_LT:
     printf("  cmp rax, rdi\n");
@@ -185,15 +195,6 @@ static void gen_binary(Node *node) {
     printf("  setle al\n");
     printf("  movzb rax, al\n");
     break;
-  case ND_EQ:
-    printf("  cmp rax, rdi\n");
-    printf("  sete al\n");
-    printf("  movzb rax, al\n");
-    break;
-  case ND_NE:
-    printf("  cmp rax, rdi\n");
-    printf("  setne al\n");
-    printf("  movzb rax, al\n");
   }
   
   printf("  push rax\n");
@@ -235,6 +236,19 @@ static void gen(Node *node) {
       gen(node->rhs);
       store(node->ty);
       return;
+    case ND_TERNARY: {
+      int seq = labelseq++;
+      gen(node->cond);
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");
+      printf("  je  .L.else.%d\n", seq);
+      gen(node->then);
+      printf("  jmp .L.end.%d\n", seq);
+      printf(".L.else.%d:\n", seq);
+      gen(node->els);
+      printf(".L.end.%d:\n", seq);
+      return;
+    }
     case ND_PRE_INC:
       gen_lval(node->lhs);
       printf("  push [rsp]\n");
@@ -271,31 +285,11 @@ static void gen(Node *node) {
     case ND_PTR_SUB_EQ:
     case ND_MUL_EQ:
     case ND_DIV_EQ:
+    case ND_SHL_EQ:
+    case ND_SHR_EQ:
     case ND_BITAND_EQ:
     case ND_BITOR_EQ:
     case ND_BITXOR_EQ:
-      gen_lval(node->lhs);
-      printf("  push [rsp]\n");
-      load(node->lhs->ty);
-      gen(node->rhs);
-      gen_binary(node);
-      store(node->ty);
-      return;
-    case ND_TERNARY: {
-      int seq = labelseq++;
-      gen(node->cond);
-      printf("  pop rax\n");
-      printf("  cmp rax, 0\n");
-      printf("  je  .L.else.%d\n", seq);
-      gen(node->then);
-      printf("  jmp .L.end.%d\n", seq);
-      printf(".L.else.%d:\n", seq);
-      gen(node->els);
-      printf(".L.end.%d:\n", seq);
-      return;
-    }
-    case ND_SHL_EQ:
-    case ND_SHR_EQ:
       gen_lval(node->lhs);
       printf("  push [rsp]\n");
       load(node->lhs->ty);
@@ -321,6 +315,12 @@ static void gen(Node *node) {
       printf("  cmp rax, 0\n");
       printf("  sete al\n");
       printf("  movzb rax, al\n");
+      printf("  push rax\n");
+      return;
+    case ND_BITNOT:
+      gen(node->lhs);
+      printf("  pop rax\n");
+      printf("  not rax\n");
       printf("  push rax\n");
       return;
     case ND_LOGAND:{
@@ -369,19 +369,13 @@ static void gen(Node *node) {
       printf(".L.end.%d:\n", seq);
       return;
     }
-    case ND_BITNOT:
-      gen(node->lhs);
-      printf("  pop rax\n");
-      printf("  not rax\n");
-      printf("  push rax\n");
-      return;
     case ND_IF:{
       int seq = labelseq++;
       if(node->els) {
         gen(node->cond);
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je .L.else.%d\n", seq);
+        printf("  je  .L.else.%d\n", seq);
         gen(node->then);
         printf("  jmp .L.end.%d\n", seq);
         printf(".L.else.%d:\n", seq);
@@ -391,7 +385,7 @@ static void gen(Node *node) {
         gen(node->cond);
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je .L.end.%d\n", seq);
+        printf("  je  .L.end.%d\n", seq);
         gen(node->then);
         printf(".L.end.%d:\n", seq);
       }
@@ -523,8 +517,8 @@ static void gen(Node *node) {
         printf("  mov edi, dword ptr [rbp-8]\n");
         printf("  mov dword ptr [rax], 0\n");
         printf("  mov dword ptr [rax+4], 0\n");
-        printf("  mov dword ptr [rax+8], rdi\n");
-        printf("  mov dword ptr [rax+16], 0\n");
+        printf("  mov qword ptr [rax+8], rdi\n");
+        printf("  mov qword ptr [rax+16], 0\n");
         return;
       }
       int nargs = 0;
