@@ -259,7 +259,7 @@ static Type *basetype(StorageClass *sclass) {
     }
 
     // Handle user-defined ypes.
-    if (!peek("void") && !peek("_Bool") && !peek("char") && !peek("short") && !peek("int") && !peek("long")) {
+    if (!peek("void") && !peek("_Bool") && !peek("char") && !peek("short") && !peek("int") && !peek("long") && !peek("signed")) {
       if (counter)
         break;
       
