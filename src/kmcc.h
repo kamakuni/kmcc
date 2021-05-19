@@ -35,6 +35,7 @@ struct Token {
     Token *next;
     int len; // token length
     long val; // value for Integer token
+    Type *ty; // Used if TK_NUM
     char *str; // token stirng for debugging
     char *contents; // String literal contents including terminating '\0'
     char cont_len; //  String literal length
@@ -51,7 +52,6 @@ Token *consume(char *op);
 Token *consume_ident(void);
 //int expect(int line, int expected, int actual);
 void expect(char *s);
-long expect_number();
 char *expect_ident();
 bool at_eof();
 Token *tokenize(void);
