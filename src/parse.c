@@ -291,7 +291,7 @@ static Type *basetype(StorageClass *sclass) {
   else if (consume("long"))
     counter += LONG;
   else if (consume("signed"))
-    counter += SIGNED;
+    counter |= SIGNED;
 
   switch (counter) {
     case VOID:
@@ -311,6 +311,7 @@ static Type *basetype(StorageClass *sclass) {
       ty = short_type;
       break;
     case INT:
+    case SIGNED:
     case SIGNED + INT:
       ty = int_type;
       break;
