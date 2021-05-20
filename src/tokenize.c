@@ -275,11 +275,25 @@ static Token *read_int_literal(Token *cur, char *start) {
   }
 
   long val = strtol(p, &p, base);
+  Type *ty = int_type;
+
+  // Read L or LL prefix or infer a type.
+  if (startswith(p, "LL") || startswith(p, "ll")) {
+    p += 2;
+    ty = long_type;
+  } else if (*p == 'L' || *p == 'l') {
+    p++;
+    ty = long_type;
+  } else if (val != (int)val) {
+    ty = long_type;
+  }
+
   if (is_alnum(*p))
     error_at(p, "invalid digit");
 
   Token *tok = new_token(TK_NUM, cur, start, p - start);
   tok->val = val;
+  tok->ty = ty;
   return tok;
 }
 
