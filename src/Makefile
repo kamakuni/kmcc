@@ -1,19 +1,29 @@
-CFLAGS=-std=c11 -g -o0
+CFLAGS=-std=c11 -g -static -fno-common
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
 kmcc: $(OBJS)
-			$(CC) -no-pie -o kmcc $(OBJS) $(LDFLAGS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 
 $(OBJS): kmcc.h
 
-test: kmcc
+kmcc-gen2: kmcc $(SRCS) kmcc.h
+	./self.sh
+
+extern.o: tests-extern
+	gcc -xc -c -o extern.o tests-extern
+
+test: kmcc extern.o
 		./kmcc tests > tmp.s
-		gcc -static -o tmp tmp.s
+		gcc -static -o tmp tmp.s extern.o
 		./tmp
 
-clean:
-		rm -f kmcc *.o *~ tmp*
+test-gen2: kmcc-gen2 extern.o
+	./kmcc-gen2 tests > tmp.s
+	gcc -static -o tmp tmp.s extern.o
+	./tmp
 
-debug: $(OBJS)
-			$(CC) -g3 -O0 -o kmcc $(OBJS)
+clean:
+		rm -rf kmcc kmcc-gen* *.o *~ tmp*
+
+.PHONY: test clean

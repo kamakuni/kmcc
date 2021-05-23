@@ -1,10 +1,5 @@
 #include "kmcc.h"
 
-Tokens *tokens;
-Token *token;
-char *filename;
-char *user_input;
-
 // Return the contents of a given file.
 static char *read_file(char *path) {
   // Open and read file.
@@ -39,12 +34,12 @@ int main(int argc, char **argv) {
   // Tokenize and parse.
   filename = argv[1];
   user_input = read_file(argv[1]);
-  token = tokenize(user_input);
+  token = tokenize();
   Program *prog = program();
 
   // Assign offsets to local variables.
   for (Function *fn = prog->fns; fn; fn = fn->next) {
-    int offset = 0;
+    int offset = fn->has_varargs ? 56 : 0;
     for (VarList *vl = fn->locals; vl; vl = vl->next) {
 	    Var *var = vl->var;
       offset = align_to(offset, var->ty->align);

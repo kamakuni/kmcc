@@ -3,5 +3,6 @@
 *.s
 tmp*
 kmcc
+kmcc-gen
 .gdb_history
 ./src/.vscode

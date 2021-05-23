@@ -2,6 +2,7 @@
 
 char *filename;
 char *user_input;
+Token *token;
 
 // Report an error and exit.
 void error(char *fmt, ...) {
@@ -46,16 +47,10 @@ void verror_at(char *loc, char *fmt, va_list ap) {
 
 // Reports an error location and exit.
 void error_at(char *loc, char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-
-    int pos = loc - user_input;
-    fprintf(stderr, "%s\n", user_input);
-    fprintf(stderr, "%*s", pos, ""); // pos個の空白を出力
-    fprintf(stderr, "^ ");
-    vfprintf(stderr, fmt, ap);
-    fprintf(stderr, "\n");
-    exit(1);
+  va_list ap;
+  va_start(ap, fmt);
+  verror_at(loc, fmt, ap);
+  exit(1);
 }
 
 // Reports an error location and exit.
@@ -89,7 +84,10 @@ bool startswith(char *p, char * q) {
 
 static char *starts_with_reserved(char *p) {
   // Keyword
-  static char *kw[] = {"return", "if", "else", "while", "for", "short", "int", "long", "char", "sizeof", "struct", "void", "typedef", "_Bool", "enum", "static"};
+  static char *kw[] = {"return", "if", "else", "while", "for", "short", "int",
+                      "long", "char", "sizeof", "struct", "void", "typedef",
+                      "_Bool", "enum", "static", "break", "extern", "_Alignof",
+                      "continue", "goto", "switch", "case", "default", "do", "signed"};
 
   for (int i = 0; i < sizeof(kw) / sizeof(*kw); i++) {
     int len = strlen(kw[i]);
@@ -98,7 +96,7 @@ static char *starts_with_reserved(char *p) {
   }
 
   // Multi-letter punctuator
-  static char *ops[] = {"<<=",">>=","==", "!=", "<=", ">=", "->", "<<", ">>", "++", "--", "+=", "-=", "*=", "/="};
+  static char *ops[] = {"<<=",">>=","...","==", "!=", "<=", ">=", "->", "<<", ">>", "++", "--", "+=", "-=", "*=", "/=", "&&", "||", "&=", "|=", "^="};
 
   for (int i = 0; i < sizeof(ops) / sizeof(*ops); i++)
     if (startswith(p, ops[i]))
@@ -183,13 +181,6 @@ static char get_escape_char(char c) {
   }
 }
 
-char *strndup(char *p,int len) {
-    char *buf = malloc(len + 1);
-    strncpy(buf, p , len);
-    buf[len] = '\0';
-    return buf;
-}
-
 Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     Token *t = calloc(1, sizeof(Token));
     t->kind = kind;
@@ -245,6 +236,28 @@ static Token *read_string_literal(Token *cur, char *start) {
   return tok;
 }
 
+static Token *read_char_literal(Token *cur, char *start) {
+  char *p = start + 1;
+  if (*p == '\0')
+    error_at(start,"unclosed char liteal");
+
+  char c;
+  if (*p == '\\') {
+    p++;
+    c = get_escape_char(*p++);
+  } else {
+    c = *p++;
+  }
+
+  if (*p != '\'')
+    error_at(start, "char literal too long");
+  p++;
+
+  Token *tok = new_token(TK_NUM, cur, start, p - start);
+  tok->val = c;
+  return tok;
+}
+
 static Token *read_int_literal(Token *cur, char *start) {
   char *p = start;
 
@@ -262,15 +275,30 @@ static Token *read_int_literal(Token *cur, char *start) {
   }
 
   long val = strtol(p, &p, base);
+  Type *ty = int_type;
+
+  // Read L or LL prefix or infer a type.
+  if (startswith(p, "LL") || startswith(p, "ll")) {
+    p += 2;
+    ty = long_type;
+  } else if (*p == 'L' || *p == 'l') {
+    p++;
+    ty = long_type;
+  } else if (val != (int)val) {
+    ty = long_type;
+  }
+
   if (is_alnum(*p))
     error_at(p, "invalid digit");
 
   Token *tok = new_token(TK_NUM, cur, start, p - start);
   tok->val = val;
+  tok->ty = ty;
   return tok;
 }
 
-Token *tokenize(char *p) {
+Token *tokenize(void) {
+  char *p = user_input;
   Token head = {};
   Token *cur = &head;
     
@@ -304,7 +332,14 @@ Token *tokenize(char *p) {
       p += cur->len;
       continue;
     }
-          
+    
+    // Character literal
+    if (*p == '\'') {
+      cur = read_char_literal(cur, p);
+      p += cur->len;
+      continue;
+    }
+
     // Keywords or Multi-letter punctuators
     char *kw = starts_with_reserved(p);
     if (kw) {

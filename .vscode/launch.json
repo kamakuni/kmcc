@@ -14,6 +14,7 @@
             //"args": ["int main() { return \"abc\"[0]; }"],
             //"args": ["int main() { return \"\\a\"[0]; }"],
             "args": ["/home/vagrant/development/kmcc/test.c"],
+            //"args": ["/home/vagrant/development/kmcc/src/tests"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

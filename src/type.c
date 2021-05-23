@@ -46,6 +46,12 @@ Type *enum_type() {
   return new_type(TY_ENUM, 4, 4);
 }
 
+Type *struct_type(void) {
+  Type *ty = new_type(TY_STRUCT, 0, 1);
+  ty->is_incomplete = true;
+  return ty;
+}
+
 void add_type(Node *node) {
   if (!node || node->ty)
     return;
@@ -69,17 +75,23 @@ void add_type(Node *node) {
   case ND_PTR_DIFF:
   case ND_MUL:
   case ND_DIV:
+  case ND_BITAND:
+  case ND_BITOR:
+  case ND_BITXOR:
   case ND_EQ:
   case ND_NE:
   case ND_LT:
   case ND_LE:
-  case ND_FUNCALL:
-  case ND_NUM:
+  case ND_NOT:
+  case ND_LOGOR:
+  case ND_LOGAND:
     node->ty = long_type;
     return;
   case ND_PTR_ADD:
   case ND_PTR_SUB:
   case ND_ASSIGN:
+  case ND_SHL:
+  case ND_SHR:
   case ND_PRE_INC:
   case ND_PRE_DEC:
   case ND_POST_INC:
@@ -90,10 +102,12 @@ void add_type(Node *node) {
   case ND_PTR_SUB_EQ:
   case ND_MUL_EQ:
   case ND_DIV_EQ:
-  case ND_SHL:
-  case ND_SHR:
   case ND_SHL_EQ:
   case ND_SHR_EQ:
+  case ND_BITAND_EQ:
+  case ND_BITOR_EQ:
+  case ND_BITXOR_EQ:
+  case ND_BITNOT:
     node->ty = node->lhs->ty;
     return;
   case ND_VAR:
@@ -114,13 +128,18 @@ void add_type(Node *node) {
     else
       node->ty = pointer_to(node->lhs->ty);
     return;
-  case ND_DEREF:
+  case ND_DEREF: {
     if (!node->lhs->ty->base)
       error_tok(node->tok, "invalid pointer dereference");
-    node->ty = node->lhs->ty->base;
-    if (node->ty->kind == TY_VOID)
+    
+    Type *ty = node->lhs->ty->base;
+    if (ty->kind == TY_VOID)
       error_tok(node->tok, "dereferencing a void pointer");
+    if (ty->kind == TY_STRUCT && ty->is_incomplete)
+      error_tok(node->tok, "incomplete struct type");
+    node->ty = ty;
     return;
+  }
   case ND_STMT_EXPR: {
     Node *last = node->body;
     while (last->next)
